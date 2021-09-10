@@ -31,6 +31,10 @@ dependencies:
   chewie: ^1.2.2
   flutter_vlc_player: ^6.0.4
   flutter_html: ^2.1.2
+  path_provider: ^2.0.3
+  dio: ^4.0.0
+  image_gallery_saver: ^1.6.9
+  permission_handler: ^8.1.4+2
 
 dev_dependencies:
   flutter_test:

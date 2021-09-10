@@ -79,6 +79,8 @@ class Thread extends StatelessWidget {
                                                     post.ext.toString(),
                                                 ext: post.ext.toString(),
                                                 board: board,
+                                                height: post.tnH,
+                                                width: post.tnW,
                                               ),
                                             ),
                                           )

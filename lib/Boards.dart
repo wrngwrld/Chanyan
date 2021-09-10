@@ -41,35 +41,46 @@ class Boards extends StatelessWidget {
               );
               break;
             default:
-              return Padding(
-                padding: EdgeInsets.all(10),
-                child: ListView(children: [
-                  for (Board board in snapshot.data.boards)
-                    InkWell(
-                      onTap: () => {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => Catalog(
-                              id: board.board,
-                              name: board.board,
-                            ),
-                          ),
-                        ),
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 30,
-                        child: Text(
-                          '/' + board.board + '/',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
+              return ListView(children: [
+                for (Board board in snapshot.data.boards)
+                  InkWell(
+                    onTap: () => {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Catalog(
+                            id: board.board,
+                            name: board.board,
                           ),
                         ),
                       ),
-                    )
-                ]),
-              );
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        children: [
+                          Text(
+                            '/' + board.board + '/',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            board.title,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+              ]);
           }
         },
       ),
