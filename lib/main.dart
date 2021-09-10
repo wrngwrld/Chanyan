@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/thread.dart';
+
+import 'Boards.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,8 +13,9 @@ class MyApp extends StatelessWidget {
       title: 'Chanyan',
       theme: ThemeData(
         primarySwatch: Colors.green,
+        fontFamily: 'Montserrat',
       ),
-      home: Thread(id: '20797400', name: 'SEX'),
+      home: Boards(id: 'gif', name: 'gif'),
     );
   }
 }
