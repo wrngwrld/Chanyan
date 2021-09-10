@@ -35,10 +35,17 @@ dependencies:
   dio: ^4.0.0
   image_gallery_saver: ^1.6.9
   permission_handler: ^8.1.4+2
+  flutter_launcher_icons: ^0.9.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/icon.png"
+  image_path_ios: "assets/icons/icon_ios.jpg"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

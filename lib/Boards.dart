@@ -15,9 +15,6 @@ class Boards extends StatelessWidget {
   Future<BoardModel> makeGetRequest() async {
     final url = Uri.parse('https://a.4cdn.org/boards.json');
     Response response = await get(url);
-    // print('Status code: ${response.statusCode}');
-    // print('Headers: ${response.headers}');
-    // print('Body: ${response.body}');
 
     final boards = boardModelFromJson(response.body);
 

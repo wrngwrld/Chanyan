@@ -16,9 +16,6 @@ class Catalog extends StatelessWidget {
   Future<List<CatalogModel>> makeGetRequest() async {
     final url = Uri.parse('https://a.4cdn.org/$id/catalog.json');
     Response response = await get(url);
-    // print('Status code: ${response.statusCode}');
-    // print('Headers: ${response.headers}');
-    // print('Body: ${response.body}');
 
     final catalog = catalogModelFromJson(response.body);
 
