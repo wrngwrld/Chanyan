@@ -1,22 +1,19 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_chan/vlcPlayer.dart';
 import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class VideoListView extends StatefulWidget {
-  VideoListView({
+class MediaPage extends StatelessWidget {
+  MediaPage({
     @required this.video,
     @required this.ext,
     @required this.board,
     @required this.height,
     @required this.width,
-    @required this.list,
-    @required this.startVideo,
-    @required this.names,
   });
 
   final String video;
@@ -24,17 +21,6 @@ class VideoListView extends StatefulWidget {
   final String board;
   final int height;
   final int width;
-  final int startVideo;
-
-  final List<Widget> list;
-  final List<String> names;
-
-  @override
-  _VideoListViewState createState() => _VideoListViewState();
-}
-
-class _VideoListViewState extends State<VideoListView> {
-  PageController controller;
 
   Future<bool> _requestPermission(Permission permission) async {
     if (await permission.isGranted) {
@@ -48,7 +34,8 @@ class _VideoListViewState extends State<VideoListView> {
     return false;
   }
 
-  Future<bool> saveVideo(String url, String fileName) async {
+  Future<bool> saveVideo(
+      String url, String fileName, BuildContext context) async {
     Directory directory;
     var dio = Dio();
 
@@ -66,7 +53,7 @@ class _VideoListViewState extends State<VideoListView> {
               break;
             }
           }
-          newPath = newPath + "/RPSApp";
+          newPath = newPath + "/Download/4Chan";
           directory = Directory(newPath);
         } else {
           return false;
@@ -88,7 +75,11 @@ class _VideoListViewState extends State<VideoListView> {
             onReceiveProgress: (value1, value2) {});
         if (Platform.isIOS) {
           await ImageGallerySaver.saveFile(saveFile.path,
-              isReturnPathOfIOS: true);
+                  isReturnPathOfIOS: true)
+              .then((value) =>
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('File downloaded!'),
+                  )));
         }
         return true;
       }
@@ -98,64 +89,63 @@ class _VideoListViewState extends State<VideoListView> {
     return false;
   }
 
-  int index;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = PageController(initialPage: widget.startVideo);
-
-    controller.addListener(() {
-      setState(() {
-        index = controller.page.toInt();
-      });
-    });
-  }
-
-  final String page = '0';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         toolbarHeight: 55,
-        backgroundColor: Colors.black,
-        title: Column(
-          children: [
-            Text(index == null
-                ? widget.names[widget.startVideo].toString()
-                : widget.names[index].toString()),
-            Text(
-              index == null
-                  ? widget.startVideo.toString() +
-                      '/' +
-                      (widget.list.length - 1).toString()
-                  : index.toString() +
-                      '/' +
-                      (widget.list.length - 1).toString(),
-              style: TextStyle(fontSize: 14),
-            )
-          ],
-        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(video),
         actions: [
-          widget.ext != '.webm'
-              ? IconButton(
-                  onPressed: () => {
-                        // downloadFile(),
-                        saveVideo(
-                            'https://i.4cdn.org/${widget.board}/${widget.video}',
-                            widget.video),
-                      },
-                  icon: Icon(Icons.download))
-              : Container(),
+          if (ext != '.webm' && Platform.isIOS)
+            IconButton(
+                onPressed: () => {
+                      // downloadFile(),
+
+                      saveVideo(
+                          'https://i.4cdn.org/$board/$video', video, context),
+                    },
+                icon: Icon(Icons.download)),
+          PopupMenuButton(
+              icon: Icon(Icons.more_vert),
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text("Copy Link"),
+                      value: 0,
+                    ),
+                  ],
+              onSelected: (result) {
+                String clipboardText = 'https://i.4cdn.org/$board/$video';
+
+                if (result == 0) {
+                  print(clipboardText);
+                  Clipboard.setData(
+                          new ClipboardData(text: clipboardText.toString()))
+                      .then((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Video address copied to clipboard")));
+                  });
+                }
+              })
         ],
       ),
-      body: PageView(
-        scrollDirection: Axis.horizontal,
-        controller: controller,
-        children: widget.list,
-        dragStartBehavior: DragStartBehavior.down,
+      body: Column(
+        children: [
+          Expanded(
+            child: ext == '.webm'
+                ? VLCPlayer(
+                    video: video,
+                    height: height,
+                    width: width,
+                  )
+                : Image.network(
+                    'https://i.4cdn.org/$board/$video',
+                  ),
+          ),
+        ],
       ),
     );
   }

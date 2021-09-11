@@ -1,30 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/VideoView.dart';
-import 'package:flutter_chan/vlcPlayer.dart';
+import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:http/http.dart';
+import 'package:flutter_chan/pages/media_page.dart';
+import 'package:flutter_chan/widgets/webm_player.dart';
 
-import 'Models/ThreadModel.dart';
-import 'VideoListView.dart';
-
-class Thread extends StatelessWidget {
-  Thread({
+class ThreadPage extends StatefulWidget {
+  ThreadPage({
     @required this.board,
-    @required this.id,
+    @required this.thread,
     @required this.threadName,
   });
 
   final board;
-  final id;
+  final thread;
   final threadName;
 
+  @override
+  _ThreadPageState createState() => _ThreadPageState();
+}
+
+class _ThreadPageState extends State<ThreadPage> {
   List<Widget> media = [];
+
   List<String> names = [];
 
   getAllMedia() async {
-    ThreadModel threadModel = await makeGetRequest();
+    List<Post> posts = await fetchPosts(widget.board, widget.thread);
 
-    for (Post post in threadModel.posts) {
+    for (Post post in posts) {
       if (post.tim != null) {
         String video = post.tim.toString() + post.ext.toString();
 
@@ -36,30 +40,21 @@ class Thread extends StatelessWidget {
                   height: post.h,
                   width: post.w,
                 )
-              : Image.network('https://i.4cdn.org/$board/$video'),
+              : Image.network('https://i.4cdn.org/${widget.board}/$video'),
         );
       }
     }
-  }
-
-  Future<ThreadModel> makeGetRequest() async {
-    final url = Uri.parse('https://a.4cdn.org/$board/thread/$id.json');
-    Response response = await get(url);
-
-    final threadModel = threadModelFromJson(response.body);
-
-    return threadModel;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(threadName),
+        title: Text(widget.threadName),
       ),
       body: FutureBuilder(
-        future: makeGetRequest(),
-        builder: (BuildContext context, AsyncSnapshot<ThreadModel> snapshot) {
+        future: fetchPosts(widget.board, widget.thread),
+        builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return LinearProgressIndicator(
@@ -72,7 +67,7 @@ class Thread extends StatelessWidget {
               return ListView(
                 children: [
                   // for (Post post in snapshot.data.posts)
-                  for (int i = 0; i < snapshot.data.posts.length; i++)
+                  for (int i = 0; i < snapshot.data.length; i++)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -87,7 +82,7 @@ class Thread extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            snapshot.data.posts[i].filename != null
+                            snapshot.data[i].filename != null
                                 ? SizedBox(
                                     width: 100,
                                     height: 100,
@@ -105,29 +100,27 @@ class Thread extends StatelessWidget {
                                               //   names: names,
                                               //   list: media,
                                               //   video: snapshot
-                                              //           .data.posts[i].tim
+                                              //           .posts[i].tim
                                               //           .toString() +
-                                              //       snapshot.data.posts[i].ext
+                                              //       snapshot.data[i].ext
                                               //           .toString(),
-                                              //   ext: snapshot.data.posts[i].ext
+                                              //   ext: snapshot.data[i].ext
                                               //       .toString(),
                                               //   board: board,
                                               //   height:
-                                              //       snapshot.data.posts[i].h,
-                                              //   width: snapshot.data.posts[i].w,
+                                              //       snapshot.data[i].h,
+                                              //   width: snapshot.data[i].w,
                                               // ),
-                                              builder: (context) => VideoView(
-                                                video: snapshot
-                                                        .data.posts[i].tim
+                                              builder: (context) => MediaPage(
+                                                video: snapshot.data[i].tim
                                                         .toString() +
-                                                    snapshot.data.posts[i].ext
+                                                    snapshot.data[i].ext
                                                         .toString(),
-                                                ext: snapshot.data.posts[i].ext
+                                                ext: snapshot.data[i].ext
                                                     .toString(),
-                                                board: board,
-                                                height:
-                                                    snapshot.data.posts[i].h,
-                                                width: snapshot.data.posts[i].w,
+                                                board: widget.board,
+                                                height: snapshot.data[i].h,
+                                                width: snapshot.data[i].w,
                                               ),
                                             ),
                                           )
@@ -136,8 +129,8 @@ class Thread extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           child: Image.network(
-                                            'https://i.4cdn.org/$board/' +
-                                                snapshot.data.posts[i].tim
+                                            'https://i.4cdn.org/${widget.board}/' +
+                                                snapshot.data[i].tim
                                                     .toString() +
                                                 's.jpg',
                                             fit: BoxFit.cover,
@@ -153,12 +146,11 @@ class Thread extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    snapshot.data.posts[i].filename != null
+                                    snapshot.data[i].filename != null
                                         ? Text(
-                                            snapshot.data.posts[i].filename
+                                            snapshot.data[i].filename
                                                     .toString() +
-                                                snapshot.data.posts[i].ext
-                                                    .toString(),
+                                                snapshot.data[i].ext.toString(),
                                             style: TextStyle(
                                               fontSize: 12,
                                             ),
@@ -167,18 +159,17 @@ class Thread extends StatelessWidget {
                                           )
                                         : Container(),
                                     Text(
-                                      'No.' +
-                                          snapshot.data.posts[i].no.toString(),
+                                      'No.' + snapshot.data[i].no.toString(),
                                       style: TextStyle(
                                         fontSize: 12,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    snapshot.data.posts[i].com != null
+                                    snapshot.data[i].com != null
                                         ? Html(
-                                            data: snapshot.data.posts[i].com
-                                                .toString(),
+                                            data:
+                                                snapshot.data[i].com.toString(),
                                           )
                                         : Container(),
                                   ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'Boards.dart';
+import 'package:flutter_chan/pages/board_list.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
       ),
-      home: Boards(id: 'gif', name: 'gif'),
+      home: BoardList(),
     );
   }
 }

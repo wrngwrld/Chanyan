@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
-import 'Models/Overlay.dart';
-
 class VLCPlayer extends StatefulWidget {
   VLCPlayer({
     @required this.video,
@@ -92,8 +90,8 @@ class _VLCPlayerState extends State<VLCPlayer> {
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
     _videoPlayerController.removeListener(listener);
+    _videoPlayerController.dispose();
 
     super.dispose();
   }
@@ -103,10 +101,15 @@ class _VLCPlayerState extends State<VLCPlayer> {
     return Stack(
       // mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        VlcPlayer(
-          controller: _videoPlayerController,
-          aspectRatio: widget.width / widget.height,
-          placeholder: Center(child: CircularProgressIndicator()),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            VlcPlayer(
+              controller: _videoPlayerController,
+              aspectRatio: widget.width / widget.height,
+              placeholder: Center(child: CircularProgressIndicator()),
+            ),
+          ],
         ),
         SafeArea(
           child: Column(
