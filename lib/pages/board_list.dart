@@ -48,6 +48,8 @@ class _BoardListState extends State<BoardList> {
 
     favoriteBoards = prefs.getStringList('favoriteBoards');
 
+    if (favoriteBoards == null) favoriteBoards = [];
+
     print(favoriteBoards);
   }
 
