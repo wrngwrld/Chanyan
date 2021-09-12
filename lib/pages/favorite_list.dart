@@ -3,6 +3,7 @@ import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/favorite.dart';
 import 'package:flutter_chan/pages/thread_page.dart';
+import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class FavoriteList extends StatefulWidget {
@@ -11,6 +12,8 @@ class FavoriteList extends StatefulWidget {
 }
 
 class _FavoriteListState extends State<FavoriteList> {
+  final ScrollController scrollController = ScrollController();
+
   refreshPage() {
     setState(() {});
   }
@@ -22,6 +25,9 @@ class _FavoriteListState extends State<FavoriteList> {
         title: Text('Favorite Threads'),
         backgroundColor: AppColors.kGreen,
         foregroundColor: AppColors.kWhite,
+      ),
+      floatingActionButton: FloatingActionButtons(
+        scrollController: scrollController,
       ),
       body: FutureBuilder(
         future: fetchFavorites(),
@@ -44,6 +50,7 @@ class _FavoriteListState extends State<FavoriteList> {
                       ),
                     )
                   : ListView(
+                      controller: scrollController,
                       children: [
                         for (int i = 0; i < snapshot.data.posts.length; i++)
                           InkWell(

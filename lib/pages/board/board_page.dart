@@ -5,6 +5,7 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/board/grid_view.dart';
 import 'package:flutter_chan/pages/board/list_view.dart';
+import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 
 class BoardPage extends StatefulWidget {
   BoardPage({
@@ -20,6 +21,8 @@ class BoardPage extends StatefulWidget {
 }
 
 class _BoardPageState extends State<BoardPage> {
+  final ScrollController scrollController = ScrollController();
+
   Sort sortBy = Sort.byImagesCount;
   View view = View.gridView;
 
@@ -121,6 +124,9 @@ class _BoardPageState extends State<BoardPage> {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButtons(
+        scrollController: scrollController,
+      ),
       body: FutureBuilder(
         future: fetchOPs(sortBy, widget.board),
         builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
@@ -135,18 +141,21 @@ class _BoardPageState extends State<BoardPage> {
               switch (view) {
                 case View.listView:
                   return BoardListView(
+                    scrollController: scrollController,
                     board: widget.board,
                     snapshot: snapshot,
                   );
                   break;
                 case View.gridView:
                   return BoardGridView(
+                    scrollController: scrollController,
                     board: widget.board,
                     snapshot: snapshot,
                   );
                   break;
                 default:
                   return BoardListView(
+                    scrollController: scrollController,
                     board: widget.board,
                     snapshot: snapshot,
                   );

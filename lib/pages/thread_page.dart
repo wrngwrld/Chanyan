@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_chan/pages/media_page.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
@@ -26,6 +27,8 @@ class ThreadPage extends StatefulWidget {
 }
 
 class _ThreadPageState extends State<ThreadPage> {
+  final ScrollController scrollController = ScrollController();
+
   List<Widget> media = [];
   List<String> fileNames = [];
   List<String> names = [];
@@ -156,6 +159,9 @@ class _ThreadPageState extends State<ThreadPage> {
               })
         ],
       ),
+      floatingActionButton: FloatingActionButtons(
+        scrollController: scrollController,
+      ),
       body: FutureBuilder(
         future: fetchPosts(widget.board, widget.thread),
         builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
@@ -169,6 +175,7 @@ class _ThreadPageState extends State<ThreadPage> {
             default:
               getAllMedia();
               return ListView(
+                controller: scrollController,
                 children: [
                   // for (Post post in snapshot.data.posts)
                   for (int i = 0; i < snapshot.data.length; i++)
