@@ -13,6 +13,7 @@ class BoardList extends StatefulWidget {
 
 class _BoardListState extends State<BoardList> {
   List<String> favoriteBoards = [];
+  Offset _tapDownPosition;
 
   addToFavorites(Board board) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -58,6 +59,10 @@ class _BoardListState extends State<BoardList> {
     setState(() {
       favoriteBoards = prefs.getStringList('favoriteBoards');
     });
+  }
+
+  reload() {
+    setState(() {});
   }
 
   @override
@@ -117,11 +122,40 @@ class _BoardListState extends State<BoardList> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => BoardPage(
+                                      boardName: board.title,
                                       board: board.board,
                                       name: board.board,
                                     ),
                                   ),
                                 ),
+                              },
+                              onTapDown: (TapDownDetails details) {
+                                _tapDownPosition = details.globalPosition;
+                              },
+                              onLongPress: () async {
+                                RenderBox overlay = Overlay.of(context)
+                                    .context
+                                    .findRenderObject();
+
+                                showMenu(
+                                  context: context,
+                                  position: RelativeRect.fromLTRB(
+                                    _tapDownPosition.dx,
+                                    _tapDownPosition.dy,
+                                    overlay.size.width - _tapDownPosition.dx,
+                                    overlay.size.height - _tapDownPosition.dy,
+                                  ),
+                                  items: [
+                                    PopupMenuItem(
+                                      value: 'remove',
+                                      child: Text('Remove from favorites'),
+                                      onTap: () => {
+                                        removeFromFavorites(board),
+                                        reload(),
+                                      },
+                                    ),
+                                  ],
+                                );
                               },
                               child: Row(
                                 children: [

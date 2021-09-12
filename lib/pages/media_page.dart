@@ -8,6 +8,7 @@ import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 
 class MediaPage extends StatefulWidget {
   MediaPage({
@@ -17,7 +18,6 @@ class MediaPage extends StatefulWidget {
     @required this.height,
     @required this.width,
     @required this.list,
-    @required this.startVideo,
     @required this.names,
     @required this.fileNames,
   });
@@ -27,7 +27,6 @@ class MediaPage extends StatefulWidget {
   final String board;
   final int height;
   final int width;
-  final int startVideo;
 
   final List<Widget> list;
   final List<String> names;
@@ -39,7 +38,8 @@ class MediaPage extends StatefulWidget {
 
 class _MediaPageState extends State<MediaPage> {
   MediaView mediaView = MediaView.pageView;
-  PageController controller;
+  PreloadPageController controller;
+  PageController pageController;
 
   final String page = '0';
   int index;
@@ -122,7 +122,12 @@ class _MediaPageState extends State<MediaPage> {
 
     index = widget.fileNames.indexWhere((element) => element == widget.video);
 
-    controller = PageController(
+    controller = PreloadPageController(
+      initialPage: index,
+      keepPage: false,
+    );
+
+    pageController = PageController(
       initialPage: index,
       keepPage: false,
     );
@@ -206,12 +211,21 @@ class _MediaPageState extends State<MediaPage> {
         ],
       ),
       body: mediaView == MediaView.pageView
-          ? PageView(
+          ? PreloadPageView(
               scrollDirection: Axis.horizontal,
               controller: controller,
               children: widget.list,
+              physics: ClampingScrollPhysics(),
               onPageChanged: (i) => onPageChanged(i),
+              preloadPagesCount: 2,
             )
+          // ? PageView(
+          //     scrollDirection: Axis.horizontal,
+          //     controller: pageController,
+          //     children: widget.list,
+          //     physics: ClampingScrollPhysics(),
+          //     onPageChanged: (i) => onPageChanged(i),
+          //   )
           : Column(
               children: [
                 Expanded(
@@ -221,8 +235,12 @@ class _MediaPageState extends State<MediaPage> {
                           height: widget.height,
                           width: widget.width,
                         )
-                      : Image.network(
-                          'https://i.4cdn.org/${widget.board}/${widget.video}',
+                      : InteractiveViewer(
+                          minScale: 0.5,
+                          maxScale: 5,
+                          child: Image.network(
+                            'https://i.4cdn.org/${widget.board}/${widget.video}',
+                          ),
                         ),
                 ),
               ],

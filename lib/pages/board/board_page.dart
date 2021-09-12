@@ -11,10 +11,12 @@ class BoardPage extends StatefulWidget {
   BoardPage({
     @required this.board,
     @required this.name,
+    @required this.boardName,
   });
 
   final board;
   final name;
+  final boardName;
 
   @override
   _BoardPageState createState() => _BoardPageState();
@@ -32,7 +34,7 @@ class _BoardPageState extends State<BoardPage> {
       appBar: AppBar(
         backgroundColor: AppColors.kGreen,
         foregroundColor: AppColors.kWhite,
-        title: Text('/' + widget.name + '/'),
+        title: Text(widget.boardName),
         actions: [
           PopupMenuButton(
             icon: Icon(Icons.sort),

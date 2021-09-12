@@ -60,7 +60,12 @@ class _ThreadPageState extends State<ThreadPage> {
                   height: post.h,
                   width: post.w,
                 )
-              : Image.network('https://i.4cdn.org/${widget.board}/$video'),
+              : InteractiveViewer(
+                  minScale: 0.5,
+                  maxScale: 5,
+                  child: Image.network(
+                      'https://i.4cdn.org/${widget.board}/$video'),
+                ),
         );
       }
     }
@@ -127,7 +132,17 @@ class _ThreadPageState extends State<ThreadPage> {
       appBar: AppBar(
         backgroundColor: AppColors.kGreen,
         foregroundColor: AppColors.kWhite,
-        title: Text(widget.threadName),
+        title: Html(
+          data: widget.threadName,
+          style: {
+            "body": Style(
+              fontSize: FontSize(20.0),
+              color: Colors.white,
+              maxLines: 1,
+              fontWeight: FontWeight.w500,
+            ),
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () => isFavorite ? removeFavorite() : setFavorite(),
@@ -148,7 +163,6 @@ class _ThreadPageState extends State<ThreadPage> {
                     'https://boards.4chan.org/${widget.board}/thread/${widget.thread}';
 
                 if (result == 0) {
-                  print(clipboardText);
                   Clipboard.setData(
                           new ClipboardData(text: clipboardText.toString()))
                       .then((_) {
@@ -218,7 +232,6 @@ class _ThreadPageState extends State<ThreadPage> {
                                                     board: widget.board,
                                                     height: snapshot.data[i].h,
                                                     width: snapshot.data[i].w,
-                                                    startVideo: i,
                                                     names: names,
                                                     list: media,
                                                     fileNames: fileNames,

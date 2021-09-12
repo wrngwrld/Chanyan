@@ -21,6 +21,8 @@ class VLCPlayer extends StatefulWidget {
 class _VLCPlayerState extends State<VLCPlayer> {
   VlcPlayerController _videoPlayerController;
 
+  bool isVisible = false;
+
   Future<void> initializePlayer() async {}
 
   double sliderValue = 0.0;
@@ -37,7 +39,11 @@ class _VLCPlayerState extends State<VLCPlayer> {
         'https://i.4cdn.org/gif/' + widget.video,
         hwAcc: HwAcc.FULL,
         autoPlay: true,
-        options: VlcPlayerOptions(),
+        options: VlcPlayerOptions(
+          advanced: VlcAdvancedOptions([
+            VlcAdvancedOptions.networkCaching(2000),
+          ]),
+        ),
       );
     } catch (e) {
       print(e);
@@ -48,7 +54,12 @@ class _VLCPlayerState extends State<VLCPlayer> {
 
   void listener() async {
     if (!mounted) return;
-    if (_videoPlayerController.value.isInitialized) {
+
+    if (!isVisible) {
+      _videoPlayerController.pause();
+    }
+
+    if (_videoPlayerController.value.isInitialized && isVisible) {
       var oPosition = _videoPlayerController.value.position;
       var oDuration = _videoPlayerController.value.duration;
       if (oPosition != null && oDuration != null) {
@@ -68,8 +79,8 @@ class _VLCPlayerState extends State<VLCPlayer> {
       }
       setState(() {});
     }
+
     if (_videoPlayerController.value.isEnded) {
-      print('restart');
       _videoPlayerController.stop();
       _videoPlayerController.play();
     }
@@ -87,12 +98,13 @@ class _VLCPlayerState extends State<VLCPlayer> {
       _videoPlayerController.value.isPlaying
           ? _videoPlayerController.pause()
           : _videoPlayerController.play();
+
+      isVisible ? isVisible = false : isVisible = true;
     });
   }
 
   @override
   void dispose() {
-    _videoPlayerController.removeListener(listener);
     _videoPlayerController.dispose();
 
     super.dispose();
@@ -103,12 +115,23 @@ class _VLCPlayerState extends State<VLCPlayer> {
     return VisibilityDetector(
       key: ObjectKey(widget.video),
       onVisibilityChanged: (visibility) {
-        print(visibility);
-        if (visibility.visibleFraction < 1 && this.mounted) {
-          _videoPlayerController?.pause();
+        if (visibility.visibleFraction < 0.5 &&
+            this.mounted &&
+            _videoPlayerController.value.isInitialized) {
+          _videoPlayerController.pause();
+
+          setState(() {
+            isVisible = false;
+          });
         }
-        if (visibility.visibleFraction == 1 && this.mounted) {
-          _videoPlayerController?.play();
+        if (visibility.visibleFraction > 0.5 &&
+            this.mounted &&
+            _videoPlayerController.value.isInitialized) {
+          _videoPlayerController.play();
+
+          setState(() {
+            isVisible = true;
+          });
         }
       },
       child: Stack(
