@@ -5,3 +5,13 @@ enum Sort {
   byNewest,
   byOldest,
 }
+
+enum View {
+  gridView,
+  listView,
+}
+
+enum MediaView {
+  pageView,
+  singleView,
+}

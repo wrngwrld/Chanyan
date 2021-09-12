@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/board_list_favorites.dart';
-import 'package:flutter_chan/pages/board_page.dart';
+import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,8 +50,6 @@ class _BoardListState extends State<BoardList> {
     favoriteBoards = prefs.getStringList('favoriteBoards');
 
     if (favoriteBoards == null) favoriteBoards = [];
-
-    print(favoriteBoards);
   }
 
   onGoBack() async {
@@ -72,6 +71,8 @@ class _BoardListState extends State<BoardList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.kGreen,
+        foregroundColor: AppColors.kWhite,
         title: Text('Chanyan'),
         actions: [
           IconButton(
@@ -93,60 +94,71 @@ class _BoardListState extends State<BoardList> {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return LinearProgressIndicator(
-                color: Colors.white,
-                backgroundColor: Colors.green,
+                color: AppColors.kWhite,
+                backgroundColor: AppColors.kGreen,
               );
               break;
             default:
-              return ListView(
-                children: [
-                  for (Board board in snapshot.data)
-                    if (favoriteBoards.contains(board.board))
-                      InkWell(
-                        onTap: () => {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => BoardPage(
-                                board: board.board,
-                                name: board.board,
-                              ),
-                            ),
-                          ),
-                        },
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '/' + board.board + '/',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      board.title,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+              return favoriteBoards.length == 0
+                  ? Center(
+                      child: Text(
+                        'Add your boards first!',
+                        style: TextStyle(
+                          fontSize: 26,
                         ),
-                      )
-                ],
-              );
+                      ),
+                    )
+                  : ListView(
+                      children: [
+                        for (Board board in snapshot.data)
+                          if (favoriteBoards.contains(board.board))
+                            InkWell(
+                              onTap: () => {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => BoardPage(
+                                      board: board.board,
+                                      name: board.board,
+                                    ),
+                                  ),
+                                ),
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 10, 0, 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '/' + board.board + '/',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w300,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            board.title,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                      ],
+                    );
           }
         },
       ),

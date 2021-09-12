@@ -2,18 +2,24 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_chan/constants.dart';
+import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class MediaPage extends StatelessWidget {
+class MediaPage extends StatefulWidget {
   MediaPage({
     @required this.video,
     @required this.ext,
     @required this.board,
     @required this.height,
     @required this.width,
+    @required this.list,
+    @required this.startVideo,
+    @required this.names,
+    @required this.fileNames,
   });
 
   final String video;
@@ -21,6 +27,23 @@ class MediaPage extends StatelessWidget {
   final String board;
   final int height;
   final int width;
+  final int startVideo;
+
+  final List<Widget> list;
+  final List<String> names;
+  final List<String> fileNames;
+
+  @override
+  State<MediaPage> createState() => _MediaPageState();
+}
+
+class _MediaPageState extends State<MediaPage> {
+  MediaView mediaView = MediaView.pageView;
+  PageController controller;
+
+  final String page = '0';
+  int index;
+  String currentName = "";
 
   Future<bool> _requestPermission(Permission permission) async {
     if (await permission.isGranted) {
@@ -89,24 +112,56 @@ class MediaPage extends StatelessWidget {
     return false;
   }
 
+  onPageChanged(int i) {
+    index = i;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    index = widget.fileNames.indexWhere((element) => element == widget.video);
+
+    controller = PageController(
+      initialPage: index,
+      keepPage: false,
+    );
+
+    controller.addListener(() {
+      setState(() {
+        // index = controller.page.toInt();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        foregroundColor: AppColors.kWhite,
         toolbarHeight: 55,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(video),
+        title: mediaView == MediaView.pageView
+            ? Column(
+                children: [
+                  Text(widget.names[index]),
+                  Text((index + 1).toString() +
+                      '/' +
+                      widget.list.length.toString()),
+                ],
+              )
+            : Text(widget.video),
         actions: [
-          if (ext != '.webm' && Platform.isIOS)
+          if (widget.ext != '.webm' && Platform.isIOS)
             IconButton(
                 onPressed: () => {
-                      // downloadFile(),
-
                       saveVideo(
-                          'https://i.4cdn.org/$board/$video', video, context),
+                          'https://i.4cdn.org/${widget.board}/${widget.video}',
+                          widget.video,
+                          context),
                     },
                 icon: Icon(Icons.download)),
           PopupMenuButton(
@@ -116,12 +171,20 @@ class MediaPage extends StatelessWidget {
                       child: Text("Copy Link"),
                       value: 0,
                     ),
+                    PopupMenuItem(
+                      child: Text("Scrollable View"),
+                      value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: Text("Single View"),
+                      value: 2,
+                    ),
                   ],
               onSelected: (result) {
-                String clipboardText = 'https://i.4cdn.org/$board/$video';
+                String clipboardText =
+                    'https://i.4cdn.org/${widget.board}/${widget.video}';
 
                 if (result == 0) {
-                  print(clipboardText);
                   Clipboard.setData(
                           new ClipboardData(text: clipboardText.toString()))
                       .then((_) {
@@ -129,24 +192,41 @@ class MediaPage extends StatelessWidget {
                         content: Text("Video address copied to clipboard")));
                   });
                 }
+                if (result == 1) {
+                  setState(() {
+                    mediaView = MediaView.pageView;
+                  });
+                }
+                if (result == 2) {
+                  setState(() {
+                    mediaView = MediaView.singleView;
+                  });
+                }
               })
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ext == '.webm'
-                ? VLCPlayer(
-                    video: video,
-                    height: height,
-                    width: width,
-                  )
-                : Image.network(
-                    'https://i.4cdn.org/$board/$video',
-                  ),
-          ),
-        ],
-      ),
+      body: mediaView == MediaView.pageView
+          ? PageView(
+              scrollDirection: Axis.horizontal,
+              controller: controller,
+              children: widget.list,
+              onPageChanged: (i) => onPageChanged(i),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: widget.ext == '.webm'
+                      ? VLCPlayer(
+                          video: widget.video,
+                          height: widget.height,
+                          width: widget.width,
+                        )
+                      : Image.network(
+                          'https://i.4cdn.org/${widget.board}/${widget.video}',
+                        ),
+                ),
+              ],
+            ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,8 +48,6 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
     favoriteBoards = prefs.getStringList('favoriteBoards');
 
     if (favoriteBoards == null) favoriteBoards = [];
-
-    print(favoriteBoards);
   }
 
   @override
@@ -62,6 +61,8 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.kGreen,
+        foregroundColor: AppColors.kWhite,
         title: Text('Favorites'),
       ),
       body: FutureBuilder(
@@ -70,8 +71,8 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return LinearProgressIndicator(
-                color: Colors.white,
-                backgroundColor: Colors.green,
+                color: AppColors.kWhite,
+                backgroundColor: AppColors.kGreen,
               );
               break;
             default:
@@ -122,7 +123,7 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
                               favoriteBoards.contains(board.board)
                                   ? Icons.star_rate
                                   : Icons.star_outline,
-                              color: Colors.grey,
+                              color: AppColors.kBlack,
                             ),
                           )
                         ],

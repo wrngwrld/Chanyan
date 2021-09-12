@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/pages/board_list.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_chan/pages/bottom_nav_bar.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,13 +12,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chanyan',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.lime,
         fontFamily: 'Montserrat',
         appBarTheme: AppBarTheme(
-          brightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarBrightness: Brightness.dark,
+          ),
         ),
       ),
-      home: BoardList(),
+      home: BottomNavBar(),
     );
   }
 }
