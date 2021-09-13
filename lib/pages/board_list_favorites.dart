@@ -76,60 +76,62 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
               );
               break;
             default:
-              return ListView(
-                children: [
-                  for (Board board in snapshot.data)
-                    InkWell(
-                      onTap: () => {
-                        favoriteBoards.contains(board.board)
-                            ? removeFromFavorites(board)
-                            : addToFavorites(board),
-                      },
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '/' + board.board + '/',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w300,
+              return Scrollbar(
+                child: ListView(
+                  children: [
+                    for (Board board in snapshot.data)
+                      InkWell(
+                        onTap: () => {
+                          favoriteBoards.contains(board.board)
+                              ? removeFromFavorites(board)
+                              : addToFavorites(board),
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '/' + board.board + '/',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w300,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    board.title,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
+                                    SizedBox(
+                                      height: 5,
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      board.title,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                            onPressed: () =>
+                            IconButton(
+                              onPressed: () =>
+                                  favoriteBoards.contains(board.board)
+                                      ? removeFromFavorites(board)
+                                      : addToFavorites(board),
+                              icon: Icon(
                                 favoriteBoards.contains(board.board)
-                                    ? removeFromFavorites(board)
-                                    : addToFavorites(board),
-                            icon: Icon(
-                              favoriteBoards.contains(board.board)
-                                  ? Icons.star_rate
-                                  : Icons.star_outline,
-                              color: AppColors.kBlack,
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                ],
+                                    ? Icons.star_rate
+                                    : Icons.star_outline,
+                                color: AppColors.kBlack,
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                  ],
+                ),
               );
           }
         },

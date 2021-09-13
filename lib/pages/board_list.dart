@@ -113,85 +113,87 @@ class _BoardListState extends State<BoardList> {
                         ),
                       ),
                     )
-                  : ListView(
-                      children: [
-                        for (Board board in snapshot.data)
-                          if (favoriteBoards.contains(board.board))
-                            InkWell(
-                              onTap: () => {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => BoardPage(
-                                      boardName: board.title,
-                                      board: board.board,
-                                      name: board.board,
-                                    ),
-                                  ),
-                                ),
-                              },
-                              onTapDown: (TapDownDetails details) {
-                                _tapDownPosition = details.globalPosition;
-                              },
-                              onLongPress: () async {
-                                RenderBox overlay = Overlay.of(context)
-                                    .context
-                                    .findRenderObject();
-
-                                showMenu(
-                                  context: context,
-                                  position: RelativeRect.fromLTRB(
-                                    _tapDownPosition.dx,
-                                    _tapDownPosition.dy,
-                                    overlay.size.width - _tapDownPosition.dx,
-                                    overlay.size.height - _tapDownPosition.dy,
-                                  ),
-                                  items: [
-                                    PopupMenuItem(
-                                      value: 'remove',
-                                      child: Text('Remove from favorites'),
-                                      onTap: () => {
-                                        removeFromFavorites(board),
-                                        reload(),
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 10, 0, 10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '/' + board.board + '/',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            board.title,
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
+                  : Scrollbar(
+                      child: ListView(
+                        children: [
+                          for (Board board in snapshot.data)
+                            if (favoriteBoards.contains(board.board))
+                              InkWell(
+                                onTap: () => {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => BoardPage(
+                                        boardName: board.title,
+                                        board: board.board,
+                                        name: board.board,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            )
-                      ],
+                                },
+                                onTapDown: (TapDownDetails details) {
+                                  _tapDownPosition = details.globalPosition;
+                                },
+                                onLongPress: () async {
+                                  RenderBox overlay = Overlay.of(context)
+                                      .context
+                                      .findRenderObject();
+
+                                  showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromLTRB(
+                                      _tapDownPosition.dx,
+                                      _tapDownPosition.dy,
+                                      overlay.size.width - _tapDownPosition.dx,
+                                      overlay.size.height - _tapDownPosition.dy,
+                                    ),
+                                    items: [
+                                      PopupMenuItem(
+                                        value: 'remove',
+                                        child: Text('Remove from favorites'),
+                                        onTap: () => {
+                                          removeFromFavorites(board),
+                                          reload(),
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 10, 0, 10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '/' + board.board + '/',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              board.title,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                        ],
+                      ),
                     );
           }
         },

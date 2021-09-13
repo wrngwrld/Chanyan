@@ -56,9 +56,11 @@ class _ThreadPageState extends State<ThreadPage> {
         media.add(
           post.ext == '.webm'
               ? VLCPlayer(
+                  board: widget.board,
                   video: video,
                   height: post.h,
                   width: post.w,
+                  fileName: post.filename,
                 )
               : InteractiveViewer(
                   minScale: 0.5,
@@ -188,146 +190,154 @@ class _ThreadPageState extends State<ThreadPage> {
               break;
             default:
               getAllMedia();
-              return ListView(
+              return Scrollbar(
                 controller: scrollController,
-                children: [
-                  // for (Post post in snapshot.data.posts)
-                  for (int i = 0; i < snapshot.data.length; i++)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey,
-                              width: .25,
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+                    // for (Post post in snapshot.data.posts)
+                    for (int i = 0; i < snapshot.data.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey,
+                                width: .25,
+                              ),
                             ),
                           ),
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                snapshot.data[i].filename != null
-                                    ? SizedBox(
-                                        width: 125,
-                                        height: 125,
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              8, 0, 8, 16),
-                                          child: InkWell(
-                                            onTap: () => {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MediaPage(
-                                                    video: snapshot.data[i].tim
-                                                            .toString() +
-                                                        snapshot.data[i].ext
-                                                            .toString(),
-                                                    ext: snapshot.data[i].ext
-                                                        .toString(),
-                                                    board: widget.board,
-                                                    height: snapshot.data[i].h,
-                                                    width: snapshot.data[i].w,
-                                                    names: names,
-                                                    list: media,
-                                                    fileNames: fileNames,
+                          child: Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  snapshot.data[i].filename != null
+                                      ? SizedBox(
+                                          width: 125,
+                                          height: 125,
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8, 0, 8, 16),
+                                            child: InkWell(
+                                              onTap: () => {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MediaPage(
+                                                      video: snapshot
+                                                              .data[i].tim
+                                                              .toString() +
+                                                          snapshot.data[i].ext
+                                                              .toString(),
+                                                      ext: snapshot.data[i].ext
+                                                          .toString(),
+                                                      board: widget.board,
+                                                      height:
+                                                          snapshot.data[i].h,
+                                                      width: snapshot.data[i].w,
+                                                      names: names,
+                                                      list: media,
+                                                      fileNames: fileNames,
+                                                    ),
                                                   ),
+                                                )
+                                              },
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                child: Image.network(
+                                                  'https://i.4cdn.org/${widget.board}/' +
+                                                      snapshot.data[i].tim
+                                                          .toString() +
+                                                      's.jpg',
+                                                  fit: BoxFit.cover,
                                                 ),
-                                              )
-                                            },
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Image.network(
-                                                'https://i.4cdn.org/${widget.board}/' +
-                                                    snapshot.data[i].tim
-                                                        .toString() +
-                                                    's.jpg',
-                                                fit: BoxFit.cover,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                    : Container(),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        snapshot.data[i].filename != null
-                                            ? Text(
-                                                snapshot.data[i].ext
-                                                        .toString() +
-                                                    ' (' +
-                                                    formatBytes(
-                                                      snapshot.data[i].fsize,
-                                                      0,
-                                                    ) +
-                                                    ')',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: AppColors.kGreen,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              )
-                                            : Container(),
-                                        snapshot.data[i].sub != null
-                                            ? Text(
-                                                snapshot.data[i].sub.toString(),
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              )
-                                            : Container(),
-                                        Text(
-                                          'No.' +
-                                              snapshot.data[i].no.toString(),
-                                          style: TextStyle(
-                                            fontSize: 12,
+                                        )
+                                      : Container(),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          snapshot.data[i].filename != null
+                                              ? Text(
+                                                  snapshot.data[i].ext
+                                                          .toString() +
+                                                      ' (' +
+                                                      formatBytes(
+                                                        snapshot.data[i].fsize,
+                                                        0,
+                                                      ) +
+                                                      ')',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColors.kGreen,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                )
+                                              : Container(),
+                                          snapshot.data[i].sub != null
+                                              ? Text(
+                                                  snapshot.data[i].sub
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                )
+                                              : Container(),
+                                          Text(
+                                            'No.' +
+                                                snapshot.data[i].no.toString(),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          snapshot.data[i].name.toString(),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
+                                          Text(
+                                            snapshot.data[i].name.toString(),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Divider(
-                                  color: Colors.grey,
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                            snapshot.data[i].com != null
-                                ? Html(
-                                    data: snapshot.data[i].com.toString(),
-                                  )
-                                : Container(),
-                          ],
+                                  Divider(
+                                    color: Colors.grey,
+                                    height: 20,
+                                  ),
+                                ],
+                              ),
+                              snapshot.data[i].com != null
+                                  ? Html(
+                                      data: snapshot.data[i].com.toString(),
+                                    )
+                                  : Container(),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               );
           }
         },

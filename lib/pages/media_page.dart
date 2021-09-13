@@ -9,6 +9,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MediaPage extends StatefulWidget {
   MediaPage({
@@ -116,11 +117,19 @@ class _MediaPageState extends State<MediaPage> {
     index = i;
   }
 
+  setStartVideo(String video) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('startVideo', video);
+  }
+
   @override
   void initState() {
     super.initState();
 
     index = widget.fileNames.indexWhere((element) => element == widget.video);
+
+    setStartVideo(widget.names[index]);
 
     controller = PreloadPageController(
       initialPage: index,
@@ -231,9 +240,11 @@ class _MediaPageState extends State<MediaPage> {
                 Expanded(
                   child: widget.ext == '.webm'
                       ? VLCPlayer(
+                          board: widget.board,
                           video: widget.video,
                           height: widget.height,
                           width: widget.width,
+                          fileName: widget.fileNames[index],
                         )
                       : InteractiveViewer(
                           minScale: 0.5,
