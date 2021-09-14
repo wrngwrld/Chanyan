@@ -45,7 +45,8 @@ class _ThreadPageState extends State<ThreadPage> {
   }
 
   getAllMedia() async {
-    List<Post> posts = await fetchPosts(widget.board, widget.thread);
+    List<Post> posts =
+        await fetchAllPostsFromThread(widget.board, widget.thread);
 
     for (Post post in posts) {
       if (post.tim != null) {
@@ -179,7 +180,7 @@ class _ThreadPageState extends State<ThreadPage> {
         scrollController: scrollController,
       ),
       body: FutureBuilder(
-        future: fetchPosts(widget.board, widget.thread),
+        future: fetchAllPostsFromThread(widget.board, widget.thread),
         builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:

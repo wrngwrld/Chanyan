@@ -66,7 +66,7 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
         title: Text('Favorites'),
       ),
       body: FutureBuilder(
-        future: fetchBoards(),
+        future: fetchAllBoards(),
         builder: (BuildContext context, AsyncSnapshot<List<Board>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:

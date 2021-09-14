@@ -3,13 +3,12 @@ import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/post.dart';
-import 'package:flutter_chan/pages/archive_page.dart';
 import 'package:flutter_chan/pages/board/grid_view.dart';
 import 'package:flutter_chan/pages/board/list_view.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 
-class BoardPage extends StatefulWidget {
-  BoardPage({
+class ArchivePage extends StatefulWidget {
+  ArchivePage({
     @required this.board,
     @required this.boardName,
   });
@@ -18,10 +17,10 @@ class BoardPage extends StatefulWidget {
   final boardName;
 
   @override
-  _BoardPageState createState() => _BoardPageState();
+  _ArchivePageState createState() => _ArchivePageState();
 }
 
-class _BoardPageState extends State<BoardPage> {
+class _ArchivePageState extends State<ArchivePage> {
   final ScrollController scrollController = ScrollController();
 
   Sort sortBy = Sort.byImagesCount;
@@ -105,10 +104,6 @@ class _BoardPageState extends State<BoardPage> {
                 child: Text("List view"),
                 value: 1,
               ),
-              PopupMenuItem(
-                child: Text("Archive"),
-                value: 2,
-              ),
             ],
             onSelected: (result) {
               switch (result) {
@@ -123,12 +118,6 @@ class _BoardPageState extends State<BoardPage> {
                   });
 
                   break;
-                case 2:
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ArchivePage(
-                          board: widget.board, boardName: widget.boardName)));
-
-                  break;
                 default:
               }
             },
@@ -139,7 +128,7 @@ class _BoardPageState extends State<BoardPage> {
         scrollController: scrollController,
       ),
       body: FutureBuilder(
-        future: fetchAllThreadsFromBoard(sortBy, widget.board),
+        future: fetchAllArchivesFromBoard(sortBy, widget.board),
         builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -149,28 +138,29 @@ class _BoardPageState extends State<BoardPage> {
               );
               break;
             default:
-              switch (view) {
-                case View.listView:
-                  return BoardListView(
-                    scrollController: scrollController,
-                    board: widget.board,
-                    snapshot: snapshot,
-                  );
-                  break;
-                case View.gridView:
-                  return BoardGridView(
-                    scrollController: scrollController,
-                    board: widget.board,
-                    snapshot: snapshot,
-                  );
-                  break;
-                default:
-                  return BoardListView(
-                    scrollController: scrollController,
-                    board: widget.board,
-                    snapshot: snapshot,
-                  );
-              }
+              // switch (view) {
+              //   case View.listView:
+              //     return BoardListView(
+              //       scrollController: scrollController,
+              //       board: widget.board,
+              //       snapshot: snapshot,
+              //     );
+              //     break;
+              //   case View.gridView:
+              //     return BoardGridView(
+              //       scrollController: scrollController,
+              //       board: widget.board,
+              //       snapshot: snapshot,
+              //     );
+              //     break;
+              //   default:
+              //     return BoardListView(
+              //       scrollController: scrollController,
+              //       board: widget.board,
+              //       snapshot: snapshot,
+              //     );
+              // }
+              return Container();
           }
         },
       ),

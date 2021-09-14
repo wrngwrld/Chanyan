@@ -25,6 +25,7 @@ class Post {
   int lastModified;
   String country;
   String board;
+  int archived;
 
   Post({
     this.no,
@@ -53,6 +54,7 @@ class Post {
     this.lastModified,
     this.country,
     this.board,
+    this.archived,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
@@ -82,6 +84,7 @@ class Post {
         lastModified: json['last_modified'],
         country: json['country'],
         board: json['board'],
+        archived: json['archived'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -109,5 +112,6 @@ class Post {
         "images": images,
         "unique_ips": uniqueIps,
         'board': board,
+        'archived': archived,
       };
 }

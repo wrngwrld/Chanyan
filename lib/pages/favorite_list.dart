@@ -30,7 +30,7 @@ class _FavoriteListState extends State<FavoriteList> {
         scrollController: scrollController,
       ),
       body: FutureBuilder(
-        future: fetchFavorites(),
+        future: fetchFavoriteThreads(),
         builder: (BuildContext context, AsyncSnapshot<Favorite> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -123,6 +123,20 @@ class _FavoriteListState extends State<FavoriteList> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
+                                                snapshot.data.posts[i]
+                                                            .archived !=
+                                                        null
+                                                    ? Text(
+                                                        'Archived',
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 12,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      )
+                                                    : Container(),
                                                 Text(
                                                   'No.' +
                                                       snapshot.data.posts[i].no

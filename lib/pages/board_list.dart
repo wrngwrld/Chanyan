@@ -94,7 +94,7 @@ class _BoardListState extends State<BoardList> {
         ],
       ),
       body: FutureBuilder(
-        future: fetchBoards(),
+        future: fetchAllBoards(),
         builder: (BuildContext context, AsyncSnapshot<List<Board>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -125,7 +125,6 @@ class _BoardListState extends State<BoardList> {
                                       builder: (context) => BoardPage(
                                         boardName: board.title,
                                         board: board.board,
-                                        name: board.board,
                                       ),
                                     ),
                                   ),
