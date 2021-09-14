@@ -147,15 +147,23 @@ class _BoardListState extends State<BoardList> {
                                     ),
                                     items: [
                                       PopupMenuItem(
-                                        value: 'remove',
+                                        value: 0,
                                         child: Text('Remove from favorites'),
-                                        onTap: () => {
-                                          removeFromFavorites(board),
-                                          reload(),
-                                        },
+                                        // onTap: () => {
+                                        //   removeFromFavorites(board),
+                                        //   reload(),
+                                        // },
                                       ),
                                     ],
-                                  );
+                                  ).then((value) {
+                                    switch (value) {
+                                      case 0:
+                                        removeFromFavorites(board);
+                                        reload();
+                                        break;
+                                      default:
+                                    }
+                                  });
                                 },
                                 child: Row(
                                   children: [
