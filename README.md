@@ -2,7 +2,7 @@
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/graphs/commit-activity)
 [![Issues](https://img.shields.io/github/issues/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/issues)
-[![GPL3 License](https://img.shields.io/github/license/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/master/LICENSE.txt)
+[![GPL3 License](https://img.shields.io/github/license/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/releases/latest)
 
 ## Features
