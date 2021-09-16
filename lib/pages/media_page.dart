@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/enums/enums.dart';
-import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MediaPage extends StatefulWidget {
@@ -35,7 +33,6 @@ class MediaPage extends StatefulWidget {
 }
 
 class _MediaPageState extends State<MediaPage> {
-  MediaView mediaView = MediaView.pageView;
   PreloadPageController controller;
 
   final String page = '0';
@@ -66,9 +63,7 @@ class _MediaPageState extends State<MediaPage> {
     );
 
     controller.addListener(() {
-      setState(() {
-        // index = controller.page.toInt();
-      });
+      setState(() {});
     });
   }
 
@@ -82,16 +77,12 @@ class _MediaPageState extends State<MediaPage> {
         toolbarHeight: 55,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: mediaView == MediaView.pageView
-            ? Column(
-                children: [
-                  Text(widget.names[index]),
-                  Text((index + 1).toString() +
-                      '/' +
-                      widget.list.length.toString()),
-                ],
-              )
-            : Text(widget.video),
+        title: Column(
+          children: [
+            Text(widget.names[index]),
+            Text((index + 1).toString() + '/' + widget.list.length.toString()),
+          ],
+        ),
         actions: [
           if (widget.ext != '.webm' && Platform.isIOS)
             IconButton(
@@ -109,73 +100,26 @@ class _MediaPageState extends State<MediaPage> {
               icon: Icon(Icons.more_vert),
               itemBuilder: (context) => [
                     PopupMenuItem(
-                      child: Text("Copy Link"),
+                      child: Text('Share'),
                       value: 0,
                     ),
-                    PopupMenuItem(
-                      child: Text("Scrollable View"),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: Text("Single View"),
-                      value: 2,
-                    ),
                   ],
-              onSelected: (result) {
-                String clipboardText =
-                    'https://i.4cdn.org/${widget.board}/${widget.video}';
-
+              onSelected: (result) async {
                 if (result == 0) {
-                  Clipboard.setData(
-                          new ClipboardData(text: clipboardText.toString()))
-                      .then((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Video address copied to clipboard")));
-                  });
-                }
-                if (result == 1) {
-                  setState(() {
-                    mediaView = MediaView.pageView;
-                  });
-                }
-                if (result == 2) {
-                  setState(() {
-                    mediaView = MediaView.singleView;
-                  });
+                  Share.share('https://i.4cdn.org/${widget.board}/' +
+                      widget.fileNames[index]);
                 }
               })
         ],
       ),
-      body: mediaView == MediaView.pageView
-          ? PreloadPageView(
-              scrollDirection: Axis.horizontal,
-              controller: controller,
-              children: widget.list,
-              physics: ClampingScrollPhysics(),
-              onPageChanged: (i) => onPageChanged(i),
-              preloadPagesCount: 2,
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: widget.ext == '.webm'
-                      ? VLCPlayer(
-                          board: widget.board,
-                          video: widget.video,
-                          height: widget.height,
-                          width: widget.width,
-                          fileName: widget.fileNames[index],
-                        )
-                      : InteractiveViewer(
-                          minScale: 0.5,
-                          maxScale: 5,
-                          child: Image.network(
-                            'https://i.4cdn.org/${widget.board}/${widget.video}',
-                          ),
-                        ),
-                ),
-              ],
-            ),
+      body: PreloadPageView(
+        scrollDirection: Axis.horizontal,
+        controller: controller,
+        children: widget.list,
+        physics: ClampingScrollPhysics(),
+        onPageChanged: (i) => onPageChanged(i),
+        preloadPagesCount: 2,
+      ),
     );
   }
 }
