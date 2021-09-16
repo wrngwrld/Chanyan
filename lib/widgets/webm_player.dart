@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/constants.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -132,7 +135,12 @@ class _VLCPlayerState extends State<VLCPlayer> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Center(child: CircularProgressIndicator()),
+        Center(
+          child: PlatformCircularProgressIndicator(
+            material: (_, __) =>
+                MaterialProgressIndicatorData(color: AppColors.kGreen),
+          ),
+        ),
         VisibilityDetector(
           key: ObjectKey(widget.video),
           onVisibilityChanged: (visibility) {
@@ -163,7 +171,13 @@ class _VLCPlayerState extends State<VLCPlayer> {
                   VlcPlayer(
                     controller: _videoPlayerController,
                     aspectRatio: widget.width / widget.height,
-                    placeholder: Center(child: CircularProgressIndicator()),
+                    placeholder: Center(
+                      child: PlatformCircularProgressIndicator(
+                        material: (_, __) => MaterialProgressIndicatorData(
+                          color: AppColors.kGreen,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -197,7 +211,9 @@ class _VLCPlayerState extends State<VLCPlayer> {
                                 ),
                                 Expanded(
                                   child: Slider(
-                                    activeColor: AppColors.kGreen,
+                                    activeColor: Platform.isIOS
+                                        ? Colors.blue
+                                        : AppColors.kGreen,
                                     inactiveColor: Colors.white,
                                     value: sliderValue,
                                     min: 0.0,

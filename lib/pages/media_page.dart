@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:share_plus/share_plus.dart';
@@ -72,46 +72,75 @@ class _MediaPageState extends State<MediaPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        foregroundColor: AppColors.kWhite,
-        toolbarHeight: 55,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Column(
-          children: [
-            Text(widget.names[index]),
-            Text((index + 1).toString() + '/' + widget.list.length.toString()),
-          ],
-        ),
-        actions: [
-          if (widget.ext != '.webm' && Platform.isIOS)
-            IconButton(
+      appBar: Platform.isIOS
+          ? CupertinoNavigationBar(
+              backgroundColor: Colors.black,
+              leading: CupertinoNavigationBarBackButton(
+                color: Colors.blue,
                 onPressed: () => {
-                      saveVideo(
-                        'https://i.4cdn.org/${widget.board}/' +
-                            widget.fileNames[index],
-                        widget.video,
-                        context,
-                        true,
-                      ),
-                    },
-                icon: Icon(Icons.download)),
-          PopupMenuButton(
-              icon: Icon(Icons.more_vert),
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: Text('Share'),
-                      value: 0,
+                  Navigator.pop(context),
+                },
+              ),
+              middle: Column(
+                children: [
+                  Text(
+                    widget.names[index],
+                    style: TextStyle(
+                      color: Colors.white,
                     ),
-                  ],
-              onSelected: (result) async {
-                if (result == 0) {
-                  Share.share('https://i.4cdn.org/${widget.board}/' +
-                      widget.fileNames[index]);
-                }
-              })
-        ],
-      ),
+                  ),
+                  Text(
+                    (index + 1).toString() +
+                        '/' +
+                        widget.list.length.toString(),
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 20,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Share.share(
+                          'https://i.4cdn.org/${widget.board}' +
+                              widget.fileNames[index],
+                        );
+                      },
+                      child: Icon(
+                        Icons.ios_share,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : AppBar(
+              backgroundColor: Colors.black,
+              foregroundColor: AppColors.kWhite,
+              title: Column(
+                children: [
+                  Text(widget.names[index]),
+                  Text((index + 1).toString() +
+                      '/' +
+                      widget.list.length.toString()),
+                ],
+              ),
+              actions: [
+                IconButton(
+                    onPressed: () => {
+                          Share.share('https://i.4cdn.org/${widget.board}' +
+                              widget.fileNames[index])
+                        },
+                    icon: Icon(Icons.share)),
+              ],
+            ),
       body: PreloadPageView(
         scrollDirection: Axis.horizontal,
         controller: controller,
