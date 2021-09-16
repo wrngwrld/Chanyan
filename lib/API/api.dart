@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:flutter_chan/models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:http/http.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
@@ -169,20 +174,21 @@ Future<Favorite> fetchFavoriteThreads() async {
 
   List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
-  for (String string in favoriteThreadsPrefs) {
-    List<String> list = string.split(',');
-    final Response response = await get(
-        Uri.parse('https://a.4cdn.org/${list[0]}/thread/${list[1]}.json'));
+  if (favoriteThreadsPrefs != null)
+    for (String string in favoriteThreadsPrefs) {
+      List<String> list = string.split(',');
+      final Response response = await get(
+          Uri.parse('https://a.4cdn.org/${list[0]}/thread/${list[1]}.json'));
 
-    if (response.statusCode == 200 && response.bodyBytes != []) {
-      List<Post> posts = (jsonDecode(response.body)['posts'] as List)
-          .map((model) => Post.fromJson(model))
-          .toList();
-      postList.add(posts[0]);
+      if (response.statusCode == 200 && response.bodyBytes != []) {
+        List<Post> posts = (jsonDecode(response.body)['posts'] as List)
+            .map((model) => Post.fromJson(model))
+            .toList();
+        postList.add(posts[0]);
 
-      boardList.add(list[0]);
+        boardList.add(list[0]);
+      }
     }
-  }
 
   favorite.boards = boardList;
   favorite.posts = postList;
