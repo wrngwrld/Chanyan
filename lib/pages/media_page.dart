@@ -173,7 +173,8 @@ class _MediaPageState extends State<MediaPage> {
             IconButton(
                 onPressed: () => {
                       saveVideo(
-                          'https://i.4cdn.org/${widget.board}/${widget.video}',
+                          'https://i.4cdn.org/${widget.board}/' +
+                              widget.fileNames[index],
                           widget.video,
                           context),
                     },
