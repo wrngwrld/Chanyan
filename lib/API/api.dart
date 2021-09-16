@@ -1,15 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:flutter_chan/models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:http/http.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {

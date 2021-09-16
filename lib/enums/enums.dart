@@ -10,8 +10,3 @@ enum View {
   gridView,
   listView,
 }
-
-enum MediaView {
-  pageView,
-  singleView,
-}
