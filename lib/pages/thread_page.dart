@@ -122,6 +122,8 @@ class _ThreadPageState extends State<ThreadPage> {
     });
   }
 
+  saveImages() {}
+
   @override
   void initState() {
     super.initState();
@@ -160,6 +162,10 @@ class _ThreadPageState extends State<ThreadPage> {
                       child: Text("Copy Link"),
                       value: 0,
                     ),
+                    PopupMenuItem(
+                      child: Text("Download all Images"),
+                      value: 1,
+                    ),
                   ],
               onSelected: (result) {
                 String clipboardText =
@@ -172,6 +178,9 @@ class _ThreadPageState extends State<ThreadPage> {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Thread address copied to clipboard")));
                   });
+                }
+                if (result == 1) {
+                  saveImages();
                 }
               })
         ],
