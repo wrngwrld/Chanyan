@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/board_list_favorites.dart';
 import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/models/board.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardList extends StatefulWidget {
@@ -13,7 +17,6 @@ class BoardList extends StatefulWidget {
 
 class _BoardListState extends State<BoardList> {
   List<String> favoriteBoards = [];
-  Offset _tapDownPosition;
 
   addToFavorites(Board board) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -75,32 +78,56 @@ class _BoardListState extends State<BoardList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.kGreen,
-        foregroundColor: AppColors.kWhite,
-        title: Text('Chanyan'),
-        actions: [
-          IconButton(
-            onPressed: () => {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (context) => BoardListFavorites()),
-                  )
-                  .then((value) => onGoBack())
-            },
-            icon: Icon(Icons.star_rate),
-          ),
-        ],
-      ),
+      appBar: Platform.isIOS
+          ? CupertinoNavigationBar(
+              middle: Text('Chanyan'),
+              trailing: SizedBox(
+                width: 20,
+                child: CupertinoButton(
+                  onPressed: () => {
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                              builder: (context) => BoardListFavorites()),
+                        )
+                        .then((value) => onGoBack())
+                  },
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    Icons.star_outline,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+            )
+          : AppBar(
+              backgroundColor: AppColors.kGreen,
+              foregroundColor: AppColors.kWhite,
+              title: Text('Chanyan'),
+              actions: [
+                IconButton(
+                  onPressed: () => {
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                              builder: (context) => BoardListFavorites()),
+                        )
+                        .then((value) => onGoBack())
+                  },
+                  icon: Icon(Icons.star),
+                ),
+              ],
+            ),
       body: FutureBuilder(
         future: fetchAllBoards(),
         builder: (BuildContext context, AsyncSnapshot<List<Board>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return LinearProgressIndicator(
-                color: AppColors.kWhite,
-                backgroundColor: AppColors.kGreen,
+              return Center(
+                child: PlatformCircularProgressIndicator(
+                  material: (_, __) =>
+                      MaterialProgressIndicatorData(color: AppColors.kGreen),
+                ),
               );
               break;
             default:
@@ -118,85 +145,75 @@ class _BoardListState extends State<BoardList> {
                         children: [
                           for (Board board in snapshot.data)
                             if (favoriteBoards.contains(board.board))
-                              InkWell(
-                                onTap: () => {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => BoardPage(
-                                        boardName: board.title,
-                                        board: board.board,
+                              Dismissible(
+                                background: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  alignment: Alignment.centerRight,
+                                  color: Colors.red,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
                                       ),
-                                    ),
-                                  ),
-                                },
-                                onTapDown: (TapDownDetails details) {
-                                  _tapDownPosition = details.globalPosition;
-                                },
-                                onLongPress: () async {
-                                  RenderBox overlay = Overlay.of(context)
-                                      .context
-                                      .findRenderObject();
-
-                                  showMenu(
-                                    context: context,
-                                    position: RelativeRect.fromLTRB(
-                                      _tapDownPosition.dx,
-                                      _tapDownPosition.dy,
-                                      overlay.size.width - _tapDownPosition.dx,
-                                      overlay.size.height - _tapDownPosition.dy,
-                                    ),
-                                    items: [
-                                      PopupMenuItem(
-                                        value: 0,
-                                        child: Text('Remove from favorites'),
-                                        // onTap: () => {
-                                        //   removeFromFavorites(board),
-                                        //   reload(),
-                                        // },
+                                      Expanded(child: Container()),
+                                      Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
                                       ),
                                     ],
-                                  ).then((value) {
-                                    switch (value) {
-                                      case 0:
-                                        removeFromFavorites(board);
-                                        reload();
-                                        break;
-                                      default:
-                                    }
+                                  ),
+                                ),
+                                key: Key(board.toString()),
+                                onDismissed: (direction) {
+                                  setState(() {
+                                    removeFromFavorites(board);
                                   });
                                 },
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(10, 10, 0, 10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '/' + board.board + '/',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w300,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              board.title,
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
+                                child: InkWell(
+                                  onTap: () => {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => BoardPage(
+                                          boardName: board.title,
+                                          board: board.board,
                                         ),
                                       ),
                                     ),
-                                  ],
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.fromLTRB(
+                                              10, 10, 0, 10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '/' + board.board + '/',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                board.title,
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               )
                         ],

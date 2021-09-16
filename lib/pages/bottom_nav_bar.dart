@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/board_list.dart';
 import 'package:flutter_chan/pages/favorite_list.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class BottomNavBar extends StatefulWidget {
   @override
@@ -25,8 +26,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
+      bottomNavigationBar: PlatformNavBar(
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Boards',
@@ -37,10 +38,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        showUnselectedLabels: false,
-        selectedItemColor: AppColors.kGreen,
-        unselectedItemColor: AppColors.kBlack,
+        itemChanged: _onItemTapped,
+        material: (_, __) => MaterialNavBarData(
+          showUnselectedLabels: false,
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: AppColors.kGreen,
+        ),
+        cupertino: (_, __) => CupertinoTabBarData(
+          activeColor: Colors.blue,
+          inactiveColor: Colors.grey,
+          iconSize: 25,
+        ),
       ),
       body: Center(
         child: _pages.elementAt(_selectedIndex),

@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/board.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardListFavorites extends StatefulWidget {
@@ -60,19 +64,31 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.kGreen,
-        foregroundColor: AppColors.kWhite,
-        title: Text('Favorites'),
-      ),
+      appBar: Platform.isIOS
+          ? CupertinoNavigationBar(
+              middle: Text('Favorites'),
+              leading: CupertinoNavigationBarBackButton(
+                color: Colors.blue,
+                onPressed: () => {
+                  Navigator.pop(context),
+                },
+              ),
+            )
+          : AppBar(
+              backgroundColor: AppColors.kGreen,
+              foregroundColor: AppColors.kWhite,
+              title: Text('Favorites'),
+            ),
       body: FutureBuilder(
         future: fetchAllBoards(),
         builder: (BuildContext context, AsyncSnapshot<List<Board>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return LinearProgressIndicator(
-                color: AppColors.kWhite,
-                backgroundColor: AppColors.kGreen,
+              return Center(
+                child: PlatformCircularProgressIndicator(
+                  material: (_, __) =>
+                      MaterialProgressIndicatorData(color: AppColors.kGreen),
+                ),
               );
               break;
             default:
@@ -124,7 +140,9 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
                                 favoriteBoards.contains(board.board)
                                     ? Icons.star_rate
                                     : Icons.star_outline,
-                                color: AppColors.kBlack,
+                                color: Platform.isIOS
+                                    ? Colors.blue
+                                    : AppColors.kBlack,
                               ),
                             )
                           ],

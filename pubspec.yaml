@@ -40,6 +40,7 @@ dependencies:
   visibility_detector: ^0.2.0
   preload_page_view: ^0.1.6
   share_plus: ^2.1.4
+  flutter_platform_widgets: ^1.9.5
 
 dev_dependencies:
   flutter_test:

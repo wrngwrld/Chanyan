@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/constants.dart';
 
@@ -18,8 +20,8 @@ class FloatingActionButtons extends StatelessWidget {
             Icons.expand_less,
             size: 35,
           ),
-          backgroundColor: AppColors.kGreen,
-          foregroundColor: AppColors.kWhite,
+          backgroundColor: Platform.isIOS ? AppColors.kWhite : AppColors.kGreen,
+          foregroundColor: Platform.isIOS ? Colors.grey : AppColors.kWhite,
           onPressed: () {
             scrollController.animateTo(
               scrollController.position.minScrollExtent,
@@ -34,8 +36,8 @@ class FloatingActionButtons extends StatelessWidget {
         ),
         FloatingActionButton(
           child: Icon(Icons.expand_more, size: 35),
-          backgroundColor: AppColors.kGreen,
-          foregroundColor: AppColors.kWhite,
+          backgroundColor: Platform.isIOS ? AppColors.kWhite : AppColors.kGreen,
+          foregroundColor: Platform.isIOS ? Colors.grey : AppColors.kWhite,
           onPressed: () => {
             scrollController.animateTo(
               scrollController.position.maxScrollExtent,
