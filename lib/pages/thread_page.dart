@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
@@ -160,6 +161,10 @@ class _ThreadPageState extends State<ThreadPage> {
                       child: Text("Copy Link"),
                       value: 0,
                     ),
+                    PopupMenuItem(
+                      child: Text("Download all Images"),
+                      value: 1,
+                    ),
                   ],
               onSelected: (result) {
                 String clipboardText =
@@ -172,6 +177,13 @@ class _ThreadPageState extends State<ThreadPage> {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text("Thread address copied to clipboard")));
                   });
+                }
+                if (result == 1) {
+                  saveAllMedia(
+                    'https://i.4cdn.org/${widget.board}/',
+                    fileNames,
+                    context,
+                  );
                 }
               })
         ],
