@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/constants.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_chan/pages/media_page.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThreadPage extends StatefulWidget {
@@ -158,7 +158,7 @@ class _ThreadPageState extends State<ThreadPage> {
               icon: Icon(Icons.more_vert),
               itemBuilder: (context) => [
                     PopupMenuItem(
-                      child: Text("Copy Link"),
+                      child: Text("Share"),
                       value: 0,
                     ),
                     PopupMenuItem(
@@ -170,20 +170,18 @@ class _ThreadPageState extends State<ThreadPage> {
                 String clipboardText =
                     'https://boards.4chan.org/${widget.board}/thread/${widget.thread}';
 
-                if (result == 0) {
-                  Clipboard.setData(
-                          new ClipboardData(text: clipboardText.toString()))
-                      .then((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Thread address copied to clipboard")));
-                  });
-                }
-                if (result == 1) {
-                  saveAllMedia(
-                    'https://i.4cdn.org/${widget.board}/',
-                    fileNames,
-                    context,
-                  );
+                switch (result) {
+                  case 0:
+                    Share.share(clipboardText);
+                    break;
+                  case 1:
+                    saveAllMedia(
+                      'https://i.4cdn.org/${widget.board}/',
+                      fileNames,
+                      context,
+                    );
+                    break;
+                  default:
                 }
               })
         ],
