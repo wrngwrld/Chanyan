@@ -78,8 +78,10 @@ class _BoardListState extends State<BoardList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
+              backgroundColor: CupertinoColors.white.withOpacity(0.85),
               middle: Text('Chanyan'),
               trailing: SizedBox(
                 width: 20,
@@ -95,7 +97,7 @@ class _BoardListState extends State<BoardList> {
                   padding: EdgeInsets.zero,
                   child: Icon(
                     Icons.star_outline,
-                    color: Colors.blue,
+                    color: CupertinoColors.systemYellow,
                   ),
                 ),
               ),
@@ -164,7 +166,7 @@ class _BoardListState extends State<BoardList> {
                                     ],
                                   ),
                                 ),
-                                key: Key(board.toString()),
+                                key: UniqueKey(),
                                 onDismissed: (direction) {
                                   setState(() {
                                     removeFromFavorites(board);

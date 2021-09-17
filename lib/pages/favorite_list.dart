@@ -38,8 +38,10 @@ class _FavoriteListState extends State<FavoriteList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
+              backgroundColor: CupertinoColors.white.withOpacity(0.85),
               middle: Text('Favorite Threads'),
             )
           : AppBar(

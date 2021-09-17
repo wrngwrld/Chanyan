@@ -34,14 +34,11 @@ class _BoardPageState extends State<BoardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              leading: CupertinoNavigationBarBackButton(
-                color: Colors.blue,
-                onPressed: () => {
-                  Navigator.pop(context),
-                },
-              ),
+              backgroundColor: CupertinoColors.white.withOpacity(0.85),
+              previousPageTitle: 'Boards',
               middle: Text(
                 '/' + widget.board + '/ - ' + widget.boardName,
                 maxLines: 1,

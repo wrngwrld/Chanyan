@@ -64,15 +64,12 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
+              backgroundColor: CupertinoColors.white.withOpacity(0.85),
               middle: Text('Favorites'),
-              leading: CupertinoNavigationBarBackButton(
-                color: Colors.blue,
-                onPressed: () => {
-                  Navigator.pop(context),
-                },
-              ),
+              previousPageTitle: 'Boards',
             )
           : AppBar(
               backgroundColor: AppColors.kGreen,
@@ -141,7 +138,7 @@ class _BoardListFavoritesState extends State<BoardListFavorites> {
                                     ? Icons.star_rate
                                     : Icons.star_outline,
                                 color: Platform.isIOS
-                                    ? Colors.blue
+                                    ? CupertinoColors.systemYellow
                                     : AppColors.kBlack,
                               ),
                             )

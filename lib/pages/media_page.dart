@@ -75,12 +75,6 @@ class _MediaPageState extends State<MediaPage> {
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
               backgroundColor: Colors.black,
-              leading: CupertinoNavigationBarBackButton(
-                color: Colors.blue,
-                onPressed: () => {
-                  Navigator.pop(context),
-                },
-              ),
               middle: Column(
                 children: [
                   Text(

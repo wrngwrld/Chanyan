@@ -7,6 +7,7 @@ import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_chan/pages/media_page.dart';
@@ -136,16 +137,13 @@ class _ThreadPageState extends State<ThreadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              leading: CupertinoNavigationBarBackButton(
-                color: Colors.blue,
-                onPressed: () => {
-                  Navigator.pop(context),
-                },
-              ),
+              backgroundColor: CupertinoColors.white.withOpacity(0.85),
+              previousPageTitle: '/' + widget.board + '/',
               middle: Text(
-                widget.threadName,
+                Stringz.unescape(Stringz.cleanTags(widget.threadName)),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -160,7 +158,7 @@ class _ThreadPageState extends State<ThreadPage> {
                       isFavorite
                           ? Icons.favorite
                           : Icons.favorite_border_outlined,
-                      color: Colors.blue,
+                      color: CupertinoColors.systemRed,
                     ),
                   ),
                   SizedBox(
@@ -214,16 +212,8 @@ class _ThreadPageState extends State<ThreadPage> {
           : AppBar(
               backgroundColor: AppColors.kGreen,
               foregroundColor: AppColors.kWhite,
-              title: Html(
-                data: widget.threadName,
-                style: {
-                  "body": Style(
-                    fontSize: FontSize(20.0),
-                    color: Colors.white,
-                    maxLines: 1,
-                    fontWeight: FontWeight.w500,
-                  ),
-                },
+              title: Text(
+                Stringz.unescape(Stringz.cleanTags(widget.threadName)),
               ),
               actions: [
                 IconButton(
