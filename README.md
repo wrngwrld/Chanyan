@@ -11,19 +11,31 @@
 - Boards in grid- or listview
 - Sortable boards
 - Fast video and image galery (Support for WebM on iOS)
-- Downloadable Images
+- Downloadable images
+- Download all images from one board
 
 
 ## Screenshots
 
-<img src="./screenshots/screenshot_1.jpg" width="35%">
-<img src="./screenshots/screenshot_2.jpg" width="35%">
-<img src="./screenshots/screenshot_3.gif" width="35%">
+### iOS
+<p>
+  <img src="./screenshots/ios_screenshot_1.jpg" width="40%">
+  <img src="./screenshots/ios_screenshot_2.jpg" width="40%">
+</p>
+
+### Android
+<p>
+  <img src="./screenshots/android_screenshot_1.jpg" width="40%">
+  <img src="./screenshots/android_screenshot_2.jpg" width="40%">
+</p>
+
+### Gallery
+<img src="./screenshots/galery.gif" width="40%">
 
 ## Testflight
 
-If you want to test it on testflight just email [me](mailto:Marvin.Jaeckisch1@web.de)
+If you want to test it on testflight just email [me](mailto:Marvin.Jaeckisch1@web.de) or use [this link](https://testflight.apple.com/join/ky5bRwMY) 
 
 ## License
 
-Distributed under the GPL3 License. See `LICENSE` for more information.
+Distributed under the GPL3 License. See [LICENSE](https://github.com/wrngwrld/Chanyan/blob/develop/LICENSE) for more information.
