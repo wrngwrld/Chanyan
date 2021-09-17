@@ -42,7 +42,11 @@ class _BoardPageState extends State<BoardPage> {
                   Navigator.pop(context),
                 },
               ),
-              middle: Text(widget.boardName),
+              middle: Text(
+                '/' + widget.board + '/ - ' + widget.boardName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -176,7 +180,11 @@ class _BoardPageState extends State<BoardPage> {
           : AppBar(
               backgroundColor: AppColors.kGreen,
               foregroundColor: AppColors.kWhite,
-              title: Text(widget.boardName),
+              title: Text(
+                '/' + widget.board + '/ - ' + widget.boardName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               actions: [
                 PopupMenuButton(
                   icon: Icon(Icons.sort),

@@ -144,7 +144,11 @@ class _ThreadPageState extends State<ThreadPage> {
                   Navigator.pop(context),
                 },
               ),
-              middle: Text('Chanyan'),
+              middle: Text(
+                widget.threadName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

@@ -88,6 +88,8 @@ class _MediaPageState extends State<MediaPage> {
                     style: TextStyle(
                       color: Colors.white,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     (index + 1).toString() +
