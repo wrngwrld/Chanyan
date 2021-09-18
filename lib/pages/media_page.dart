@@ -111,10 +111,7 @@ class _MediaPageState extends State<MediaPage> {
                               CupertinoActionSheet(
                             actions: [
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'Open in Browser',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
+                                child: Text('Open in Browser'),
                                 onPressed: () {
                                   launchURL(
                                     'https://i.4cdn.org/${widget.board}/' +
@@ -124,10 +121,7 @@ class _MediaPageState extends State<MediaPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'Share',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
+                                child: Text('Share'),
                                 onPressed: () {
                                   Share.share(
                                     'https://i.4cdn.org/${widget.board}/' +
@@ -137,10 +131,7 @@ class _MediaPageState extends State<MediaPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'Download',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
+                                child: Text('Download'),
                                 onPressed: () {
                                   saveVideo(
                                     'https://i.4cdn.org/${widget.board}/' +
@@ -153,13 +144,16 @@ class _MediaPageState extends State<MediaPage> {
                                 },
                               ),
                             ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
                           ),
                         );
                       },
-                      child: Icon(
-                        Icons.ios_share,
-                        color: Colors.blue,
-                      ),
+                      child: Icon(Icons.ios_share),
                     ),
                   ),
                 ],

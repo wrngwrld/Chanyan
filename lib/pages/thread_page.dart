@@ -182,10 +182,7 @@ class _ThreadPageState extends State<ThreadPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'Share',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
+                                child: Text('Share'),
                                 onPressed: () {
                                   Share.share(
                                       'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
@@ -193,10 +190,7 @@ class _ThreadPageState extends State<ThreadPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'Download all Images',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
+                                child: Text('Download all Images'),
                                 onPressed: () {
                                   saveAllMedia(
                                     'https://i.4cdn.org/${widget.board}/',
@@ -207,13 +201,16 @@ class _ThreadPageState extends State<ThreadPage> {
                                 },
                               ),
                             ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
                           ),
                         );
                       },
-                      child: Icon(
-                        Icons.more_vert,
-                        color: Colors.blue,
-                      ),
+                      child: Icon(Icons.more_vert),
                     ),
                   ),
                 ],
@@ -382,7 +379,8 @@ class _ThreadPageState extends State<ThreadPage> {
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                     color: Platform.isIOS
-                                                        ? Colors.blue
+                                                        ? CupertinoColors
+                                                            .activeBlue
                                                         : AppColors.kGreen,
                                                   ),
                                                   maxLines: 1,

@@ -120,10 +120,7 @@ class _BoardPageState extends State<BoardPage> {
                           ),
                           actions: [
                             CupertinoActionSheetAction(
-                              child: Text(
-                                'Image Count',
-                                style: TextStyle(color: Colors.blue),
-                              ),
+                              child: Text('Image Count'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byImagesCount;
@@ -132,10 +129,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text(
-                                'Reply Count',
-                                style: TextStyle(color: Colors.blue),
-                              ),
+                              child: Text('Reply Count'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byReplyCount;
@@ -144,10 +138,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text(
-                                'Bump Order',
-                                style: TextStyle(color: Colors.blue),
-                              ),
+                              child: Text('Bump Order'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byBumpOrder;
@@ -156,10 +147,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text(
-                                'Newest',
-                                style: TextStyle(color: Colors.blue),
-                              ),
+                              child: Text('Newest'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byNewest;
@@ -168,10 +156,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text(
-                                'Oldest',
-                                style: TextStyle(color: Colors.blue),
-                              ),
+                              child: Text('Oldest'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byOldest;
@@ -180,13 +165,16 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                           ],
+                          cancelButton: CupertinoActionSheetAction(
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
                         ),
                       );
                     },
-                    child: Icon(
-                      Icons.sort,
-                      color: Colors.blue,
-                    ),
+                    child: Icon(Icons.sort),
                   ),
                   SizedBox(
                     width: 20,
@@ -199,10 +187,7 @@ class _BoardPageState extends State<BoardPage> {
                               CupertinoActionSheet(
                             actions: [
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'Grid View',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
+                                child: Text('Grid View'),
                                 onPressed: () {
                                   setState(() {
                                     view = View.gridView;
@@ -211,10 +196,7 @@ class _BoardPageState extends State<BoardPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'List View',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
+                                child: Text('List View'),
                                 onPressed: () {
                                   setState(() {
                                     view = View.listView;
@@ -223,12 +205,17 @@ class _BoardPageState extends State<BoardPage> {
                                 },
                               ),
                             ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
                           ),
                         );
                       },
                       child: Icon(
                         Icons.more_vert,
-                        color: Colors.blue,
                       ),
                     ),
                   ),
