@@ -69,7 +69,7 @@ class BoardGridView extends StatelessWidget {
                                     },
                                   )
                                 : Html(
-                                    data: post.com,
+                                    data: post.com ?? '',
                                     style: {
                                       "body": Style(
                                         fontSize: FontSize(16.0),

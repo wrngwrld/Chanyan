@@ -171,7 +171,9 @@ class _BoardListState extends State<BoardList> {
                                                   board.title,
                                               style: TextStyle(
                                                 fontSize: 18,
-                                                fontWeight: FontWeight.w700,
+                                                fontWeight: Platform.isIOS
+                                                    ? FontWeight.w700
+                                                    : FontWeight.w600,
                                               ),
                                             ),
                                             SizedBox(

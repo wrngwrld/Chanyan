@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -37,6 +38,8 @@ class _VLCPlayerState extends State<VLCPlayer> {
   bool validPosition = false;
   String position = '';
   String duration = '';
+
+  bool controllsVisible = true;
 
   @override
   void initState() {
@@ -163,90 +166,119 @@ class _VLCPlayerState extends State<VLCPlayer> {
               });
             }
           },
-          child: Stack(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          child: GestureDetector(
+            onTap: () => {
+              setState(() {
+                controllsVisible = !controllsVisible;
+              })
+            },
+            child: Container(
+              child: Stack(
                 children: [
-                  VlcPlayer(
-                    controller: _videoPlayerController,
-                    aspectRatio: widget.width / widget.height,
-                    placeholder: Center(
-                      child: PlatformCircularProgressIndicator(
-                        material: (_, __) => MaterialProgressIndicatorData(
-                          color: AppColors.kGreen,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      VlcPlayer(
+                        controller: _videoPlayerController,
+                        aspectRatio: widget.width / widget.height,
+                        placeholder: Center(
+                          child: PlatformCircularProgressIndicator(
+                            material: (_, __) => MaterialProgressIndicatorData(
+                              color: AppColors.kGreen,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Container(),
-                    ),
-                    Container(
-                      color: Colors.transparent,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                  Opacity(
+                    opacity: controllsVisible ? 1 : 0,
+                    child: SafeArea(
+                      child: Column(
                         children: [
-                          IconButton(
-                            color: Colors.white,
-                            icon: _videoPlayerController.value.isPlaying
-                                ? Icon(Icons.pause_circle_outline)
-                                : Icon(Icons.play_circle_outline),
-                            onPressed: _togglePlaying,
-                          ),
                           Expanded(
+                            child: Container(),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            height: 45,
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(50, 50, 50, 0.85),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15))),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
-                                  position,
-                                  style: TextStyle(color: Colors.white),
+                                IconButton(
+                                  color: Colors.white,
+                                  icon: _videoPlayerController.value.isPlaying
+                                      ? Icon(Icons.pause)
+                                      : Icon(Icons.play_arrow),
+                                  onPressed: _togglePlaying,
                                 ),
                                 Expanded(
-                                  child: Slider(
-                                    activeColor: Platform.isIOS
-                                        ? Colors.blue
-                                        : AppColors.kGreen,
-                                    inactiveColor: Colors.white,
-                                    value: sliderValue,
-                                    min: 0.0,
-                                    max: (!validPosition &&
-                                            _videoPlayerController
-                                                    .value.duration ==
-                                                null)
-                                        ? 1.0
-                                        : _videoPlayerController
-                                            .value.duration.inSeconds
-                                            .toDouble(),
-                                    onChanged: validPosition
-                                        ? _onSliderPositionChanged
-                                        : null,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Text(
+                                        position,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Slider(
+                                          activeColor: Platform.isIOS
+                                              ? CupertinoColors.systemGrey
+                                              : AppColors.kGreen,
+                                          inactiveColor: Platform.isIOS
+                                              ? CupertinoColors.systemFill
+                                              : AppColors.kWhite,
+                                          thumbColor: Platform.isIOS
+                                              ? CupertinoColors.white
+                                              : AppColors.kWhite,
+                                          value: sliderValue,
+                                          min: 0.0,
+                                          max: (!validPosition &&
+                                                  _videoPlayerController
+                                                          .value.duration ==
+                                                      null)
+                                              ? 1.0
+                                              : _videoPlayerController
+                                                  .value.duration.inSeconds
+                                                  .toDouble(),
+                                          onChanged: validPosition
+                                              ? _onSliderPositionChanged
+                                              : null,
+                                        ),
+                                      ),
+                                      Text(
+                                        duration,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      )
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  duration,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                )
                               ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ],

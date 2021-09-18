@@ -183,6 +183,49 @@ class _MediaPageState extends State<MediaPage> {
                               widget.fileNames[index])
                         },
                     icon: Icon(Icons.share)),
+                PopupMenuButton(
+                  icon: Icon(Icons.more_vert),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text("Open in Browser"),
+                      value: 0,
+                    ),
+                    PopupMenuItem(
+                      child: Text("Share"),
+                      value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: Text("Download"),
+                      value: 2,
+                    ),
+                  ],
+                  onSelected: (result) {
+                    switch (result) {
+                      case 0:
+                        launchURL(
+                          'https://i.4cdn.org/${widget.board}/' +
+                              widget.fileNames[index],
+                        );
+                        break;
+                      case 1:
+                        Share.share(
+                          'https://i.4cdn.org/${widget.board}/' +
+                              widget.fileNames[index],
+                        );
+                        break;
+                      case 2:
+                        saveVideo(
+                          'https://i.4cdn.org/${widget.board}/' +
+                              widget.fileNames[index],
+                          widget.fileNames[index],
+                          context,
+                          true,
+                        );
+                        break;
+                      default:
+                    }
+                  },
+                )
               ],
             ),
       body: PreloadPageView(

@@ -236,35 +236,44 @@ class _ThreadPageState extends State<ThreadPage> {
                   ),
                 ),
                 PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
-                    itemBuilder: (context) => [
-                          PopupMenuItem(
-                            child: Text("Share"),
-                            value: 0,
-                          ),
-                          PopupMenuItem(
-                            child: Text("Download all Images"),
-                            value: 1,
-                          ),
-                        ],
-                    onSelected: (result) {
-                      String clipboardText =
-                          'https://boards.4chan.org/${widget.board}/thread/${widget.thread}';
+                  icon: Icon(Icons.more_vert),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text("Open in Browser"),
+                      value: 0,
+                    ),
+                    PopupMenuItem(
+                      child: Text("Share"),
+                      value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: Text("Download all Images"),
+                      value: 2,
+                    ),
+                  ],
+                  onSelected: (result) {
+                    String clipboardText =
+                        'https://boards.4chan.org/${widget.board}/thread/${widget.thread}';
 
-                      switch (result) {
-                        case 0:
-                          Share.share(clipboardText);
-                          break;
-                        case 1:
-                          saveAllMedia(
-                            'https://i.4cdn.org/${widget.board}/',
-                            fileNames,
-                            context,
-                          );
-                          break;
-                        default:
-                      }
-                    })
+                    switch (result) {
+                      case 0:
+                        launchURL(
+                            'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
+                        break;
+                      case 1:
+                        Share.share(clipboardText);
+                        break;
+                      case 2:
+                        saveAllMedia(
+                          'https://i.4cdn.org/${widget.board}/',
+                          fileNames,
+                          context,
+                        );
+                        break;
+                      default:
+                    }
+                  },
+                )
               ],
             ),
       floatingActionButton: FloatingActionButtons(
