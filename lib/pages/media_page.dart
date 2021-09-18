@@ -37,6 +37,8 @@ class MediaPage extends StatefulWidget {
 class _MediaPageState extends State<MediaPage> {
   PreloadPageController controller;
 
+  bool isDark = true;
+
   final String page = '0';
   int index;
   String currentName = "";
@@ -72,17 +74,17 @@ class _MediaPageState extends State<MediaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              backgroundColor: Colors.black,
+              backgroundColor: isDark ? Colors.black : Colors.white,
               middle: Column(
                 children: [
                   Text(
                     widget.names[index],
                     style: TextStyle(
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -92,7 +94,7 @@ class _MediaPageState extends State<MediaPage> {
                         '/' +
                         widget.list.length.toString(),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
                 ],
@@ -100,6 +102,18 @@ class _MediaPageState extends State<MediaPage> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => {
+                      setState(() {
+                        isDark = !isDark;
+                      })
+                    },
+                    child: Icon(
+                      Icons.wb_sunny,
+                      color: CupertinoColors.activeBlue,
+                    ),
+                  ),
                   SizedBox(
                     width: 20,
                     child: CupertinoButton(
@@ -160,8 +174,8 @@ class _MediaPageState extends State<MediaPage> {
               ),
             )
           : AppBar(
-              backgroundColor: Colors.black,
-              foregroundColor: AppColors.kWhite,
+              backgroundColor: isDark ? Colors.black : Colors.white,
+              foregroundColor: isDark ? Colors.white : AppColors.kBlack,
               title: Column(
                 children: [
                   Text(widget.names[index]),
@@ -173,12 +187,13 @@ class _MediaPageState extends State<MediaPage> {
               actions: [
                 IconButton(
                     onPressed: () => {
-                          Share.share('https://i.4cdn.org/${widget.board}/' +
-                              widget.fileNames[index])
+                          setState(() {
+                            isDark = !isDark;
+                          })
                         },
-                    icon: Icon(Icons.share)),
+                    icon: Icon(Icons.wb_sunny)),
                 PopupMenuButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: Icon(Icons.share),
                   itemBuilder: (context) => [
                     PopupMenuItem(
                       child: Text("Open in Browser"),
