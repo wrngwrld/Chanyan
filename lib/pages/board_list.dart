@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/pages/board_list_favorites.dart';
 import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/models/board.dart';
+import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,7 +25,8 @@ class _BoardListState extends State<BoardList> {
 
     if (favoriteBoardsPref == null) favoriteBoardsPref = [];
 
-    favoriteBoardsPref.add(board.board);
+    if (!favoriteBoardsPref.contains(board.board))
+      favoriteBoardsPref.add(board.board);
 
     setState(() {
       favoriteBoards = favoriteBoardsPref;
@@ -59,13 +60,11 @@ class _BoardListState extends State<BoardList> {
   onGoBack() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    if (!mounted) return;
+
     setState(() {
       favoriteBoards = prefs.getStringList('favoriteBoards');
     });
-  }
-
-  reload() {
-    setState(() {});
   }
 
   @override
@@ -83,42 +82,11 @@ class _BoardListState extends State<BoardList> {
           ? CupertinoNavigationBar(
               backgroundColor: CupertinoColors.white.withOpacity(0.85),
               middle: Text('Chanyan'),
-              trailing: SizedBox(
-                width: 20,
-                child: CupertinoButton(
-                  onPressed: () => {
-                    Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(
-                              builder: (context) => BoardListFavorites()),
-                        )
-                        .then((value) => onGoBack())
-                  },
-                  padding: EdgeInsets.zero,
-                  child: Icon(
-                    Icons.star_outline,
-                    color: CupertinoColors.systemYellow,
-                  ),
-                ),
-              ),
             )
           : AppBar(
               backgroundColor: AppColors.kGreen,
               foregroundColor: AppColors.kWhite,
               title: Text('Chanyan'),
-              actions: [
-                IconButton(
-                  onPressed: () => {
-                    Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(
-                              builder: (context) => BoardListFavorites()),
-                        )
-                        .then((value) => onGoBack())
-                  },
-                  icon: Icon(Icons.star),
-                ),
-              ],
             ),
       body: FutureBuilder(
         future: fetchAllBoards(),
@@ -133,94 +101,216 @@ class _BoardListState extends State<BoardList> {
               );
               break;
             default:
-              return favoriteBoards.length == 0
-                  ? Center(
+              return Scrollbar(
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
                       child: Text(
-                        'Add your boards first!',
+                        'favorites',
                         style: TextStyle(
-                          fontSize: 26,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
-                    )
-                  : Scrollbar(
-                      child: ListView(
-                        children: [
-                          for (Board board in snapshot.data)
-                            if (favoriteBoards.contains(board.board))
-                              Dismissible(
-                                background: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  alignment: Alignment.centerRight,
-                                  color: Colors.red,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
-                                      ),
-                                      Expanded(child: Container()),
-                                      Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
+                    ),
+                    for (Board board in snapshot.data)
+                      if (favoriteBoards.contains(board.board))
+                        Dismissible(
+                          background: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            alignment: Alignment.centerRight,
+                            color: Colors.red,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
                                 ),
-                                key: UniqueKey(),
-                                onDismissed: (direction) {
-                                  setState(() {
-                                    removeFromFavorites(board);
-                                  });
+                                Expanded(child: Container()),
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                          key: UniqueKey(),
+                          onDismissed: (direction) {
+                            removeFromFavorites(board);
+                          },
+                          child: Column(
+                            children: [
+                              InkWell(
+                                onTap: () => {
+                                  Navigator.of(context)
+                                      .push(
+                                        MaterialPageRoute(
+                                          builder: (context) => BoardPage(
+                                            boardName: board.title,
+                                            board: board.board,
+                                          ),
+                                        ),
+                                      )
+                                      .then((value) => onGoBack())
                                 },
-                                child: InkWell(
-                                  onTap: () => {
-                                    Navigator.of(context).push(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '/' +
+                                                  board.board +
+                                                  '/  -  ' +
+                                                  board.title,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              Stringz.cleanTags(
+                                                  Stringz.unescape(
+                                                board.metaDescription,
+                                              )),
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: AppColors.kBlack,
+                                      size: 16,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Divider(),
+                            ],
+                          ),
+                        ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                      child: Text(
+                        'all',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    for (Board board in snapshot.data)
+                      Dismissible(
+                        background: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerRight,
+                          color: Colors.green,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                              Expanded(child: Container()),
+                              Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                        key: UniqueKey(),
+                        onDismissed: (direction) {
+                          setState(() {
+                            addToFavorites(board);
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: () => {
+                                Navigator.of(context)
+                                    .push(
                                       MaterialPageRoute(
                                         builder: (context) => BoardPage(
                                           boardName: board.title,
                                           board: board.board,
                                         ),
                                       ),
-                                    ),
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          padding: EdgeInsets.fromLTRB(
-                                              10, 10, 0, 10),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '/' + board.board + '/',
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Text(
+                                    )
+                                    .then((value) => onGoBack()),
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '/' +
+                                                board.board +
+                                                '/  -  ' +
                                                 board.title,
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700,
+                                            ),
                                           ),
-                                        ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            Stringz.cleanTags(Stringz.unescape(
+                                              board.metaDescription,
+                                            )),
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              )
-                        ],
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: AppColors.kBlack,
+                                    size: 16,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  )
+                                ],
+                              ),
+                            ),
+                            Divider(),
+                          ],
+                        ),
                       ),
-                    );
+                  ],
+                ),
+              );
           }
         },
       ),

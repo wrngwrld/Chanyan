@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/constants.dart';
 
@@ -16,12 +17,13 @@ class FloatingActionButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         FloatingActionButton(
-          child: Icon(
-            Icons.expand_less,
-            size: 35,
-          ),
-          backgroundColor: Platform.isIOS ? AppColors.kWhite : AppColors.kGreen,
-          foregroundColor: Platform.isIOS ? Colors.grey : AppColors.kWhite,
+          child: Icon(Icons.expand_less, size: 35),
+          elevation: 0,
+          backgroundColor: Platform.isIOS
+              ? AppColors.kWhite.withOpacity(0.85)
+              : AppColors.kGreen,
+          foregroundColor:
+              Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
           onPressed: () {
             scrollController.animateTo(
               scrollController.position.minScrollExtent,
@@ -36,8 +38,12 @@ class FloatingActionButtons extends StatelessWidget {
         ),
         FloatingActionButton(
           child: Icon(Icons.expand_more, size: 35),
-          backgroundColor: Platform.isIOS ? AppColors.kWhite : AppColors.kGreen,
-          foregroundColor: Platform.isIOS ? Colors.grey : AppColors.kWhite,
+          elevation: 0,
+          backgroundColor: Platform.isIOS
+              ? AppColors.kWhite.withOpacity(0.85)
+              : AppColors.kGreen,
+          foregroundColor:
+              Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
           onPressed: () => {
             scrollController.animateTo(
               scrollController.position.maxScrollExtent,
