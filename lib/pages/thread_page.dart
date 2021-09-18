@@ -173,6 +173,16 @@ class _ThreadPageState extends State<ThreadPage> {
                             actions: [
                               CupertinoActionSheetAction(
                                 child: Text(
+                                  'Open in Browser',
+                                ),
+                                onPressed: () {
+                                  launchURL(
+                                      'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              CupertinoActionSheetAction(
+                                child: Text(
                                   'Share',
                                   style: TextStyle(color: Colors.blue),
                                 ),

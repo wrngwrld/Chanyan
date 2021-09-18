@@ -6,6 +6,7 @@ import 'package:flutter_chan/models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
   final Response response =
@@ -189,4 +190,12 @@ Future<Favorite> fetchFavoriteThreads() async {
   favorite.posts = postList;
 
   return favorite;
+}
+
+launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    print('Could not launch $url');
+  }
 }
