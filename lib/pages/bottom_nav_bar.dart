@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/board_list.dart';
-import 'package:flutter_chan/pages/favorite_list.dart';
+import 'package:flutter_chan/pages/bookmarks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -15,7 +15,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   List<Widget> _pages = <Widget>[
     BoardList(),
-    FavoriteList(),
+    Bookmarks(),
   ];
 
   _onItemTapped(int index) {
