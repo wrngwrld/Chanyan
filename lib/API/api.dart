@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/board.dart';
-import 'package:flutter_chan/models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {

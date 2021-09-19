@@ -68,7 +68,7 @@ class _BookmarksState extends State<Bookmarks> {
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
               backgroundColor: CupertinoColors.white.withOpacity(0.85),
-              middle: Text('Favorite Threads'),
+              middle: Text('Bookmarks'),
               trailing: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
@@ -220,7 +220,24 @@ class _BookmarksState extends State<Bookmarks> {
                                       .push(
                                         MaterialPageRoute(
                                           builder: (context) => ThreadPage(
-                                            post: Post(),
+                                            post: Post(
+                                              no: snapshot.data[i].no,
+                                              sub: snapshot.data[i].sub,
+                                              replies: snapshot.data[i].replies,
+                                              images: snapshot.data[i].images,
+                                              com: snapshot.data[i].com,
+                                              tim: int.parse(
+                                                snapshot.data[i].imageUrl
+                                                    .substring(
+                                                        0,
+                                                        snapshot
+                                                                .data[i]
+                                                                .imageUrl
+                                                                .length -
+                                                            5),
+                                              ),
+                                              board: snapshot.data[i].board,
+                                            ),
                                             threadName:
                                                 snapshot.data[i].sub != null
                                                     ? snapshot.data[i].sub
@@ -284,20 +301,6 @@ class _BookmarksState extends State<Bookmarks> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  // snapshot.data[i]
-                                                  //             .archived !=
-                                                  //         null
-                                                  //     ? Text(
-                                                  //         'Archived',
-                                                  //         style: TextStyle(
-                                                  //           color: Colors.red,
-                                                  //           fontSize: 12,
-                                                  //         ),
-                                                  //         maxLines: 1,
-                                                  //         overflow: TextOverflow
-                                                  //             .ellipsis,
-                                                  //       )
-                                                  //     : Container(),
                                                   Text(
                                                     'No.' +
                                                         snapshot.data[i].no

@@ -162,7 +162,7 @@ class _ThreadPageState extends State<ThreadPage> {
           ? CupertinoNavigationBar(
               backgroundColor: CupertinoColors.white.withOpacity(0.85),
               previousPageTitle:
-                  widget.fromFavorites ? 'favorites' : '/' + widget.board + '/',
+                  widget.fromFavorites ? 'bookmarks' : '/' + widget.board + '/',
               middle: Text(
                 Stringz.unescape(Stringz.cleanTags(widget.threadName)),
                 maxLines: 1,
@@ -413,8 +413,10 @@ class _ThreadPageState extends State<ThreadPage> {
                                               : Container(),
                                           snapshot.data[i].sub != null
                                               ? Text(
-                                                  snapshot.data[i].sub
-                                                      .toString(),
+                                                  Stringz.unescape(
+                                                      Stringz.cleanTags(snapshot
+                                                          .data[i].sub
+                                                          .toString())),
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w600,
