@@ -16,6 +16,10 @@ class MyApp extends StatelessWidget {
         ? CupertinoApp(
             color: CupertinoColors.activeGreen,
             home: BottomNavBar(),
+            theme: CupertinoThemeData(
+              barBackgroundColor: CupertinoColors.white.withOpacity(0.8),
+              brightness: Brightness.light,
+            ),
           )
         : MaterialApp(
             title: 'Chanyan',

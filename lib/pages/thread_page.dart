@@ -160,7 +160,6 @@ class _ThreadPageState extends State<ThreadPage> {
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              backgroundColor: CupertinoColors.white.withOpacity(0.85),
               previousPageTitle:
                   widget.fromFavorites ? 'bookmarks' : '/' + widget.board + '/',
               middle: Text(

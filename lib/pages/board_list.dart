@@ -80,7 +80,6 @@ class _BoardListState extends State<BoardList> {
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              backgroundColor: CupertinoColors.white.withOpacity(0.85),
               middle: Text('Chanyan'),
             )
           : AppBar(

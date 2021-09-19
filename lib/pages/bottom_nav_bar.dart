@@ -46,8 +46,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
           selectedItemColor: AppColors.kGreen,
         ),
         cupertino: (_, __) => CupertinoTabBarData(
-          activeColor: CupertinoColors.activeBlue,
-          inactiveColor: CupertinoColors.systemGrey,
           iconSize: 25,
         ),
       ),
