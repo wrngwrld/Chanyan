@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/constants.dart';
+import 'package:flutter_chan/models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
@@ -21,11 +23,15 @@ class ThreadPage extends StatefulWidget {
     @required this.board,
     @required this.thread,
     @required this.threadName,
+    @required this.post,
+    this.fromFavorites = false,
   });
 
   final board;
   final thread;
   final threadName;
+  final Post post;
+  final bool fromFavorites;
 
   @override
   _ThreadPageState createState() => _ThreadPageState();
@@ -39,6 +45,8 @@ class _ThreadPageState extends State<ThreadPage> {
   List<String> names = [];
 
   bool isFavorite = false;
+
+  Favorite favorite;
 
   static String formatBytes(int bytes, int decimals) {
     if (bytes <= 0) return "0 B";
@@ -79,14 +87,14 @@ class _ThreadPageState extends State<ThreadPage> {
     }
   }
 
-  fetchFavorite() async {
+  fetchFavorite(Favorite favorite) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
     if (favoriteThreadsPrefs == null) favoriteThreadsPrefs = [];
 
-    if (favoriteThreadsPrefs.contains('${widget.board},${widget.thread}')) {
+    if (favoriteThreadsPrefs.contains(json.encode(favorite))) {
       setState(() {
         isFavorite = true;
       });
@@ -97,14 +105,16 @@ class _ThreadPageState extends State<ThreadPage> {
     }
   }
 
-  setFavorite() async {
+  setFavorite(Favorite favorite) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
     if (favoriteThreadsPrefs == null) favoriteThreadsPrefs = [];
 
-    favoriteThreadsPrefs.add('${widget.board},${widget.thread}');
+    String favoriteString = json.encode(favorite);
+
+    favoriteThreadsPrefs.add(favoriteString);
 
     prefs.setStringList('favoriteThreads', favoriteThreadsPrefs);
 
@@ -113,12 +123,12 @@ class _ThreadPageState extends State<ThreadPage> {
     });
   }
 
-  removeFavorite() async {
+  removeFavorite(Favorite favorite) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
-    favoriteThreadsPrefs.remove('${widget.board},${widget.thread}');
+    favoriteThreadsPrefs.remove(json.encode(favorite));
 
     prefs.setStringList('favoriteThreads', favoriteThreadsPrefs);
 
@@ -131,7 +141,17 @@ class _ThreadPageState extends State<ThreadPage> {
   void initState() {
     super.initState();
 
-    fetchFavorite();
+    favorite = Favorite(
+      no: widget.post.no,
+      sub: widget.post.sub,
+      replies: widget.post.replies,
+      images: widget.post.images,
+      com: widget.post.com,
+      imageUrl: widget.post.tim.toString() + 's.jpg',
+      board: widget.board.toString(),
+    );
+
+    fetchFavorite(favorite);
   }
 
   @override
@@ -141,7 +161,8 @@ class _ThreadPageState extends State<ThreadPage> {
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
               backgroundColor: CupertinoColors.white.withOpacity(0.85),
-              previousPageTitle: '/' + widget.board + '/',
+              previousPageTitle:
+                  widget.fromFavorites ? 'favorites' : '/' + widget.board + '/',
               middle: Text(
                 Stringz.unescape(Stringz.cleanTags(widget.threadName)),
                 maxLines: 1,
@@ -152,8 +173,9 @@ class _ThreadPageState extends State<ThreadPage> {
                 children: [
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () =>
-                        isFavorite ? removeFavorite() : setFavorite(),
+                    onPressed: () => isFavorite
+                        ? removeFavorite(favorite)
+                        : setFavorite(favorite),
                     child: Icon(
                       isFavorite
                           ? Icons.favorite
@@ -224,8 +246,9 @@ class _ThreadPageState extends State<ThreadPage> {
               ),
               actions: [
                 IconButton(
-                  onPressed: () =>
-                      isFavorite ? removeFavorite() : setFavorite(),
+                  onPressed: () => isFavorite
+                      ? removeFavorite(favorite)
+                      : setFavorite(favorite),
                   icon: Icon(
                     isFavorite
                         ? Icons.favorite

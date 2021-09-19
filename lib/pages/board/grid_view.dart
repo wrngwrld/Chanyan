@@ -33,6 +33,7 @@ class BoardGridView extends StatelessWidget {
                           : post.com.toString(),
                       thread: post.no,
                       board: board,
+                      post: post,
                     ),
                   ),
                 )

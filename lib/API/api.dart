@@ -60,79 +60,6 @@ Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
   }
 }
 
-Future<List<Post>> fetchAllArchivesFromBoard(Sort sorting, String board) async {
-  final Response response =
-      await get(Uri.parse('https://a.4cdn.org/$board/archive.json'));
-
-  List<Post> posts = List.empty(growable: true);
-
-  for (int post in jsonDecode(response.body)) {
-    Response responsePost =
-        await get(Uri.parse('https://a.4cdn.org/$board/thread/$post.json'));
-
-    try {
-      print(jsonDecode(responsePost.body)['posts'][0]);
-      List<Post> postDecode = jsonDecode(responsePost.body)['posts'];
-
-      print(postDecode);
-    } catch (e) {
-      print(e);
-    }
-
-    // String postDecode = jsonDecode(responsePost.body);
-
-    // if (response.statusCode == 200) {}
-  }
-  // List<Post> ops = List.empty(growable: true);
-  // List pages = jsonDecode(response.body);
-
-  // if (response.statusCode == 200) {
-  //   pages.forEach((page) {
-  //     List opsInPage = page['threads'];
-  //     opsInPage.forEach((opInPage) {
-  //       ops.add(Post.fromJson(opInPage));
-  //     });
-  //   });
-
-  //   // Thread sorting
-  //   if (sorting != null) {
-  //     switch (sorting) {
-  //       case Sort.byBumpOrder:
-  //         ops.sort((a, b) {
-  //           return a.lastModified.compareTo(b.lastModified);
-  //         });
-  //         break;
-  //       case Sort.byReplyCount:
-  //         ops.sort((a, b) {
-  //           return b.replies.compareTo(a.replies);
-  //         });
-  //         break;
-  //       case Sort.byImagesCount:
-  //         ops.sort((a, b) {
-  //           return b.images.compareTo(a.images);
-  //         });
-  //         break;
-  //       case Sort.byNewest:
-  //         ops.sort((a, b) {
-  //           return b.time.compareTo(a.time);
-  //         });
-  //         break;
-  //       case Sort.byOldest:
-  //         ops.sort((a, b) {
-  //           return a.time.compareTo(b.time);
-  //         });
-  //         break;
-  //     }
-  //   }
-
-  //   return ops;
-  // } else {
-  //   throw Exception('Failed to load OPs.');
-  // }
-
-  return posts;
-}
-
 Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
   final Response response =
       await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
@@ -158,38 +85,6 @@ Future<List<Board>> fetchAllBoards() async {
   } else {
     throw Exception('Failed to load boards.');
   }
-}
-
-Future<Favorite> fetchFavoriteThreads() async {
-  Favorite favorite = Favorite();
-
-  List<Post> postList = [];
-  List<String> boardList = [];
-
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
-
-  if (favoriteThreadsPrefs != null)
-    for (String string in favoriteThreadsPrefs) {
-      List<String> list = string.split(',');
-      final Response response = await get(
-          Uri.parse('https://a.4cdn.org/${list[0]}/thread/${list[1]}.json'));
-
-      if (response.statusCode == 200 && response.bodyBytes != []) {
-        List<Post> posts = (jsonDecode(response.body)['posts'] as List)
-            .map((model) => Post.fromJson(model))
-            .toList();
-        postList.add(posts[0]);
-
-        boardList.add(list[0]);
-      }
-    }
-
-  favorite.boards = boardList;
-  favorite.posts = postList;
-
-  return favorite;
 }
 
 launchURL(String url) async {

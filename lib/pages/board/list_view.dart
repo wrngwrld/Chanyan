@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/thread_page.dart';
+import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class BoardListView extends StatelessWidget {
@@ -31,6 +32,7 @@ class BoardListView extends StatelessWidget {
                           ? post.sub.toString()
                           : post.com.toString(),
                       thread: post.no,
+                      post: post,
                       board: board,
                     ),
                   ),
@@ -85,7 +87,8 @@ class BoardListView extends StatelessWidget {
                                 ),
                                 post.sub != null
                                     ? Text(
-                                        post.sub.toString(),
+                                        Stringz.unescape(Stringz.cleanTags(
+                                            post.sub.toString())),
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,

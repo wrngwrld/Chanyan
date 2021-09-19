@@ -1,34 +1,60 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/constants.dart';
+import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/favorite.dart';
+import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/thread_page.dart';
+import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FavoriteList extends StatefulWidget {
+class Bookmarks extends StatefulWidget {
   @override
-  State<FavoriteList> createState() => _FavoriteListState();
+  State<Bookmarks> createState() => _BookmarksState();
 }
 
-class _FavoriteListState extends State<FavoriteList> {
+class _BookmarksState extends State<Bookmarks> {
   final ScrollController scrollController = ScrollController();
+
+  Sort sortBy = Sort.byOldest;
 
   refreshPage() {
     setState(() {});
   }
 
-  removeFavorite(String board, String thread) async {
+  Future<List<Favorite>> fetchFavoriteThreads(Sort sort) async {
+    List<Favorite> favorites = [];
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
-    favoriteThreadsPrefs.remove('$board,$thread');
+    if (favoriteThreadsPrefs != null)
+      for (String string in favoriteThreadsPrefs) {
+        Favorite favorite = Favorite.fromJson(json.decode(string));
+
+        favorites.add(favorite);
+      }
+
+    if (sort == Sort.byNewest) {
+      favorites = favorites.reversed.toList();
+    }
+
+    return favorites;
+  }
+
+  removeFavorite(Favorite favorite) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
+
+    favoriteThreadsPrefs.remove(json.encode(favorite));
 
     prefs.setStringList('favoriteThreads', favoriteThreadsPrefs);
 
@@ -43,18 +69,94 @@ class _FavoriteListState extends State<FavoriteList> {
           ? CupertinoNavigationBar(
               backgroundColor: CupertinoColors.white.withOpacity(0.85),
               middle: Text('Favorite Threads'),
+              trailing: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  showCupertinoModalPopup(
+                    context: context,
+                    builder: (BuildContext context) => CupertinoActionSheet(
+                      message: Text(
+                        'Sort by',
+                        style: TextStyle(color: AppColors.kBlack),
+                      ),
+                      actions: [
+                        CupertinoActionSheetAction(
+                          child: Text('Newest'),
+                          onPressed: () {
+                            setState(() {
+                              sortBy = Sort.byNewest;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: Text('Oldest'),
+                          onPressed: () {
+                            setState(() {
+                              sortBy = Sort.byOldest;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: Icon(Icons.sort),
+              ),
             )
           : AppBar(
               backgroundColor: AppColors.kGreen,
               foregroundColor: AppColors.kWhite,
               title: Text('Favorite Threads'),
+              actions: [
+                PopupMenuButton(
+                  icon: Icon(Icons.sort),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text("Sort by newest"),
+                      value: 0,
+                    ),
+                    PopupMenuItem(
+                      child: Text("Sort by oldest"),
+                      value: 1,
+                    ),
+                  ],
+                  onSelected: (result) {
+                    switch (result) {
+                      case 0:
+                        setState(() {
+                          sortBy = Sort.byNewest;
+                        });
+
+                        break;
+                      case 1:
+                        setState(() {
+                          sortBy = Sort.byOldest;
+                        });
+
+                        break;
+                      default:
+                    }
+                  },
+                ),
+              ],
             ),
       floatingActionButton: FloatingActionButtons(
         scrollController: scrollController,
       ),
       body: FutureBuilder(
-        future: fetchFavoriteThreads(),
-        builder: (BuildContext context, AsyncSnapshot<Favorite> snapshot) {
+        future: fetchFavoriteThreads(
+          sortBy,
+        ),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Favorite>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return Center(
@@ -65,7 +167,7 @@ class _FavoriteListState extends State<FavoriteList> {
               );
               break;
             default:
-              return snapshot.data.boards.length == 0
+              return snapshot.data.length == 0
                   ? Center(
                       child: Text(
                         'Add favorites first!',
@@ -79,7 +181,7 @@ class _FavoriteListState extends State<FavoriteList> {
                       child: ListView(
                         controller: scrollController,
                         children: [
-                          for (int i = 0; i < snapshot.data.posts.length; i++)
+                          for (int i = 0; i < snapshot.data.length; i++)
                             Dismissible(
                               background: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 10),
@@ -99,14 +201,18 @@ class _FavoriteListState extends State<FavoriteList> {
                                   ],
                                 ),
                               ),
-                              key: Key(snapshot.data.posts[i].toString()),
+                              key: Key(snapshot.data[i].toString()),
                               onDismissed: (direction) {
-                                setState(() {
-                                  removeFavorite(
-                                    snapshot.data.boards[i],
-                                    snapshot.data.posts[i].no.toString(),
-                                  );
-                                });
+                                Favorite favorite = Favorite(
+                                  no: snapshot.data[i].no,
+                                  sub: snapshot.data[i].sub,
+                                  replies: snapshot.data[i].replies,
+                                  images: snapshot.data[i].images,
+                                  com: snapshot.data[i].com,
+                                  imageUrl: snapshot.data[i].imageUrl,
+                                  board: snapshot.data[i].board,
+                                );
+                                removeFavorite(favorite);
                               },
                               child: InkWell(
                                 onTap: () => {
@@ -114,15 +220,16 @@ class _FavoriteListState extends State<FavoriteList> {
                                       .push(
                                         MaterialPageRoute(
                                           builder: (context) => ThreadPage(
+                                            post: Post(),
                                             threadName:
-                                                snapshot.data.posts[i].sub !=
-                                                        null
-                                                    ? snapshot.data.posts[i].sub
+                                                snapshot.data[i].sub != null
+                                                    ? snapshot.data[i].sub
                                                         .toString()
-                                                    : snapshot.data.posts[i].com
+                                                    : snapshot.data[i].com
                                                         .toString(),
-                                            thread: snapshot.data.posts[i].no,
-                                            board: snapshot.data.boards[i],
+                                            thread: snapshot.data[i].no,
+                                            board: snapshot.data[i].board,
+                                            fromFavorites: true,
                                           ),
                                         ),
                                       )
@@ -147,7 +254,7 @@ class _FavoriteListState extends State<FavoriteList> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          snapshot.data.posts[i].tim != null
+                                          snapshot.data[i].imageUrl != null
                                               ? SizedBox(
                                                   width: 125,
                                                   height: 125,
@@ -160,11 +267,9 @@ class _FavoriteListState extends State<FavoriteList> {
                                                           BorderRadius.circular(
                                                               10),
                                                       child: Image.network(
-                                                        'https://i.4cdn.org/${snapshot.data.boards[i]}/' +
-                                                            snapshot.data
-                                                                .posts[i].tim
-                                                                .toString() +
-                                                            's.jpg',
+                                                        'https://i.4cdn.org/${snapshot.data[i].board}/' +
+                                                            snapshot.data[i]
+                                                                .imageUrl,
                                                         fit: BoxFit.cover,
                                                       ),
                                                     ),
@@ -179,24 +284,23 @@ class _FavoriteListState extends State<FavoriteList> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  snapshot.data.posts[i]
-                                                              .archived !=
-                                                          null
-                                                      ? Text(
-                                                          'Archived',
-                                                          style: TextStyle(
-                                                            color: Colors.red,
-                                                            fontSize: 12,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        )
-                                                      : Container(),
+                                                  // snapshot.data[i]
+                                                  //             .archived !=
+                                                  //         null
+                                                  //     ? Text(
+                                                  //         'Archived',
+                                                  //         style: TextStyle(
+                                                  //           color: Colors.red,
+                                                  //           fontSize: 12,
+                                                  //         ),
+                                                  //         maxLines: 1,
+                                                  //         overflow: TextOverflow
+                                                  //             .ellipsis,
+                                                  //       )
+                                                  //     : Container(),
                                                   Text(
                                                     'No.' +
-                                                        snapshot
-                                                            .data.posts[i].no
+                                                        snapshot.data[i].no
                                                             .toString(),
                                                     style: TextStyle(
                                                       fontSize: 12,
@@ -205,12 +309,12 @@ class _FavoriteListState extends State<FavoriteList> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                   ),
-                                                  snapshot.data.posts[i].sub !=
-                                                          null
+                                                  snapshot.data[i].sub != null
                                                       ? Text(
-                                                          snapshot
-                                                              .data.posts[i].sub
-                                                              .toString(),
+                                                          Stringz.unescape(Stringz
+                                                              .cleanTags(snapshot
+                                                                  .data[i].sub
+                                                                  .toString())),
                                                           style: TextStyle(
                                                             fontSize: 16,
                                                             fontWeight:
@@ -220,12 +324,10 @@ class _FavoriteListState extends State<FavoriteList> {
                                                       : Container(),
                                                   Text(
                                                     'R: ' +
-                                                        snapshot.data.posts[i]
-                                                            .replies
+                                                        snapshot.data[i].replies
                                                             .toString() +
                                                         ' / I: ' +
-                                                        snapshot.data.posts[i]
-                                                            .images
+                                                        snapshot.data[i].images
                                                             .toString(),
                                                     style: TextStyle(
                                                       fontSize: 12,
@@ -237,9 +339,9 @@ class _FavoriteListState extends State<FavoriteList> {
                                           ),
                                         ],
                                       ),
-                                      snapshot.data.posts[i].com != null
+                                      snapshot.data[i].com != null
                                           ? Html(
-                                              data: snapshot.data.posts[i].com
+                                              data: snapshot.data[i].com
                                                   .toString(),
                                             )
                                           : Container(),
