@@ -61,54 +61,97 @@ class _BookmarksState extends State<Bookmarks> {
     refreshPage();
   }
 
+  clearBookmarks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setStringList('favoriteThreads', []);
+
+    refreshPage();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              backgroundColor: CupertinoColors.white.withOpacity(0.85),
               middle: Text('Bookmarks'),
-              trailing: CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (BuildContext context) => CupertinoActionSheet(
-                      message: Text(
-                        'Sort by',
-                        style: TextStyle(color: AppColors.kBlack),
-                      ),
-                      actions: [
-                        CupertinoActionSheetAction(
-                          child: Text('Newest'),
-                          onPressed: () {
-                            setState(() {
-                              sortBy = Sort.byNewest;
-                            });
-                            Navigator.pop(context);
-                          },
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (BuildContext context) => CupertinoActionSheet(
+                          message: Text(
+                            'Sort by',
+                            style: TextStyle(color: AppColors.kBlack),
+                          ),
+                          actions: [
+                            CupertinoActionSheetAction(
+                              child: Text('Newest'),
+                              onPressed: () {
+                                setState(() {
+                                  sortBy = Sort.byNewest;
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                            CupertinoActionSheetAction(
+                              child: Text('Oldest'),
+                              onPressed: () {
+                                setState(() {
+                                  sortBy = Sort.byOldest;
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                          cancelButton: CupertinoActionSheetAction(
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
                         ),
-                        CupertinoActionSheetAction(
-                          child: Text('Oldest'),
-                          onPressed: () {
-                            setState(() {
-                              sortBy = Sort.byOldest;
-                            });
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                      cancelButton: CupertinoActionSheetAction(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+                      );
+                    },
+                    child: Icon(Icons.sort),
+                  ),
+                  SizedBox(
+                    width: 20,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        showCupertinoModalPopup(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              CupertinoActionSheet(
+                            actions: [
+                              CupertinoActionSheetAction(
+                                child: Text('Clear bookmarks'),
+                                onPressed: () {
+                                  clearBookmarks();
+                                  refreshPage();
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                      child: Icon(Icons.more_vert),
                     ),
-                  );
-                },
-                child: Icon(Icons.sort),
+                  ),
+                ],
               ),
             )
           : AppBar(
@@ -141,6 +184,24 @@ class _BookmarksState extends State<Bookmarks> {
                           sortBy = Sort.byOldest;
                         });
 
+                        break;
+                      default:
+                    }
+                  },
+                ),
+                PopupMenuButton(
+                  icon: Icon(Icons.more_vert),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text("Clear bookmarks"),
+                      value: 0,
+                    ),
+                  ],
+                  onSelected: (result) {
+                    switch (result) {
+                      case 0:
+                        clearBookmarks();
+                        refreshPage();
                         break;
                       default:
                     }
