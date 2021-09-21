@@ -10,3 +10,9 @@ enum View {
   gridView,
   listView,
 }
+
+enum ThreadStatus {
+  deleted,
+  archived,
+  online,
+}
