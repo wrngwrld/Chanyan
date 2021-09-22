@@ -38,6 +38,8 @@ class _BoardPageState extends State<BoardPage> {
 
     List<String> favoriteBoards = prefs.getStringList('favoriteBoards');
 
+    if (favoriteBoards == null) favoriteBoards = [];
+
     setState(() {
       if (favoriteBoards.contains(widget.board)) isFavorite = true;
     });

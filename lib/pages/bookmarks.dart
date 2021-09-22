@@ -338,8 +338,6 @@ class _BookmarksState extends State<Bookmarks> {
                                           Favorite favorite = Favorite(
                                             no: snapshot.data[i].no,
                                             sub: snapshot.data[i].sub,
-                                            replies: snapshot.data[i].replies,
-                                            images: snapshot.data[i].images,
                                             com: snapshot.data[i].com,
                                             imageUrl: snapshot.data[i].imageUrl,
                                             board: snapshot.data[i].board,
@@ -357,10 +355,6 @@ class _BookmarksState extends State<Bookmarks> {
                                                         no: snapshot.data[i].no,
                                                         sub: snapshot
                                                             .data[i].sub,
-                                                        replies: snapshot
-                                                            .data[i].replies,
-                                                        images: snapshot
-                                                            .data[i].images,
                                                         com: snapshot
                                                             .data[i].com,
                                                         tim: int.parse(
@@ -569,17 +563,7 @@ class _BookmarksState extends State<Bookmarks> {
                                                                   case ConnectionState
                                                                       .waiting:
                                                                     return Text(
-                                                                      'R: ' +
-                                                                          snapshot
-                                                                              .data[
-                                                                                  i]
-                                                                              .replies
-                                                                              .toString() +
-                                                                          ' / I: ' +
-                                                                          snapshot
-                                                                              .data[i]
-                                                                              .images
-                                                                              .toString(),
+                                                                      'R: - / I: -',
                                                                       style:
                                                                           TextStyle(
                                                                         fontSize:

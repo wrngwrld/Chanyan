@@ -144,8 +144,6 @@ class _ThreadPageState extends State<ThreadPage> {
     favorite = Favorite(
       no: widget.post.no,
       sub: widget.post.sub,
-      replies: widget.post.replies,
-      images: widget.post.images,
       com: widget.post.com,
       imageUrl: widget.post.tim.toString() + 's.jpg',
       board: widget.board.toString(),
