@@ -452,9 +452,6 @@ class _ThreadPageState extends State<ThreadPage> {
                                 ],
                               ),
                               snapshot.data[i].com != null
-                                  // ? Html(
-                                  //     data: snapshot.data[i].com.toString(),
-                                  //   )
                                   ? SelectableHtml(
                                       data: snapshot.data[i].com.toString(),
                                     )

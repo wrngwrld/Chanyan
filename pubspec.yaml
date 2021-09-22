@@ -33,7 +33,7 @@ dependencies:
   flutter_html: ^2.1.2
   path_provider: ^2.0.3
   dio: ^4.0.0
-  image_gallery_saver: ^1.6.9
+  image_gallery_saver: ^1.7.0
   permission_handler: ^8.1.4+2
   flutter_launcher_icons: ^0.9.2
   shared_preferences: ^2.0.7
@@ -42,6 +42,7 @@ dependencies:
   share_plus: ^2.1.4
   flutter_platform_widgets: ^1.9.5
   url_launcher: ^6.0.11
+  provider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
