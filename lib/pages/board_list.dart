@@ -9,6 +9,7 @@ import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -167,30 +168,18 @@ class _BoardListState extends State<BoardList> {
                               ),
                               for (Board board in snapshot.data)
                                 if (favoriteBoards.contains(board.board))
-                                  Dismissible(
-                                    background: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      alignment: Alignment.centerRight,
-                                      color: Colors.red,
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Colors.white,
-                                          ),
-                                          Expanded(child: Container()),
-                                          Icon(
-                                            Icons.delete,
-                                            color: Colors.white,
-                                          ),
-                                        ],
+                                  Slidable(
+                                    actionPane: SlidableDrawerActionPane(),
+                                    secondaryActions: <Widget>[
+                                      IconSlideAction(
+                                        caption: 'Delete',
+                                        color: Colors.red,
+                                        icon: Icons.delete,
+                                        onTap: () => {
+                                          removeFromFavorites(board),
+                                        },
                                       ),
-                                    ),
-                                    key: UniqueKey(),
-                                    onDismissed: (direction) {
-                                      removeFromFavorites(board);
-                                    },
+                                    ],
                                     child: Column(
                                       children: [
                                         InkWell(
@@ -299,32 +288,18 @@ class _BoardListState extends State<BoardList> {
                                 ),
                               ),
                               for (Board board in snapshot.data)
-                                Dismissible(
-                                  background: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    alignment: Alignment.centerRight,
-                                    color: Colors.green,
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                        ),
-                                        Expanded(child: Container()),
-                                        Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                        ),
-                                      ],
+                                Slidable(
+                                  actionPane: SlidableDrawerActionPane(),
+                                  secondaryActions: <Widget>[
+                                    IconSlideAction(
+                                      caption: 'Add',
+                                      color: Colors.green,
+                                      icon: Icons.add,
+                                      onTap: () => {
+                                        addToFavorites(board),
+                                      },
                                     ),
-                                  ),
-                                  key: UniqueKey(),
-                                  onDismissed: (direction) {
-                                    setState(() {
-                                      addToFavorites(board);
-                                    });
-                                  },
+                                  ],
                                   child: Column(
                                     children: [
                                       InkWell(

@@ -12,6 +12,7 @@ import 'package:flutter_chan/pages/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +25,7 @@ class Bookmarks extends StatefulWidget {
 class _BookmarksState extends State<Bookmarks> {
   final ScrollController scrollController = ScrollController();
 
-  Sort sortBy = Sort.byOldest;
+  Sort sortBy = Sort.byNewest;
 
   refreshPage() {
     setState(() {});
@@ -326,37 +327,26 @@ class _BookmarksState extends State<Bookmarks> {
                                     for (int i = 0;
                                         i < snapshot.data.length;
                                         i++)
-                                      Dismissible(
-                                        background: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          alignment: Alignment.centerRight,
-                                          color: Colors.red,
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.delete,
-                                                color: Colors.white,
-                                              ),
-                                              Expanded(child: Container()),
-                                              Icon(
-                                                Icons.delete,
-                                                color: Colors.white,
-                                              ),
-                                            ],
+                                      Slidable(
+                                        actionPane: SlidableDrawerActionPane(),
+                                        secondaryActions: <Widget>[
+                                          IconSlideAction(
+                                            caption: 'Delete',
+                                            color: Colors.red,
+                                            icon: Icons.delete,
+                                            onTap: () {
+                                              Favorite favorite = Favorite(
+                                                no: snapshot.data[i].no,
+                                                sub: snapshot.data[i].sub,
+                                                com: snapshot.data[i].com,
+                                                imageUrl:
+                                                    snapshot.data[i].imageUrl,
+                                                board: snapshot.data[i].board,
+                                              );
+                                              removeFavorite(favorite);
+                                            },
                                           ),
-                                        ),
-                                        key: UniqueKey(),
-                                        onDismissed: (direction) {
-                                          Favorite favorite = Favorite(
-                                            no: snapshot.data[i].no,
-                                            sub: snapshot.data[i].sub,
-                                            com: snapshot.data[i].com,
-                                            imageUrl: snapshot.data[i].imageUrl,
-                                            board: snapshot.data[i].board,
-                                          );
-                                          removeFavorite(favorite);
-                                        },
+                                        ],
                                         child: InkWell(
                                           onTap: () => {
                                             Navigator.of(context)
