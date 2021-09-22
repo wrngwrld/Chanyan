@@ -96,17 +96,6 @@ class _BoardListState extends State<BoardList> {
                     backgroundColor: theme.getTheme() == ThemeData.dark()
                         ? CupertinoColors.black
                         : CupertinoColors.white,
-                    trailing: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () => {
-                        theme.setTheme(
-                          theme.getTheme() == ThemeData.dark()
-                              ? ThemeData.light()
-                              : ThemeData.dark(),
-                        )
-                      },
-                      child: Icon(Icons.dark_mode_outlined),
-                    ),
                   )
                 : SliverAppBar(
                     backgroundColor: AppColors.kGreen,
