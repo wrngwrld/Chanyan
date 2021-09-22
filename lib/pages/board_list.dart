@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardList extends StatefulWidget {
@@ -78,15 +80,31 @@ class _BoardListState extends State<BoardList> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
     return CupertinoPageScaffold(
       child: Scrollbar(
         child: CustomScrollView(
           slivers: [
             Platform.isIOS
                 ? CupertinoSliverNavigationBar(
-                    border: Border.all(color: CupertinoColors.white),
+                    border: Border.all(color: Colors.transparent),
                     largeTitle: Text(
                       '4chan',
+                    ),
+                    backgroundColor: theme.getTheme() == ThemeData.dark()
+                        ? CupertinoColors.black
+                        : CupertinoColors.white,
+                    trailing: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () => {
+                        theme.setTheme(
+                          theme.getTheme() == ThemeData.dark()
+                              ? ThemeData.light()
+                              : ThemeData.dark(),
+                        )
+                      },
+                      child: Icon(Icons.dark_mode_outlined),
                     ),
                   )
                 : SliverAppBar(
@@ -141,6 +159,9 @@ class _BoardListState extends State<BoardList> {
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w800,
+                                    color: theme.getTheme() == ThemeData.dark()
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                 ),
                               ),
@@ -208,6 +229,13 @@ class _BoardListState extends State<BoardList> {
                                                                   .isIOS
                                                               ? FontWeight.w700
                                                               : FontWeight.w600,
+                                                          color:
+                                                              theme.getTheme() ==
+                                                                      ThemeData
+                                                                          .dark()
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -222,6 +250,13 @@ class _BoardListState extends State<BoardList> {
                                                           fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.w400,
+                                                          color:
+                                                              theme.getTheme() ==
+                                                                      ThemeData
+                                                                          .dark()
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
                                                         ),
                                                       ),
                                                     ],
@@ -230,7 +265,6 @@ class _BoardListState extends State<BoardList> {
                                               ),
                                               Icon(
                                                 Icons.arrow_forward_ios,
-                                                color: AppColors.kBlack,
                                                 size: 16,
                                               ),
                                               SizedBox(
@@ -239,7 +273,14 @@ class _BoardListState extends State<BoardList> {
                                             ],
                                           ),
                                         ),
-                                        Divider(),
+                                        Divider(
+                                          color: theme.getTheme() ==
+                                                  ThemeData.dark()
+                                              ? Color(0x1FFFFFFF)
+                                              : Color(0x1F000000),
+                                          indent: 5,
+                                          endIndent: 5,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -251,6 +292,9 @@ class _BoardListState extends State<BoardList> {
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w800,
+                                    color: theme.getTheme() == ThemeData.dark()
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                 ),
                               ),
@@ -316,6 +360,12 @@ class _BoardListState extends State<BoardList> {
                                                         fontSize: 18,
                                                         fontWeight:
                                                             FontWeight.w700,
+                                                        color:
+                                                            theme.getTheme() ==
+                                                                    ThemeData
+                                                                        .dark()
+                                                                ? Colors.white
+                                                                : Colors.black,
                                                       ),
                                                     ),
                                                     SizedBox(
@@ -330,6 +380,12 @@ class _BoardListState extends State<BoardList> {
                                                         fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.w400,
+                                                        color:
+                                                            theme.getTheme() ==
+                                                                    ThemeData
+                                                                        .dark()
+                                                                ? Colors.white
+                                                                : Colors.black,
                                                       ),
                                                     ),
                                                   ],
@@ -338,7 +394,6 @@ class _BoardListState extends State<BoardList> {
                                             ),
                                             Icon(
                                               Icons.arrow_forward_ios,
-                                              color: AppColors.kBlack,
                                               size: 16,
                                             ),
                                             SizedBox(
@@ -347,7 +402,14 @@ class _BoardListState extends State<BoardList> {
                                           ],
                                         ),
                                       ),
-                                      Divider(),
+                                      Divider(
+                                        color:
+                                            theme.getTheme() == ThemeData.dark()
+                                                ? Color(0x1FFFFFFF)
+                                                : Color(0x1F000000),
+                                        indent: 5,
+                                        endIndent: 5,
+                                      ),
                                     ],
                                   ),
                                 ),

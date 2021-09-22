@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_chan/pages/media_page.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -154,10 +156,17 @@ class _ThreadPageState extends State<ThreadPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
     return Scaffold(
+      backgroundColor:
+          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
+              backgroundColor: theme.getTheme() == ThemeData.light()
+                  ? Colors.white
+                  : Colors.black,
               previousPageTitle:
                   widget.fromFavorites ? 'bookmarks' : '/' + widget.board + '/',
               middle: Text(
@@ -322,7 +331,9 @@ class _ThreadPageState extends State<ThreadPage> {
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: Colors.grey,
+                                color: theme.getTheme() == ThemeData.dark()
+                                    ? Color(0x1FFFFFFF)
+                                    : Colors.grey,
                                 width: .25,
                               ),
                             ),
@@ -417,6 +428,10 @@ class _ThreadPageState extends State<ThreadPage> {
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w600,
+                                                    color: theme.getTheme() ==
+                                                            ThemeData.dark()
+                                                        ? Colors.white
+                                                        : Colors.black,
                                                   ),
                                                   maxLines: 1,
                                                   overflow:
@@ -428,6 +443,10 @@ class _ThreadPageState extends State<ThreadPage> {
                                                 snapshot.data[i].no.toString(),
                                             style: TextStyle(
                                               fontSize: 12,
+                                              color: theme.getTheme() ==
+                                                      ThemeData.dark()
+                                                  ? Colors.white
+                                                  : Colors.black,
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -437,6 +456,10 @@ class _ThreadPageState extends State<ThreadPage> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w600,
+                                              color: theme.getTheme() ==
+                                                      ThemeData.dark()
+                                                  ? Colors.white
+                                                  : Colors.black,
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -446,14 +469,28 @@ class _ThreadPageState extends State<ThreadPage> {
                                     ),
                                   ),
                                   Divider(
-                                    color: Colors.grey,
+                                    color: theme.getTheme() == ThemeData.dark()
+                                        ? Color(0x1FFFFFFF)
+                                        : Color(0x1F000000),
                                     height: 20,
                                   ),
                                 ],
                               ),
                               snapshot.data[i].com != null
-                                  ? SelectableHtml(
-                                      data: snapshot.data[i].com.toString(),
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 15),
+                                      child: SelectableHtml(
+                                        data: snapshot.data[i].com.toString(),
+                                        style: {
+                                          "body": Style(
+                                            color: theme.getTheme() ==
+                                                    ThemeData.dark()
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                        },
+                                      ),
                                     )
                                   : Container(),
                             ],

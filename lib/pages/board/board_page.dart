@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/post.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_chan/pages/board/grid_view.dart';
 import 'package:flutter_chan/pages/board/list_view.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardPage extends StatefulWidget {
@@ -84,11 +86,18 @@ class _BoardPageState extends State<BoardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
     return Scaffold(
+      backgroundColor:
+          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
               previousPageTitle: 'Boards',
+              backgroundColor: theme.getTheme() == ThemeData.light()
+                  ? Colors.white
+                  : Colors.black,
               middle: Text(
                 '/' + widget.board + '/ - ' + widget.boardName,
                 maxLines: 1,

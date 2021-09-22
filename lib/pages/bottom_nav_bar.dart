@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/board_list.dart';
 import 'package:flutter_chan/pages/bookmarks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
   @override
@@ -26,6 +28,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
     return Scaffold(
       bottomNavigationBar: PlatformNavBar(
         items: [
@@ -46,6 +50,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
           selectedItemColor: AppColors.kGreen,
         ),
         cupertino: (_, __) => CupertinoTabBarData(
+          backgroundColor: theme.getTheme() == ThemeData.dark()
+              ? CupertinoColors.black
+              : CupertinoColors.white,
           iconSize: 25,
         ),
       ),

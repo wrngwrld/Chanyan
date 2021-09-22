@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/favorite.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Bookmarks extends StatefulWidget {
@@ -112,16 +114,21 @@ class _BookmarksState extends State<Bookmarks> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
     return CupertinoPageScaffold(
       child: Scrollbar(
         child: CustomScrollView(
           slivers: [
             Platform.isIOS
                 ? CupertinoSliverNavigationBar(
-                    border: Border.all(color: CupertinoColors.white),
+                    border: Border.all(color: Colors.transparent),
                     largeTitle: Text(
                       'Bookmarks',
                     ),
+                    backgroundColor: theme.getTheme() == ThemeData.dark()
+                        ? CupertinoColors.black
+                        : CupertinoColors.white,
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -134,7 +141,9 @@ class _BookmarksState extends State<Bookmarks> {
                                   CupertinoActionSheet(
                                 message: Text(
                                   'Sort by',
-                                  style: TextStyle(color: AppColors.kBlack),
+                                  style: TextStyle(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
                                 ),
                                 actions: [
                                   CupertinoActionSheetAction(
@@ -205,7 +214,7 @@ class _BookmarksState extends State<Bookmarks> {
                     backgroundColor: AppColors.kGreen,
                     foregroundColor: AppColors.kWhite,
                     title: Text(
-                      'Chanyan',
+                      'Bookmarks',
                     ),
                     actions: [
                       PopupMenuButton(
@@ -304,6 +313,10 @@ class _BookmarksState extends State<Bookmarks> {
                                       'Add bookmarks first!',
                                       style: TextStyle(
                                         fontSize: 26,
+                                        color:
+                                            theme.getTheme() == ThemeData.dark()
+                                                ? Colors.white
+                                                : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -398,7 +411,10 @@ class _BookmarksState extends State<Bookmarks> {
                                             decoration: BoxDecoration(
                                               border: Border(
                                                 bottom: BorderSide(
-                                                  color: Colors.grey,
+                                                  color: theme.getTheme() ==
+                                                          ThemeData.dark()
+                                                      ? Colors.grey[600]
+                                                      : Colors.grey,
                                                   width: 0.15,
                                                 ),
                                               ),
@@ -519,6 +535,13 @@ class _BookmarksState extends State<Bookmarks> {
                                                                       .toString(),
                                                               style: TextStyle(
                                                                 fontSize: 12,
+                                                                color: theme.getTheme() ==
+                                                                        ThemeData
+                                                                            .dark()
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors
+                                                                        .black,
                                                               ),
                                                               maxLines: 1,
                                                               overflow:
@@ -540,6 +563,13 @@ class _BookmarksState extends State<Bookmarks> {
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w600,
+                                                                      color: theme.getTheme() ==
+                                                                              ThemeData
+                                                                                  .dark()
+                                                                          ? Colors
+                                                                              .white
+                                                                          : Colors
+                                                                              .black,
                                                                     ),
                                                                   )
                                                                 : Container(),
@@ -568,6 +598,10 @@ class _BookmarksState extends State<Bookmarks> {
                                                                           TextStyle(
                                                                         fontSize:
                                                                             12,
+                                                                        color: theme.getTheme() ==
+                                                                                ThemeData.dark()
+                                                                            ? Colors.white
+                                                                            : Colors.black,
                                                                       ),
                                                                     );
                                                                     break;
@@ -584,6 +618,10 @@ class _BookmarksState extends State<Bookmarks> {
                                                                           TextStyle(
                                                                         fontSize:
                                                                             12,
+                                                                        color: theme.getTheme() ==
+                                                                                ThemeData.dark()
+                                                                            ? Colors.white
+                                                                            : Colors.black,
                                                                       ),
                                                                     );
                                                                 }
@@ -600,6 +638,15 @@ class _BookmarksState extends State<Bookmarks> {
                                                         data: snapshot
                                                             .data[i].com
                                                             .toString(),
+                                                        style: {
+                                                          "body": Style(
+                                                            color: theme.getTheme() ==
+                                                                    ThemeData
+                                                                        .dark()
+                                                                ? Colors.white
+                                                                : Colors.black,
+                                                          ),
+                                                        },
                                                       )
                                                     : Container(),
                                               ],
