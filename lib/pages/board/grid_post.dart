@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/favorites.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
-import 'package:flutter_chan/pages/thread_page.dart';
+import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class GridPost extends StatefulWidget {

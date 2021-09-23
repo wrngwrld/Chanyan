@@ -3,10 +3,11 @@ import 'package:flutter_chan/API/favorites.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/models/post.dart';
-import 'package:flutter_chan/pages/thread_page.dart';
+import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ListPost extends StatefulWidget {
@@ -76,7 +77,7 @@ class _ListPostState extends State<ListPost> {
                       isFavorite = true;
                     }),
                 },
-              ),
+              )
       ],
       child: InkWell(
         onTap: () => {
@@ -161,6 +162,19 @@ class _ListPostState extends State<ListPost> {
                                 widget.post.replies.toString() +
                                 ' / I: ' +
                                 widget.post.images.toString(),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: theme.getTheme() == ThemeData.dark()
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                          Text(
+                            DateFormat('kk:mm - dd.MM.y').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                widget.post.tim,
+                              ),
+                            ),
                             style: TextStyle(
                               fontSize: 12,
                               color: theme.getTheme() == ThemeData.dark()

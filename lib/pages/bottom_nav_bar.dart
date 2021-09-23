@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/boards/board_list.dart';
-import 'package:flutter_chan/pages/bookmarks.dart';
+import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
