@@ -96,8 +96,7 @@ class _BookmarksState extends State<Bookmarks> {
                                     CupertinoActionSheetAction(
                                       child: Text('Clear bookmarks'),
                                       onPressed: () {
-                                        clearBookmarks();
-
+                                        bookmarks.clearBookmarks();
                                         Navigator.pop(context);
                                       },
                                     ),
@@ -165,7 +164,8 @@ class _BookmarksState extends State<Bookmarks> {
                         onSelected: (result) {
                           switch (result) {
                             case 0:
-                              clearBookmarks();
+                              bookmarks.clearBookmarks();
+
                               break;
                             default:
                           }

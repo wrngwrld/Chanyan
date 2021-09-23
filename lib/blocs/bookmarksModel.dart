@@ -57,7 +57,6 @@ class BookmarksProvider with ChangeNotifier {
 
     list = [];
 
-    print(list);
     prefs.setStringList('favoriteThreads', list);
 
     notifyListeners();
