@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -8,8 +7,9 @@ import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/models/favorite.dart';
+import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/pages/bookmark_button.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -18,7 +18,6 @@ import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ThreadPage extends StatefulWidget {
   ThreadPage({
@@ -45,8 +44,6 @@ class _ThreadPageState extends State<ThreadPage> {
   List<Widget> media = [];
   List<String> fileNames = [];
   List<String> names = [];
-
-  bool isFavorite = false;
 
   Favorite favorite;
 
@@ -89,56 +86,6 @@ class _ThreadPageState extends State<ThreadPage> {
     }
   }
 
-  fetchFavorite(Favorite favorite) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
-
-    if (favoriteThreadsPrefs == null) favoriteThreadsPrefs = [];
-
-    if (favoriteThreadsPrefs.contains(json.encode(favorite))) {
-      setState(() {
-        isFavorite = true;
-      });
-    } else {
-      setState(() {
-        isFavorite = false;
-      });
-    }
-  }
-
-  setFavorite(Favorite favorite) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
-
-    if (favoriteThreadsPrefs == null) favoriteThreadsPrefs = [];
-
-    String favoriteString = json.encode(favorite);
-
-    favoriteThreadsPrefs.add(favoriteString);
-
-    prefs.setStringList('favoriteThreads', favoriteThreadsPrefs);
-
-    setState(() {
-      isFavorite = true;
-    });
-  }
-
-  removeFavorite(Favorite favorite) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
-
-    favoriteThreadsPrefs.remove(json.encode(favorite));
-
-    prefs.setStringList('favoriteThreads', favoriteThreadsPrefs);
-
-    setState(() {
-      isFavorite = false;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -150,8 +97,6 @@ class _ThreadPageState extends State<ThreadPage> {
       imageUrl: widget.post.tim.toString() + 's.jpg',
       board: widget.board.toString(),
     );
-
-    fetchFavorite(favorite);
   }
 
   @override
@@ -177,17 +122,8 @@ class _ThreadPageState extends State<ThreadPage> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => isFavorite
-                        ? removeFavorite(favorite)
-                        : setFavorite(favorite),
-                    child: Icon(
-                      isFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border_outlined,
-                      color: CupertinoColors.systemRed,
-                    ),
+                  BookmarkButton(
+                    favorite: favorite,
                   ),
                   SizedBox(
                     width: 20,
@@ -251,15 +187,8 @@ class _ThreadPageState extends State<ThreadPage> {
                 Stringz.unescape(Stringz.cleanTags(widget.threadName)),
               ),
               actions: [
-                IconButton(
-                  onPressed: () => isFavorite
-                      ? removeFavorite(favorite)
-                      : setFavorite(favorite),
-                  icon: Icon(
-                    isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border_outlined,
-                  ),
+                BookmarkButton(
+                  favorite: favorite,
                 ),
                 PopupMenuButton(
                   icon: Icon(Icons.more_vert),

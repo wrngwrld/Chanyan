@@ -9,10 +9,10 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/board/grid_view.dart';
 import 'package:flutter_chan/pages/board/list_view.dart';
+import 'package:flutter_chan/pages/favorite_button.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardPage extends StatefulWidget {
   BoardPage({
@@ -34,55 +34,6 @@ class _BoardPageState extends State<BoardPage> {
   View view = View.gridView;
 
   bool isFavorite = false;
-
-  fetchFavorites() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String> favoriteBoards = prefs.getStringList('favoriteBoards');
-
-    if (favoriteBoards == null) favoriteBoards = [];
-
-    setState(() {
-      if (favoriteBoards.contains(widget.board)) isFavorite = true;
-    });
-  }
-
-  addToFavorites(String board) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String> favoriteBoardsPref = prefs.getStringList('favoriteBoards');
-
-    if (favoriteBoardsPref == null) favoriteBoardsPref = [];
-
-    if (!favoriteBoardsPref.contains(board)) favoriteBoardsPref.add(board);
-
-    setState(() {
-      isFavorite = true;
-    });
-
-    prefs.setStringList('favoriteBoards', favoriteBoardsPref);
-  }
-
-  removeFromFavorites(String board) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String> favoriteBoardsPref = prefs.getStringList('favoriteBoards');
-
-    favoriteBoardsPref.remove(board);
-
-    setState(() {
-      isFavorite = false;
-    });
-
-    prefs.setStringList('favoriteBoards', favoriteBoardsPref);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    fetchFavorites();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,18 +57,7 @@ class _BoardPageState extends State<BoardPage> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      isFavorite
-                          ? removeFromFavorites(widget.board)
-                          : addToFavorites(widget.board);
-                    },
-                    child: Icon(
-                      isFavorite ? Icons.star_rate : Icons.star_outline,
-                      color: CupertinoColors.systemYellow,
-                    ),
-                  ),
+                  FavoriteButton(board: widget.board),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: () {
@@ -241,17 +181,7 @@ class _BoardPageState extends State<BoardPage> {
                 overflow: TextOverflow.ellipsis,
               ),
               actions: [
-                IconButton(
-                  onPressed: () {
-                    isFavorite
-                        ? removeFromFavorites(widget.board)
-                        : addToFavorites(widget.board);
-                  },
-                  icon: Icon(
-                    isFavorite ? Icons.star_rate : Icons.star_outline,
-                    color: AppColors.kWhite,
-                  ),
-                ),
+                FavoriteButton(board: widget.board),
                 PopupMenuButton(
                   icon: Icon(Icons.sort),
                   itemBuilder: (context) => [
