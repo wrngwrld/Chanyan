@@ -125,12 +125,9 @@ class _ThreadPageState extends State<ThreadPage> {
                               CupertinoActionSheet(
                             actions: [
                               CupertinoActionSheetAction(
-                                child: Text(
-                                  'Open in Browser',
-                                ),
+                                child: Text('Reload'),
                                 onPressed: () {
-                                  launchURL(
-                                      'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
+                                  setState(() {});
                                   Navigator.pop(context);
                                 },
                               ),
@@ -138,6 +135,16 @@ class _ThreadPageState extends State<ThreadPage> {
                                 child: Text('Share'),
                                 onPressed: () {
                                   Share.share(
+                                      'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              CupertinoActionSheetAction(
+                                child: Text(
+                                  'Open in Browser',
+                                ),
+                                onPressed: () {
+                                  launchURL(
                                       'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
                                   Navigator.pop(context);
                                 },

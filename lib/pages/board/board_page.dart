@@ -137,6 +137,13 @@ class _BoardPageState extends State<BoardPage> {
                               CupertinoActionSheet(
                             actions: [
                               CupertinoActionSheetAction(
+                                child: Text('Reload'),
+                                onPressed: () {
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              CupertinoActionSheetAction(
                                 child: Text('Grid View'),
                                 onPressed: () {
                                   setState(() {
@@ -245,22 +252,30 @@ class _BoardPageState extends State<BoardPage> {
                   icon: Icon(Icons.more_vert),
                   itemBuilder: (context) => [
                     PopupMenuItem(
-                      child: Text("Grid view"),
+                      child: Text("Reload"),
                       value: 0,
                     ),
                     PopupMenuItem(
-                      child: Text("List view"),
+                      child: Text("Grid view"),
                       value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: Text("List view"),
+                      value: 2,
                     ),
                   ],
                   onSelected: (result) {
                     switch (result) {
                       case 0:
-                        setState(() {
-                          view = View.gridView;
-                        });
+                        setState(() {});
                         break;
                       case 1:
+                        setState(() {
+                          view = View.listView;
+                        });
+
+                        break;
+                      case 2:
                         setState(() {
                           view = View.listView;
                         });
