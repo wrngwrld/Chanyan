@@ -44,7 +44,9 @@ class _MediaPageState extends State<MediaPage> {
   String currentName = "";
 
   onPageChanged(int i) {
-    index = i;
+    setState(() {
+      index = i;
+    });
   }
 
   setStartVideo(String video) async {
