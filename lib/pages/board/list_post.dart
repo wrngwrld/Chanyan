@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/favorites.dart';
 import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/blocs/bookmarksModel.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
@@ -26,6 +28,7 @@ class ListPost extends StatefulWidget {
 class _ListPostState extends State<ListPost> {
   Favorite favorite;
   bool isFavorite = false;
+  String favoriteString;
 
   @override
   void initState() {
@@ -39,16 +42,15 @@ class _ListPostState extends State<ListPost> {
       board: widget.board.toString(),
     );
 
-    isBookmarkCheck(favorite).then((value) {
-      setState(() {
-        isFavorite = value;
-      });
-    });
+    favoriteString = json.encode(favorite);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
+    final bookmarks = Provider.of<BookmarksProvider>(context);
+
+    isFavorite = bookmarks.getBookmarks().contains(favoriteString);
 
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
@@ -59,7 +61,7 @@ class _ListPostState extends State<ListPost> {
                 color: Colors.red,
                 icon: Icons.delete,
                 onTap: () => {
-                  removeBookmark(favorite),
+                  bookmarks.removeBookmarks(favorite),
                   if (mounted)
                     setState(() {
                       isFavorite = false;
@@ -71,7 +73,7 @@ class _ListPostState extends State<ListPost> {
                 color: Colors.green,
                 icon: Icons.add,
                 onTap: () => {
-                  addBookmark(favorite),
+                  bookmarks.addBookmarks(favorite),
                   if (mounted)
                     setState(() {
                       isFavorite = true;

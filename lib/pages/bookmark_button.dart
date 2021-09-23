@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/favorites.dart';
 import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/blocs/bookmarksModel.dart';
+import 'package:provider/provider.dart';
 
 class BookmarkButton extends StatefulWidget {
   BookmarkButton({
@@ -18,27 +20,28 @@ class BookmarkButton extends StatefulWidget {
 
 class _BookmarkButtonState extends State<BookmarkButton> {
   bool isFavorite = false;
+  String favoriteString;
 
   @override
   void initState() {
     super.initState();
 
-    isBookmarkCheck(widget.favorite).then((value) {
-      setState(() {
-        isFavorite = value;
-      });
-    });
+    favoriteString = json.encode(widget.favorite);
   }
 
   @override
   Widget build(BuildContext context) {
+    final bookmarks = Provider.of<BookmarksProvider>(context);
+
+    isFavorite = bookmarks.getBookmarks().contains(favoriteString);
+
     return Platform.isIOS
         ? CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: () => {
               isFavorite
-                  ? removeBookmark(widget.favorite)
-                  : addBookmark(widget.favorite),
+                  ? bookmarks.removeBookmarks(widget.favorite)
+                  : bookmarks.addBookmarks(widget.favorite),
               isFavorite
                   ? setState(() {
                       isFavorite = false;
@@ -55,8 +58,8 @@ class _BookmarkButtonState extends State<BookmarkButton> {
         : IconButton(
             onPressed: () => {
               isFavorite
-                  ? removeBookmark(widget.favorite)
-                  : addBookmark(widget.favorite),
+                  ? bookmarks.removeBookmarks(widget.favorite)
+                  : bookmarks.addBookmarks(widget.favorite),
               isFavorite
                   ? setState(() {
                       isFavorite = false;

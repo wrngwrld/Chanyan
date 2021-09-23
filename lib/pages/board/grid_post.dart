@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/favorites.dart';
 import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/blocs/bookmarksModel.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 
 class GridPost extends StatefulWidget {
   const GridPost({
@@ -22,6 +25,7 @@ class GridPost extends StatefulWidget {
 class _GridPostState extends State<GridPost> {
   Favorite favorite;
   bool isFavorite = false;
+  String favoriteString;
 
   @override
   void initState() {
@@ -35,15 +39,15 @@ class _GridPostState extends State<GridPost> {
       board: widget.board.toString(),
     );
 
-    isBookmarkCheck(favorite).then((value) {
-      setState(() {
-        isFavorite = value;
-      });
-    });
+    favoriteString = json.encode(favorite);
   }
 
   @override
   Widget build(BuildContext context) {
+    final bookmarks = Provider.of<BookmarksProvider>(context);
+
+    isFavorite = bookmarks.getBookmarks().contains(favoriteString);
+
     return InkWell(
       onLongPress: () => {
         showCupertinoModalPopup(
@@ -54,7 +58,7 @@ class _GridPostState extends State<GridPost> {
                   ? CupertinoActionSheetAction(
                       child: Text('Remove bookmark'),
                       onPressed: () {
-                        removeBookmark(favorite);
+                        bookmarks.removeBookmarks(favorite);
 
                         setState(() {
                           isFavorite = false;
@@ -66,7 +70,7 @@ class _GridPostState extends State<GridPost> {
                   : CupertinoActionSheetAction(
                       child: Text('Set bookmark'),
                       onPressed: () {
-                        addBookmark(favorite);
+                        bookmarks.addBookmarks(favorite);
 
                         setState(() {
                           isFavorite = true;

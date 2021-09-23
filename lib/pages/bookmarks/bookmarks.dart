@@ -10,7 +10,6 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks_post.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 class Bookmarks extends StatefulWidget {
@@ -65,18 +64,14 @@ class _BookmarksState extends State<Bookmarks> {
                                   CupertinoActionSheetAction(
                                     child: Text('Newest'),
                                     onPressed: () {
-                                      setState(() {
-                                        sortBy = Sort.byNewest;
-                                      });
+                                      bookmarks.setSort(Sort.byNewest);
                                       Navigator.pop(context);
                                     },
                                   ),
                                   CupertinoActionSheetAction(
                                     child: Text('Oldest'),
                                     onPressed: () {
-                                      setState(() {
-                                        sortBy = Sort.byOldest;
-                                      });
+                                      bookmarks.setSort(Sort.byOldest);
                                       Navigator.pop(context);
                                     },
                                   ),
@@ -106,7 +101,7 @@ class _BookmarksState extends State<Bookmarks> {
                                       child: Text('Clear bookmarks'),
                                       onPressed: () {
                                         clearBookmarks();
-                                        refreshPage();
+
                                         Navigator.pop(context);
                                       },
                                     ),
@@ -189,7 +184,7 @@ class _BookmarksState extends State<Bookmarks> {
                 return Future.delayed(Duration(seconds: 1))
                   ..then((_) {
                     if (mounted) {
-                      setState(() {});
+                      bookmarks.loadPreferences();
                     }
                   });
               },
@@ -197,64 +192,32 @@ class _BookmarksState extends State<Bookmarks> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  FutureBuilder(
-                    future: fetchFavoriteThreads(
-                      sortBy,
-                    ),
-                    builder: (BuildContext context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 100,
+                  bookmarks.getBookmarks().length == 0
+                      ? Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Text(
+                              'Add bookmarks first!',
+                              style: TextStyle(
+                                fontSize: 26,
+                                color: theme.getTheme() == ThemeData.dark()
+                                    ? Colors.white
+                                    : Colors.black,
                               ),
-                              PlatformCircularProgressIndicator(
-                                material: (_, __) =>
-                                    MaterialProgressIndicatorData(
-                                        color: AppColors.kGreen),
-                              ),
-                            ],
-                          );
-                          break;
-                        default:
-                          return snapshot.data.length == 0
-                              ? Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Text(
-                                      'Add bookmarks first!',
-                                      style: TextStyle(
-                                        fontSize: 26,
-                                        color:
-                                            theme.getTheme() == ThemeData.dark()
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Column(
-                                  children: [
-                                    for (int i = 0;
-                                        i < snapshot.data.length;
-                                        i++)
-                                      BookmarksPost(
-                                        favorite: snapshot.data[i],
-                                      )
-                                    // for (String string
-                                    //     in bookmarks.getBookmarks())
-                                    //   BookmarksPost(
-                                    //     favorite: Favorite.fromJson(
-                                    //         json.decode(string)),
-                                    //   )
-                                  ],
-                                );
-                      }
-                    },
-                  )
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            for (String string in bookmarks.getBookmarks())
+                              BookmarksPost(
+                                favorite:
+                                    Favorite.fromJson(json.decode(string)),
+                              )
+                          ],
+                        )
                 ],
               ),
             )

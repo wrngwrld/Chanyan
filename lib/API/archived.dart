@@ -14,7 +14,6 @@ Future<ThreadStatus> fetchArchived(String board, String thread) async {
     List<Post> posts = (jsonDecode(response.body)['posts'] as List)
         .map((model) => Post.fromJson(model))
         .toList();
-
     if (response.body == null) return ThreadStatus.deleted;
 
     if (posts[0].archived == 1) {
@@ -22,6 +21,8 @@ Future<ThreadStatus> fetchArchived(String board, String thread) async {
     } else {
       return ThreadStatus.online;
     }
+  } else if (response.statusCode == 404) {
+    return ThreadStatus.deleted;
   } else {
     return ThreadStatus.deleted;
   }
@@ -64,7 +65,7 @@ Future<List<int>> fetchReplies(String board, String thread) async {
 
     return list;
   } else {
-    throw Exception('Failed to load posts.');
+    return null;
   }
 }
 
