@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/blocs/favoriteModel.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/board.dart';
@@ -19,6 +20,7 @@ class _BoardListState extends State<BoardList> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
+    final favorites = Provider.of<FavoriteProvider>(context);
 
     return CupertinoPageScaffold(
       child: Scrollbar(
@@ -47,7 +49,7 @@ class _BoardListState extends State<BoardList> {
                 return Future.delayed(Duration(seconds: 1))
                   ..then((_) {
                     if (mounted) {
-                      setState(() {});
+                      favorites.loadPreferences();
                     }
                   });
               },

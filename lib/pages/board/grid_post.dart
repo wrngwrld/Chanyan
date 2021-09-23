@@ -60,10 +60,6 @@ class _GridPostState extends State<GridPost> {
                       onPressed: () {
                         bookmarks.removeBookmarks(favorite);
 
-                        setState(() {
-                          isFavorite = false;
-                        });
-
                         Navigator.pop(context);
                       },
                     )
@@ -71,10 +67,6 @@ class _GridPostState extends State<GridPost> {
                       child: Text('Set bookmark'),
                       onPressed: () {
                         bookmarks.addBookmarks(favorite);
-
-                        setState(() {
-                          isFavorite = true;
-                        });
 
                         Navigator.pop(context);
                       },

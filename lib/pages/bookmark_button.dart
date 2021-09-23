@@ -42,13 +42,6 @@ class _BookmarkButtonState extends State<BookmarkButton> {
               isFavorite
                   ? bookmarks.removeBookmarks(widget.favorite)
                   : bookmarks.addBookmarks(widget.favorite),
-              isFavorite
-                  ? setState(() {
-                      isFavorite = false;
-                    })
-                  : setState(() {
-                      isFavorite = true;
-                    }),
             },
             child: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
@@ -60,13 +53,6 @@ class _BookmarkButtonState extends State<BookmarkButton> {
               isFavorite
                   ? bookmarks.removeBookmarks(widget.favorite)
                   : bookmarks.addBookmarks(widget.favorite),
-              isFavorite
-                  ? setState(() {
-                      isFavorite = false;
-                    })
-                  : setState(() {
-                      isFavorite = true;
-                    }),
             },
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border_outlined,

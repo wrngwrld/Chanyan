@@ -62,10 +62,6 @@ class _ListPostState extends State<ListPost> {
                 icon: Icons.delete,
                 onTap: () => {
                   bookmarks.removeBookmarks(favorite),
-                  if (mounted)
-                    setState(() {
-                      isFavorite = false;
-                    }),
                 },
               )
             : IconSlideAction(
@@ -74,10 +70,6 @@ class _ListPostState extends State<ListPost> {
                 icon: Icons.add,
                 onTap: () => {
                   bookmarks.addBookmarks(favorite),
-                  if (mounted)
-                    setState(() {
-                      isFavorite = true;
-                    }),
                 },
               )
       ],

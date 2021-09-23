@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/favorites.dart';
+import 'package:flutter_chan/blocs/favoriteModel.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/models/board.dart';
@@ -27,19 +27,11 @@ class _BoardTileState extends State<BoardTile> {
   bool isFavorite = false;
 
   @override
-  void initState() {
-    super.initState();
-
-    isFavoriteCheck(widget.board.board).then((value) {
-      setState(() {
-        isFavorite = value;
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
+    final favorites = Provider.of<FavoriteProvider>(context);
+
+    isFavorite = favorites.getFavorites().contains(widget.board.board);
 
     if (isFavorite || !widget.favorites)
       return Slidable(
@@ -51,10 +43,7 @@ class _BoardTileState extends State<BoardTile> {
                   color: Colors.red,
                   icon: Icons.delete,
                   onTap: () => {
-                    removeFromFavorites(widget.board.board),
-                    setState(() {
-                      isFavorite = false;
-                    })
+                    favorites.removeFavorites(widget.board.board),
                   },
                 )
               : IconSlideAction(
@@ -62,10 +51,7 @@ class _BoardTileState extends State<BoardTile> {
                   color: Colors.green,
                   icon: Icons.add,
                   onTap: () => {
-                    addFavorites(widget.board.board),
-                    setState(() {
-                      isFavorite = true;
-                    })
+                    favorites.addFavorites(widget.board.board),
                   },
                 ),
         ],

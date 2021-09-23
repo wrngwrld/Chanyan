@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chan/blocs/bookmarksModel.dart';
+import 'package:flutter_chan/blocs/favoriteModel.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<BookmarksProvider>(
           create: (_) => BookmarksProvider([]),
+        ),
+        ChangeNotifierProvider<FavoriteProvider>(
+          create: (_) => FavoriteProvider([]),
         ),
       ],
       child: AppWithTheme(),

@@ -22,10 +22,6 @@ class _BookmarksState extends State<Bookmarks> {
 
   Sort sortBy = Sort.byNewest;
 
-  refreshPage() {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
@@ -170,7 +166,6 @@ class _BookmarksState extends State<Bookmarks> {
                           switch (result) {
                             case 0:
                               clearBookmarks();
-                              refreshPage();
                               break;
                             default:
                           }

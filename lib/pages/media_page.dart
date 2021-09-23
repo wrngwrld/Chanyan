@@ -65,10 +65,6 @@ class _MediaPageState extends State<MediaPage> {
       initialPage: index,
       keepPage: false,
     );
-
-    controller.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
