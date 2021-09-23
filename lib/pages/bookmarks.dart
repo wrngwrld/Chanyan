@@ -128,8 +128,8 @@ class _BookmarksState extends State<Bookmarks> {
                       'Bookmarks',
                     ),
                     backgroundColor: theme.getTheme() == ThemeData.dark()
-                        ? CupertinoColors.black
-                        : CupertinoColors.white,
+                        ? CupertinoColors.black.withOpacity(0.8)
+                        : CupertinoColors.white.withOpacity(0.8),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

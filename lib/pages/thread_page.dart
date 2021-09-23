@@ -109,9 +109,9 @@ class _ThreadPageState extends State<ThreadPage> {
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              backgroundColor: theme.getTheme() == ThemeData.light()
-                  ? Colors.white
-                  : Colors.black,
+              backgroundColor: theme.getTheme() == ThemeData.dark()
+                  ? CupertinoColors.black.withOpacity(0.8)
+                  : CupertinoColors.white.withOpacity(0.8),
               previousPageTitle:
                   widget.fromFavorites ? 'bookmarks' : '/' + widget.board + '/',
               middle: Text(

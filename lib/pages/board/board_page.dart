@@ -46,9 +46,9 @@ class _BoardPageState extends State<BoardPage> {
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
               previousPageTitle: 'Boards',
-              backgroundColor: theme.getTheme() == ThemeData.light()
-                  ? Colors.white
-                  : Colors.black,
+              backgroundColor: theme.getTheme() == ThemeData.dark()
+                  ? CupertinoColors.black.withOpacity(0.8)
+                  : CupertinoColors.white.withOpacity(0.8),
               middle: Text(
                 '/' + widget.board + '/ - ' + widget.boardName,
                 maxLines: 1,

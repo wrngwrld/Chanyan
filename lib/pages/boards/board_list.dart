@@ -31,8 +31,8 @@ class _BoardListState extends State<BoardList> {
                       '4chan',
                     ),
                     backgroundColor: theme.getTheme() == ThemeData.dark()
-                        ? CupertinoColors.black
-                        : CupertinoColors.white,
+                        ? CupertinoColors.black.withOpacity(0.8)
+                        : CupertinoColors.white.withOpacity(0.8),
                   )
                 : SliverAppBar(
                     backgroundColor: AppColors.kGreen,
