@@ -403,8 +403,9 @@ class _BookmarksState extends State<Bookmarks> {
                                                 bottom: BorderSide(
                                                   color: theme.getTheme() ==
                                                           ThemeData.dark()
-                                                      ? Colors.grey[600]
-                                                      : Colors.grey,
+                                                      ? CupertinoColors
+                                                          .systemGrey
+                                                      : Color(0x1F000000),
                                                   width: 0.15,
                                                 ),
                                               ),

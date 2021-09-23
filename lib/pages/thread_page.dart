@@ -261,8 +261,9 @@ class _ThreadPageState extends State<ThreadPage> {
                             border: Border(
                               bottom: BorderSide(
                                 color: theme.getTheme() == ThemeData.dark()
-                                    ? Color(0x1FFFFFFF)
-                                    : Colors.grey,
+                                    ? CupertinoColors.systemGrey
+                                        .withOpacity(0.5)
+                                    : Color(0x1F000000),
                                 width: .25,
                               ),
                             ),
@@ -398,9 +399,6 @@ class _ThreadPageState extends State<ThreadPage> {
                                     ),
                                   ),
                                   Divider(
-                                    color: theme.getTheme() == ThemeData.dark()
-                                        ? Color(0x1FFFFFFF)
-                                        : Color(0x1F000000),
                                     height: 20,
                                   ),
                                 ],
