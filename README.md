@@ -4,6 +4,7 @@
 [![Issues](https://img.shields.io/github/issues/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/issues)
 [![GPL3 License](https://img.shields.io/github/license/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/blob/develop/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/releases/latest)
+[![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg?style=flat-square)](https://pub.dev/packages/lint)
 
 ## Features
 
@@ -13,7 +14,7 @@
 - Fast video and image galery (Support for WebM on iOS)
 - Downloadable images
 - Download all images from one board
-
+- Supporting Dark Mode
 
 ## Screenshots
 
