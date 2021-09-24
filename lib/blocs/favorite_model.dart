@@ -3,29 +3,29 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteProvider with ChangeNotifier {
-  List<String> list = [];
-  Sort sort = Sort.byNewest;
-
   FavoriteProvider(this.list) {
     loadPreferences();
   }
 
-  loadPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> list = [];
+  Sort sort = Sort.byNewest;
+
+  Future<void> loadPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favoritePrefs = prefs.getStringList('favoriteBoards');
 
-    if (favoritePrefs == null) favoritePrefs = [];
+    favoritePrefs ??= [];
 
     list = favoritePrefs;
 
     notifyListeners();
   }
 
-  getFavorites() => list;
+  List<String> getFavorites() => list;
 
-  addFavorites(String board) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> addFavorites(String board) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (!list.contains(board)) {
       list.add(board);
@@ -35,8 +35,8 @@ class FavoriteProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeFavorites(String board) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> removeFavorites(String board) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     list.remove(board);
 

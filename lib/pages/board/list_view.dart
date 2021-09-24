@@ -7,26 +7,29 @@ import 'package:flutter_chan/pages/board/list_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardListView extends StatelessWidget {
-  BoardListView({
+  const BoardListView({
+    Key key,
     @required this.board,
     @required this.snapshot,
     @required this.scrollController,
-  });
+  }) : super(key: key);
 
   final String board;
   final AsyncSnapshot<List<Post>> snapshot;
   final ScrollController scrollController;
 
-  setFavorite(Favorite favorite) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> setFavorite(Favorite favorite) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
-    if (favoriteThreadsPrefs == null) favoriteThreadsPrefs = [];
+    favoriteThreadsPrefs ??= [];
 
-    if (favoriteThreadsPrefs.contains(json.encode(favorite))) return;
+    if (favoriteThreadsPrefs.contains(json.encode(favorite))) {
+      return;
+    }
 
-    String favoriteString = json.encode(favorite);
+    final String favoriteString = json.encode(favorite);
 
     favoriteThreadsPrefs.add(favoriteString);
 

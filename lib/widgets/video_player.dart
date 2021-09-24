@@ -3,24 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayer extends StatefulWidget {
-  VideoPlayer({
+  const VideoPlayer({
+    Key key,
     @required this.video,
-  });
+  }) : super(key: key);
 
   final String video;
 
   @override
-  _VideoPlayerState createState() => _VideoPlayerState();
+  VideoPlayerState createState() => VideoPlayerState();
 }
 
-class _VideoPlayerState extends State<VideoPlayer> {
+class VideoPlayerState extends State<VideoPlayer> {
   VideoPlayerController videoPlayerController;
 
   ChewieController chewieController;
 
   Future<ChewieController> getVideo() async {
     videoPlayerController =
-        VideoPlayerController.network('https://i.4cdn.org/gif/' + widget.video);
+        VideoPlayerController.network('https://i.4cdn.org/gif/${widget.video}');
 
     await videoPlayerController.initialize();
 
@@ -45,7 +46,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<ChewieController>(
       future: getVideo(),
       builder: (
         BuildContext context,
@@ -53,10 +54,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
       ) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return AspectRatio(
+            return const AspectRatio(
               aspectRatio: 16 / 9,
               child: Center(
-                child: Container(
+                child: SizedBox(
                   width: 50,
                   height: 50,
                   child: CircularProgressIndicator(
@@ -71,7 +72,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
             return Padding(
               padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
               child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: Chewie(

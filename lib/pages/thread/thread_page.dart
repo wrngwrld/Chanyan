@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/bookmark_button.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
@@ -18,25 +18,26 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ThreadPage extends StatefulWidget {
-  ThreadPage({
+  const ThreadPage({
+    Key key,
     @required this.board,
     @required this.thread,
     @required this.threadName,
     @required this.post,
     this.fromFavorites = false,
-  });
+  }) : super(key: key);
 
-  final board;
-  final thread;
-  final threadName;
+  final String board;
+  final int thread;
+  final String threadName;
   final Post post;
   final bool fromFavorites;
 
   @override
-  _ThreadPageState createState() => _ThreadPageState();
+  ThreadPageState createState() => ThreadPageState();
 }
 
-class _ThreadPageState extends State<ThreadPage> {
+class ThreadPageState extends State<ThreadPage> {
   final ScrollController scrollController = ScrollController();
 
   List<Widget> media = [];
@@ -45,13 +46,13 @@ class _ThreadPageState extends State<ThreadPage> {
 
   Favorite favorite;
 
-  getAllMedia() async {
-    List<Post> posts =
+  Future<void> getAllMedia() async {
+    final List<Post> posts =
         await fetchAllPostsFromThread(widget.board, widget.thread);
 
-    for (Post post in posts) {
+    for (final Post post in posts) {
       if (post.tim != null) {
-        String video = post.tim.toString() + post.ext.toString();
+        final String video = post.tim.toString() + post.ext;
 
         names.add(post.filename + post.ext);
         fileNames.add(post.tim.toString() + post.ext);
@@ -83,8 +84,8 @@ class _ThreadPageState extends State<ThreadPage> {
       no: widget.post.no,
       sub: widget.post.sub,
       com: widget.post.com,
-      imageUrl: widget.post.tim.toString() + 's.jpg',
-      board: widget.board.toString(),
+      imageUrl: '${widget.post.tim}s.jpg',
+      board: widget.board,
     );
   }
 
@@ -102,9 +103,9 @@ class _ThreadPageState extends State<ThreadPage> {
                   ? CupertinoColors.black.withOpacity(0.8)
                   : CupertinoColors.white.withOpacity(0.8),
               previousPageTitle:
-                  widget.fromFavorites ? 'bookmarks' : '/' + widget.board + '/',
+                  widget.fromFavorites ? 'bookmarks' : '/${widget.board}/',
               middle: Text(
-                Stringz.unescape(Stringz.cleanTags(widget.threadName)),
+                unescape(cleanTags(widget.threadName)),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -125,14 +126,14 @@ class _ThreadPageState extends State<ThreadPage> {
                               CupertinoActionSheet(
                             actions: [
                               CupertinoActionSheetAction(
-                                child: Text('Reload'),
+                                child: const Text('Reload'),
                                 onPressed: () {
                                   setState(() {});
                                   Navigator.pop(context);
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text('Share'),
+                                child: const Text('Share'),
                                 onPressed: () {
                                   Share.share(
                                       'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
@@ -140,7 +141,7 @@ class _ThreadPageState extends State<ThreadPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text(
+                                child: const Text(
                                   'Open in Browser',
                                 ),
                                 onPressed: () {
@@ -150,7 +151,7 @@ class _ThreadPageState extends State<ThreadPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text('Download all Images'),
+                                child: const Text('Download all Images'),
                                 onPressed: () {
                                   saveAllMedia(
                                     'https://i.4cdn.org/${widget.board}/',
@@ -162,7 +163,7 @@ class _ThreadPageState extends State<ThreadPage> {
                               ),
                             ],
                             cancelButton: CupertinoActionSheetAction(
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -170,7 +171,7 @@ class _ThreadPageState extends State<ThreadPage> {
                           ),
                         );
                       },
-                      child: Icon(Icons.more_vert),
+                      child: const Icon(Icons.more_vert),
                     ),
                   ),
                 ],
@@ -180,30 +181,30 @@ class _ThreadPageState extends State<ThreadPage> {
               backgroundColor: AppColors.kGreen,
               foregroundColor: AppColors.kWhite,
               title: Text(
-                Stringz.unescape(Stringz.cleanTags(widget.threadName)),
+                unescape(cleanTags(widget.threadName)),
               ),
               actions: [
                 BookmarkButton(
                   favorite: favorite,
                 ),
                 PopupMenuButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: const Icon(Icons.more_vert),
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: Text("Open in Browser"),
+                    const PopupMenuItem(
+                      child: Text('Open in Browser'),
                       value: 0,
                     ),
-                    PopupMenuItem(
-                      child: Text("Share"),
+                    const PopupMenuItem(
+                      child: Text('Share'),
                       value: 1,
                     ),
-                    PopupMenuItem(
-                      child: Text("Download all Images"),
+                    const PopupMenuItem(
+                      child: Text('Download all Images'),
                       value: 2,
                     ),
                   ],
-                  onSelected: (result) {
-                    String clipboardText =
+                  onSelected: (int result) {
+                    final String clipboardText =
                         'https://boards.4chan.org/${widget.board}/thread/${widget.thread}';
 
                     switch (result) {

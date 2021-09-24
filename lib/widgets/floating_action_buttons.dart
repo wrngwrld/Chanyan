@@ -8,20 +8,21 @@ import 'package:provider/provider.dart';
 
 class FloatingActionButtons extends StatelessWidget {
   const FloatingActionButtons({
+    Key key,
     this.scrollController,
-  });
+  }) : super(key: key);
 
   final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeChanger>(context);
+    final ThemeChanger theme = Provider.of<ThemeChanger>(context);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         FloatingActionButton(
-          child: Icon(Icons.expand_less, size: 35),
+          child: const Icon(Icons.expand_less, size: 35),
           elevation: 0,
           backgroundColor: theme.getTheme() == ThemeData.dark()
               ? Platform.isIOS
@@ -41,11 +42,11 @@ class FloatingActionButtons extends StatelessWidget {
           },
           heroTag: null,
         ),
-        SizedBox(
+        const SizedBox(
           height: 40,
         ),
         FloatingActionButton(
-          child: Icon(Icons.expand_more, size: 35),
+          child: const Icon(Icons.expand_more, size: 35),
           elevation: 0,
           backgroundColor: theme.getTheme() == ThemeData.dark()
               ? Platform.isIOS
@@ -59,7 +60,7 @@ class FloatingActionButtons extends StatelessWidget {
           onPressed: () => {
             scrollController.animateTo(
               scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.fastOutSlowIn,
             )
           },

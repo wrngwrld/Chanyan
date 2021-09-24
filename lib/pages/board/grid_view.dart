@@ -4,11 +4,12 @@ import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/board/grid_post.dart';
 
 class BoardGridView extends StatelessWidget {
-  BoardGridView({
+  const BoardGridView({
+    Key key,
     @required this.board,
     @required this.snapshot,
     @required this.scrollController,
-  });
+  }) : super(key: key);
 
   final String board;
   final AsyncSnapshot<List<Post>> snapshot;

@@ -9,7 +9,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MediaPage extends StatefulWidget {
-  MediaPage({
+  const MediaPage({
+    Key key,
     @required this.video,
     @required this.ext,
     @required this.board,
@@ -18,7 +19,7 @@ class MediaPage extends StatefulWidget {
     @required this.list,
     @required this.names,
     @required this.fileNames,
-  });
+  }) : super(key: key);
 
   final String video;
   final String ext;
@@ -41,16 +42,16 @@ class _MediaPageState extends State<MediaPage> {
 
   final String page = '0';
   int index;
-  String currentName = "";
+  String currentName = '';
 
-  onPageChanged(int i) {
+  void onPageChanged(int i) {
     setState(() {
       index = i;
     });
   }
 
-  setStartVideo(String video) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> setStartVideo(String video) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setString('startVideo', video);
   }
@@ -88,9 +89,7 @@ class _MediaPageState extends State<MediaPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    (index + 1).toString() +
-                        '/' +
-                        widget.list.length.toString(),
+                    '${index + 1}/${widget.list.length}',
                     style: TextStyle(
                       color: isDark ? Colors.white : Colors.black,
                     ),
@@ -107,7 +106,7 @@ class _MediaPageState extends State<MediaPage> {
                         isDark = !isDark;
                       })
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.wb_sunny,
                       color: CupertinoColors.activeBlue,
                     ),
@@ -123,31 +122,28 @@ class _MediaPageState extends State<MediaPage> {
                               CupertinoActionSheet(
                             actions: [
                               CupertinoActionSheetAction(
-                                child: Text('Open in Browser'),
+                                child: const Text('Open in Browser'),
                                 onPressed: () {
                                   launchURL(
-                                    'https://i.4cdn.org/${widget.board}/' +
-                                        widget.fileNames[index],
+                                    'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                                   );
                                   Navigator.pop(context);
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text('Share'),
+                                child: const Text('Share'),
                                 onPressed: () {
                                   Share.share(
-                                    'https://i.4cdn.org/${widget.board}/' +
-                                        widget.fileNames[index],
+                                    'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                                   );
                                   Navigator.pop(context);
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text('Download'),
+                                child: const Text('Download'),
                                 onPressed: () {
                                   saveVideo(
-                                    'https://i.4cdn.org/${widget.board}/' +
-                                        widget.fileNames[index],
+                                    'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                                     widget.fileNames[index],
                                     context,
                                     true,
@@ -157,7 +153,7 @@ class _MediaPageState extends State<MediaPage> {
                               ),
                             ],
                             cancelButton: CupertinoActionSheetAction(
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -165,7 +161,7 @@ class _MediaPageState extends State<MediaPage> {
                           ),
                         );
                       },
-                      child: Icon(Icons.ios_share),
+                      child: const Icon(Icons.ios_share),
                     ),
                   ),
                 ],
@@ -177,9 +173,7 @@ class _MediaPageState extends State<MediaPage> {
               title: Column(
                 children: [
                   Text(widget.names[index]),
-                  Text((index + 1).toString() +
-                      '/' +
-                      widget.list.length.toString()),
+                  Text('${index + 1}/${widget.list.length}'),
                 ],
               ),
               actions: [
@@ -189,41 +183,38 @@ class _MediaPageState extends State<MediaPage> {
                             isDark = !isDark;
                           })
                         },
-                    icon: Icon(Icons.wb_sunny)),
+                    icon: const Icon(Icons.wb_sunny)),
                 PopupMenuButton(
-                  icon: Icon(Icons.share),
+                  icon: const Icon(Icons.share),
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: Text("Open in Browser"),
+                    const PopupMenuItem(
+                      child: Text('Open in Browser'),
                       value: 0,
                     ),
-                    PopupMenuItem(
-                      child: Text("Share"),
+                    const PopupMenuItem(
+                      child: Text('Share'),
                       value: 1,
                     ),
-                    PopupMenuItem(
-                      child: Text("Download"),
+                    const PopupMenuItem(
+                      child: Text('Download'),
                       value: 2,
                     ),
                   ],
-                  onSelected: (result) {
+                  onSelected: (int result) {
                     switch (result) {
                       case 0:
                         launchURL(
-                          'https://i.4cdn.org/${widget.board}/' +
-                              widget.fileNames[index],
+                          'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                         );
                         break;
                       case 1:
                         Share.share(
-                          'https://i.4cdn.org/${widget.board}/' +
-                              widget.fileNames[index],
+                          'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                         );
                         break;
                       case 2:
                         saveVideo(
-                          'https://i.4cdn.org/${widget.board}/' +
-                              widget.fileNames[index],
+                          'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                           widget.fileNames[index],
                           context,
                           true,
@@ -239,7 +230,7 @@ class _MediaPageState extends State<MediaPage> {
         scrollDirection: Axis.horizontal,
         controller: controller,
         children: widget.list,
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         onPageChanged: (i) => onPageChanged(i),
         preloadPagesCount: 2,
       ),

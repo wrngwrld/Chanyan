@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/blocs/favoriteModel.dart';
+import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteButton extends StatefulWidget {
-  const FavoriteButton({@required this.board});
+  const FavoriteButton({Key key, @required this.board}) : super(key: key);
 
   final String board;
 

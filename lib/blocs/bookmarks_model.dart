@@ -6,34 +6,34 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookmarksProvider with ChangeNotifier {
-  List<String> list = [];
-  Sort sort = Sort.byNewest;
-
   BookmarksProvider(this.list) {
     loadPreferences();
   }
 
-  loadPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> list = [];
+  Sort sort = Sort.byNewest;
+
+  Future<void> loadPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> bookmarksPrefs = prefs.getStringList('favoriteThreads');
 
-    if (bookmarksPrefs == null) bookmarksPrefs = [];
+    bookmarksPrefs ??= [];
 
     list = bookmarksPrefs;
 
     notifyListeners();
   }
 
-  getBookmarks() {
+  Iterable<String> getBookmarks() {
     if (sort == Sort.byNewest)
       return list.reversed;
     else
       return list;
   }
 
-  addBookmarks(Favorite favorite) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> addBookmarks(Favorite favorite) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     list.add(json.encode(favorite));
 
@@ -42,8 +42,8 @@ class BookmarksProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  removeBookmarks(Favorite favorite) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> removeBookmarks(Favorite favorite) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     list.remove(json.encode(favorite));
 
@@ -52,8 +52,8 @@ class BookmarksProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  clearBookmarks() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> clearBookmarks() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     list = [];
 
@@ -62,7 +62,7 @@ class BookmarksProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setSort(Sort sortBy) {
+  void setSort(Sort sortBy) {
     sort = sortBy;
 
     notifyListeners();

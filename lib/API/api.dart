@@ -10,16 +10,16 @@ Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
   final Response response =
       await get(Uri.parse('https://a.4cdn.org/$board/catalog.json'));
 
-  List<Post> ops = List.empty(growable: true);
-  List pages = jsonDecode(response.body);
+  final List<Post> ops = List.empty(growable: true);
+  final List pages = jsonDecode(response.body) as List;
 
   if (response.statusCode == 200) {
-    pages.forEach((page) {
-      List opsInPage = page['threads'];
-      opsInPage.forEach((opInPage) {
+    for (final page in pages) {
+      final List opsInPage = page['threads'] as List;
+      for (final opInPage in opsInPage) {
         ops.add(Post.fromJson(opInPage));
-      });
-    });
+      }
+    }
 
     // Thread sorting
     if (sorting != null) {
@@ -63,7 +63,7 @@ Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
       await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
 
   if (response.statusCode == 200) {
-    List<Post> posts = (jsonDecode(response.body)['posts'] as List)
+    final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
         .map((model) => Post.fromJson(model))
         .toList();
     return posts;
@@ -73,10 +73,11 @@ Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
 }
 
 Future<List<Board>> fetchAllBoards() async {
-  Response response = await get(Uri.parse('https://a.4cdn.org/boards.json'));
+  final Response response =
+      await get(Uri.parse('https://a.4cdn.org/boards.json'));
 
   if (response.statusCode == 200) {
-    List<Board> boards = (jsonDecode(response.body)['boards'] as List)
+    final List<Board> boards = (jsonDecode(response.body)['boards'] as List)
         .map((model) => Board.fromJson(model))
         .toList();
     return boards;
@@ -85,7 +86,7 @@ Future<List<Board>> fetchAllBoards() async {
   }
 }
 
-launchURL(String url) async {
+Future<void> launchURL(String url) async {
   if (await canLaunch(url)) {
     await launch(url);
   } else {

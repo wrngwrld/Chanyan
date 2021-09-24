@@ -2,19 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/blocs/favoriteModel.dart';
+import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/models/board.dart';
+import 'package:flutter_chan/pages/board/board_page.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class BoardTile extends StatefulWidget {
   const BoardTile({
+    Key key,
     @required this.board,
     @required this.favorites,
-  });
+  }) : super(key: key);
 
   final Board board;
   final bool favorites;
@@ -35,25 +36,26 @@ class _BoardTileState extends State<BoardTile> {
 
     if (isFavorite || !widget.favorites)
       return Slidable(
-        actionPane: SlidableDrawerActionPane(),
+        actionPane: const SlidableDrawerActionPane(),
         secondaryActions: [
-          isFavorite
-              ? IconSlideAction(
-                  caption: 'Delete',
-                  color: Colors.red,
-                  icon: Icons.delete,
-                  onTap: () => {
-                    favorites.removeFavorites(widget.board.board),
-                  },
-                )
-              : IconSlideAction(
-                  caption: 'Add',
-                  color: Colors.green,
-                  icon: Icons.add,
-                  onTap: () => {
-                    favorites.addFavorites(widget.board.board),
-                  },
-                ),
+          if (isFavorite)
+            IconSlideAction(
+              caption: 'Delete',
+              color: Colors.red,
+              icon: Icons.delete,
+              onTap: () => {
+                favorites.removeFavorites(widget.board.board),
+              },
+            )
+          else
+            IconSlideAction(
+              caption: 'Add',
+              color: Colors.green,
+              icon: Icons.add,
+              onTap: () => {
+                favorites.addFavorites(widget.board.board),
+              },
+            ),
         ],
         child: Column(
           children: [
@@ -72,15 +74,12 @@ class _BoardTileState extends State<BoardTile> {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '/' +
-                                widget.board.board +
-                                '/  -  ' +
-                                widget.board.title,
+                            '/${widget.board.board}/  -  ${widget.board.title}',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: Platform.isIOS
@@ -91,14 +90,14 @@ class _BoardTileState extends State<BoardTile> {
                                   : Colors.black,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Text(
-                            Stringz.cleanTags(Stringz.unescape(
+                            cleanTags(unescape(
                               widget.board.metaDescription,
                             )),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: CupertinoColors.systemGrey,
@@ -108,7 +107,7 @@ class _BoardTileState extends State<BoardTile> {
                       ),
                     ),
                   ),
-                  Icon(
+                  const Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
                   ),
@@ -118,7 +117,7 @@ class _BoardTileState extends State<BoardTile> {
             Divider(
               color: theme.getTheme() == ThemeData.dark()
                   ? CupertinoColors.systemGrey.withOpacity(0.5)
-                  : Color(0x1F000000),
+                  : const Color(0x1F000000),
               indent: 5,
               endIndent: 5,
             ),

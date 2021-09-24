@@ -4,13 +4,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
-import 'package:flutter_chan/blocs/bookmarksModel.dart';
+import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:provider/provider.dart';
 
 class BookmarkButton extends StatefulWidget {
-  BookmarkButton({
+  const BookmarkButton({
+    Key key,
     this.favorite,
-  });
+  }) : super(key: key);
 
   final Favorite favorite;
 
@@ -39,9 +40,10 @@ class _BookmarkButtonState extends State<BookmarkButton> {
         ? CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: () => {
-              isFavorite
-                  ? bookmarks.removeBookmarks(widget.favorite)
-                  : bookmarks.addBookmarks(widget.favorite),
+              if (isFavorite)
+                bookmarks.removeBookmarks(widget.favorite)
+              else
+                bookmarks.addBookmarks(widget.favorite),
             },
             child: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
@@ -50,9 +52,10 @@ class _BookmarkButtonState extends State<BookmarkButton> {
           )
         : IconButton(
             onPressed: () => {
-              isFavorite
-                  ? bookmarks.removeBookmarks(widget.favorite)
-                  : bookmarks.addBookmarks(widget.favorite),
+              if (isFavorite)
+                bookmarks.removeBookmarks(widget.favorite)
+              else
+                bookmarks.addBookmarks(widget.favorite),
             },
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border_outlined,

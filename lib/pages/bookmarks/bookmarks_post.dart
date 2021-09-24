@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/archived.dart';
-import 'package:flutter_chan/blocs/bookmarksModel.dart';
+import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/enums/enums.dart';
-import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
@@ -13,7 +13,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class BookmarksPost extends StatefulWidget {
-  const BookmarksPost({@required this.favorite});
+  const BookmarksPost({
+    Key key,
+    @required this.favorite,
+  }) : super(key: key);
 
   final Favorite favorite;
 
@@ -28,7 +31,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
     final bookmarks = Provider.of<BookmarksProvider>(context);
 
     return Slidable(
-      actionPane: SlidableDrawerActionPane(),
+      actionPane: const SlidableDrawerActionPane(),
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: 'Delete',
@@ -54,9 +57,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                   ),
                   board: widget.favorite.board,
                 ),
-                threadName: widget.favorite.sub != null
-                    ? widget.favorite.sub.toString()
-                    : widget.favorite.com.toString(),
+                threadName: widget.favorite.sub ?? widget.favorite.com,
                 thread: widget.favorite.no,
                 board: widget.favorite.board,
                 fromFavorites: true,
@@ -71,7 +72,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
               bottom: BorderSide(
                 color: theme.getTheme() == ThemeData.dark()
                     ? CupertinoColors.systemGrey
-                    : Color(0x1F000000),
+                    : const Color(0x1F000000),
                 width: 0.15,
               ),
             ),
@@ -81,33 +82,34 @@ class _BookmarksPostState extends State<BookmarksPost> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  widget.favorite.imageUrl != null
-                      ? SizedBox(
-                          width: 125,
-                          height: 125,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                'https://i.4cdn.org/${widget.favorite.board}/' +
-                                    widget.favorite.imageUrl,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                  if (widget.favorite.imageUrl != null)
+                    SizedBox(
+                      width: 125,
+                      height: 125,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
+                            fit: BoxFit.cover,
                           ),
-                        )
-                      : Container(),
+                        ),
+                      ),
+                    )
+                  else
+                    Container(),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FutureBuilder(
+                          FutureBuilder<ThreadStatus>(
                               future: fetchArchived(widget.favorite.board,
                                   widget.favorite.no.toString()),
-                              builder: (BuildContext context, snapshot) {
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<ThreadStatus> snapshot) {
                                 switch (snapshot.connectionState) {
                                   case ConnectionState.waiting:
                                     return Container();
@@ -115,7 +117,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                   default:
                                     switch (snapshot.data) {
                                       case ThreadStatus.archived:
-                                        return Text(
+                                        return const Text(
                                           'archived',
                                           style: TextStyle(
                                             fontSize: 12,
@@ -124,7 +126,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                         );
                                         break;
                                       case ThreadStatus.deleted:
-                                        return Text(
+                                        return const Text(
                                           'deleted',
                                           style: TextStyle(
                                             fontSize: 12,
@@ -141,7 +143,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                 }
                               }),
                           Text(
-                            'No.' + widget.favorite.no.toString(),
+                            'No.${widget.favorite.no}',
                             style: TextStyle(
                               fontSize: 12,
                               color: theme.getTheme() == ThemeData.dark()
@@ -151,23 +153,24 @@ class _BookmarksPostState extends State<BookmarksPost> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          widget.favorite.sub != null
-                              ? Text(
-                                  Stringz.unescape(Stringz.cleanTags(
-                                      widget.favorite.sub.toString())),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: theme.getTheme() == ThemeData.dark()
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                )
-                              : Container(),
-                          FutureBuilder(
+                          if (widget.favorite.sub != null)
+                            Text(
+                              unescape(cleanTags(widget.favorite.sub)),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: theme.getTheme() == ThemeData.dark()
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            )
+                          else
+                            Container(),
+                          FutureBuilder<List<int>>(
                             future: fetchReplies(widget.favorite.board,
                                 widget.favorite.no.toString()),
-                            builder: (BuildContext context, snapshot1) {
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<int>> snapshot1) {
                               switch (snapshot1.connectionState) {
                                 case ConnectionState.waiting:
                                   return Text(
@@ -194,10 +197,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                       ),
                                     );
                                   return Text(
-                                    'R: ' +
-                                        snapshot1.data[0].toString() +
-                                        ' / I: ' +
-                                        snapshot1.data[1].toString(),
+                                    'R:${snapshot1.data[0]} / I: ${snapshot1.data[1]}',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color:
@@ -215,18 +215,19 @@ class _BookmarksPostState extends State<BookmarksPost> {
                   ),
                 ],
               ),
-              widget.favorite.com != null
-                  ? Html(
-                      data: widget.favorite.com.toString(),
-                      style: {
-                        "body": Style(
-                          color: theme.getTheme() == ThemeData.dark()
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      },
-                    )
-                  : Container(),
+              if (widget.favorite.com != null)
+                Html(
+                  data: widget.favorite.com,
+                  style: {
+                    'body': Style(
+                      color: theme.getTheme() == ThemeData.dark()
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  },
+                )
+              else
+                Container(),
             ],
           ),
         ),

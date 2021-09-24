@@ -15,19 +15,20 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 class BoardPage extends StatefulWidget {
-  BoardPage({
+  const BoardPage({
+    Key key,
     @required this.board,
     @required this.boardName,
-  });
+  }) : super(key: key);
 
-  final board;
-  final boardName;
+  final String board;
+  final String boardName;
 
   @override
-  _BoardPageState createState() => _BoardPageState();
+  BoardPageState createState() => BoardPageState();
 }
 
-class _BoardPageState extends State<BoardPage> {
+class BoardPageState extends State<BoardPage> {
   final ScrollController scrollController = ScrollController();
 
   Sort sortBy = Sort.byImagesCount;
@@ -50,7 +51,7 @@ class _BoardPageState extends State<BoardPage> {
                   ? CupertinoColors.black.withOpacity(0.8)
                   : CupertinoColors.white.withOpacity(0.8),
               middle: Text(
-                '/' + widget.board + '/ - ' + widget.boardName,
+                '/${widget.board}/ - ${widget.boardName}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -64,13 +65,13 @@ class _BoardPageState extends State<BoardPage> {
                       showCupertinoModalPopup(
                         context: context,
                         builder: (BuildContext context) => CupertinoActionSheet(
-                          message: Text(
+                          message: const Text(
                             'Sort by',
                             style: TextStyle(color: AppColors.kBlack),
                           ),
                           actions: [
                             CupertinoActionSheetAction(
-                              child: Text('Image Count'),
+                              child: const Text('Image Count'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byImagesCount;
@@ -79,7 +80,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text('Reply Count'),
+                              child: const Text('Reply Count'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byReplyCount;
@@ -88,7 +89,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text('Bump Order'),
+                              child: const Text('Bump Order'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byBumpOrder;
@@ -97,7 +98,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text('Newest'),
+                              child: const Text('Newest'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byNewest;
@@ -106,7 +107,7 @@ class _BoardPageState extends State<BoardPage> {
                               },
                             ),
                             CupertinoActionSheetAction(
-                              child: Text('Oldest'),
+                              child: const Text('Oldest'),
                               onPressed: () {
                                 setState(() {
                                   sortBy = Sort.byOldest;
@@ -116,7 +117,7 @@ class _BoardPageState extends State<BoardPage> {
                             ),
                           ],
                           cancelButton: CupertinoActionSheetAction(
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                             onPressed: () {
                               Navigator.pop(context);
                             },
@@ -124,7 +125,7 @@ class _BoardPageState extends State<BoardPage> {
                         ),
                       );
                     },
-                    child: Icon(Icons.sort),
+                    child: const Icon(Icons.sort),
                   ),
                   SizedBox(
                     width: 20,
@@ -137,14 +138,14 @@ class _BoardPageState extends State<BoardPage> {
                               CupertinoActionSheet(
                             actions: [
                               CupertinoActionSheetAction(
-                                child: Text('Reload'),
+                                child: const Text('Reload'),
                                 onPressed: () {
                                   setState(() {});
                                   Navigator.pop(context);
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text('Grid View'),
+                                child: const Text('Grid View'),
                                 onPressed: () {
                                   setState(() {
                                     view = View.gridView;
@@ -153,7 +154,7 @@ class _BoardPageState extends State<BoardPage> {
                                 },
                               ),
                               CupertinoActionSheetAction(
-                                child: Text('List View'),
+                                child: const Text('List View'),
                                 onPressed: () {
                                   setState(() {
                                     view = View.listView;
@@ -163,7 +164,7 @@ class _BoardPageState extends State<BoardPage> {
                               ),
                             ],
                             cancelButton: CupertinoActionSheetAction(
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -171,9 +172,7 @@ class _BoardPageState extends State<BoardPage> {
                           ),
                         );
                       },
-                      child: Icon(
-                        Icons.more_vert,
-                      ),
+                      child: const Icon(Icons.more_vert),
                     ),
                   ),
                 ],
@@ -183,37 +182,37 @@ class _BoardPageState extends State<BoardPage> {
               backgroundColor: AppColors.kGreen,
               foregroundColor: AppColors.kWhite,
               title: Text(
-                '/' + widget.board + '/ - ' + widget.boardName,
+                '/${widget.board}/ - ${widget.boardName}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               actions: [
                 FavoriteButton(board: widget.board),
                 PopupMenuButton(
-                  icon: Icon(Icons.sort),
+                  icon: const Icon(Icons.sort),
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: Text("Sort by image count"),
+                    const PopupMenuItem(
+                      child: Text('Sort by image count'),
                       value: 0,
                     ),
-                    PopupMenuItem(
-                      child: Text("Sort by reply count"),
+                    const PopupMenuItem(
+                      child: Text('Sort by reply count'),
                       value: 1,
                     ),
-                    PopupMenuItem(
-                      child: Text("Sort by bump order"),
+                    const PopupMenuItem(
+                      child: Text('Sort by bump order'),
                       value: 2,
                     ),
-                    PopupMenuItem(
-                      child: Text("Sort by newest"),
+                    const PopupMenuItem(
+                      child: Text('Sort by newest'),
                       value: 3,
                     ),
-                    PopupMenuItem(
-                      child: Text("Sort by oldest"),
+                    const PopupMenuItem(
+                      child: Text('Sort by oldest'),
                       value: 4,
                     ),
                   ],
-                  onSelected: (result) {
+                  onSelected: (int result) {
                     switch (result) {
                       case 0:
                         setState(() {
@@ -249,22 +248,22 @@ class _BoardPageState extends State<BoardPage> {
                   },
                 ),
                 PopupMenuButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: const Icon(Icons.more_vert),
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: Text("Reload"),
+                    const PopupMenuItem(
+                      child: Text('Reload'),
                       value: 0,
                     ),
-                    PopupMenuItem(
-                      child: Text("Grid view"),
+                    const PopupMenuItem(
+                      child: Text('Grid view'),
                       value: 1,
                     ),
-                    PopupMenuItem(
-                      child: Text("List view"),
+                    const PopupMenuItem(
+                      child: Text('List view'),
                       value: 2,
                     ),
                   ],
-                  onSelected: (result) {
+                  onSelected: (int result) {
                     switch (result) {
                       case 0:
                         setState(() {});

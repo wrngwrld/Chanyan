@@ -45,6 +45,7 @@ dependencies:
   provider: ^5.0.0
   flutter_slidable: ^0.6.0
   intl: ^0.17.0
+  lint: ^1.7.2
 
 dev_dependencies:
   flutter_test:

@@ -7,12 +7,6 @@ class Favorite {
     this.board,
   });
 
-  int no;
-  String sub;
-  String com;
-  String imageUrl;
-  String board;
-
   factory Favorite.fromJson(Map<String, dynamic> json) {
     return Favorite(
       no: json['no'],
@@ -22,6 +16,13 @@ class Favorite {
       board: json['board'],
     );
   }
+
+  int no;
+  String sub;
+  String com;
+  String imageUrl;
+  String board;
+
   Map<String, dynamic> toJson() {
     return {
       'no': no,

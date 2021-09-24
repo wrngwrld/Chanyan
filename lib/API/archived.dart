@@ -11,10 +11,13 @@ Future<ThreadStatus> fetchArchived(String board, String thread) async {
       await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
 
   if (response.statusCode == 200) {
-    List<Post> posts = (jsonDecode(response.body)['posts'] as List)
+    final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
         .map((model) => Post.fromJson(model))
         .toList();
-    if (response.body == null) return ThreadStatus.deleted;
+
+    if (response.body == null) {
+      return ThreadStatus.deleted;
+    }
 
     if (posts[0].archived == 1) {
       return ThreadStatus.archived;
@@ -31,13 +34,14 @@ Future<ThreadStatus> fetchArchived(String board, String thread) async {
 Future<List<Favorite>> fetchFavoriteThreads(Sort sort) async {
   List<Favorite> favorites = [];
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
+  final List<String> favoriteThreadsPrefs =
+      prefs.getStringList('favoriteThreads');
 
   if (favoriteThreadsPrefs != null)
-    for (String string in favoriteThreadsPrefs) {
-      Favorite favorite = Favorite.fromJson(json.decode(string));
+    for (final String string in favoriteThreadsPrefs) {
+      final Favorite favorite = Favorite.fromJson(json.decode(string));
 
       favorites.add(favorite);
     }
@@ -54,9 +58,9 @@ Future<List<int>> fetchReplies(String board, String thread) async {
       await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
 
   if (response.statusCode == 200) {
-    List<int> list = [];
+    final List<int> list = [];
 
-    List<Post> posts = (jsonDecode(response.body)['posts'] as List)
+    final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
         .map((model) => Post.fromJson(model))
         .toList();
 
@@ -69,22 +73,19 @@ Future<List<int>> fetchReplies(String board, String thread) async {
   }
 }
 
-removeFavorite(Favorite favorite) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+Future<void> removeFavorite(Favorite favorite) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
+  final List<String> favoriteThreadsPrefs =
+      prefs.getStringList('favoriteThreads');
 
   favoriteThreadsPrefs.remove(json.encode(favorite));
 
   prefs.setStringList('favoriteThreads', favoriteThreadsPrefs);
-
-  // refreshPage();
 }
 
-clearBookmarks() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+Future<void> clearBookmarks() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   prefs.setStringList('favoriteThreads', []);
-
-  // refreshPage();
 }

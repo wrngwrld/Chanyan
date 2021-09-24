@@ -10,7 +10,7 @@ Future<bool> _requestPermission(Permission permission) async {
   if (await permission.isGranted) {
     return true;
   } else {
-    var result = await permission.request();
+    final result = await permission.request();
     if (result == PermissionStatus.granted) {
       return true;
     }
@@ -21,23 +21,23 @@ Future<bool> _requestPermission(Permission permission) async {
 Future<bool> saveVideo(String url, String fileName, BuildContext context,
     bool showSnackBar) async {
   Directory directory;
-  var dio = Dio();
+  final dio = Dio();
 
   try {
     if (Platform.isAndroid) {
       if (await _requestPermission(Permission.storage)) {
         directory = await getExternalStorageDirectory();
-        String newPath = "";
-        List<String> paths = directory.path.split("/");
+        String newPath = '';
+        final List<String> paths = directory.path.split('/');
         for (int x = 1; x < paths.length; x++) {
-          String folder = paths[x];
-          if (folder != "Android") {
-            newPath += "/" + folder;
+          final String folder = paths[x];
+          if (folder != 'Android') {
+            newPath += '/$folder';
           } else {
             break;
           }
         }
-        newPath = newPath + "/Download/4Chan";
+        newPath = '$newPath/Download/4Chan';
         directory = Directory(newPath);
       } else {
         return false;
@@ -54,7 +54,7 @@ Future<bool> saveVideo(String url, String fileName, BuildContext context,
       await directory.create(recursive: true);
     }
     if (await directory.exists()) {
-      File saveFile = File(directory.path + "/$fileName");
+      final File saveFile = File('${directory.path}/$fileName');
       await dio.download(url, saveFile.path,
           onReceiveProgress: (value1, value2) {});
       if (Platform.isIOS) {
@@ -62,7 +62,7 @@ Future<bool> saveVideo(String url, String fileName, BuildContext context,
             .then((value) => {
                   if (showSnackBar)
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('File downloaded!'),
                       ),
                     ),
@@ -76,17 +76,18 @@ Future<bool> saveVideo(String url, String fileName, BuildContext context,
   return false;
 }
 
-saveAllMedia(String url, List<String> fileNames, BuildContext context) async {
+Future<void> saveAllMedia(
+    String url, List<String> fileNames, BuildContext context) async {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
+    const SnackBar(
       content: Text('Downloading...'),
     ),
   );
-  for (String fileName in fileNames) {
+  for (final String fileName in fileNames) {
     await saveVideo(url + fileName, fileName, context, false);
   }
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
+    const SnackBar(
       content: Text('All files downloaded!'),
     ),
   );

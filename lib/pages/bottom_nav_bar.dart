@@ -8,19 +8,21 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({Key key}) : super(key: key);
+
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  BottomNavBarState createState() => BottomNavBarState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
+class BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
-  List<Widget> _pages = <Widget>[
-    BoardList(),
-    Bookmarks(),
+  final List<Widget> _pages = [
+    const BoardList(),
+    const Bookmarks(),
   ];
 
-  _onItemTapped(int index) {
+  void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -32,7 +34,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
     return Scaffold(
       bottomNavigationBar: PlatformNavBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Boards',

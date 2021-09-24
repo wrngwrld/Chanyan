@@ -3,17 +3,19 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_chan/blocs/bookmarksModel.dart';
-import 'package:flutter_chan/blocs/favoriteModel.dart';
+import 'package:flutter_chan/blocs/bookmarks_model.dart';
+import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     // return ChangeNotifierProvider<ThemeChanger>(
@@ -32,12 +34,14 @@ class MyApp extends StatelessWidget {
           create: (_) => FavoriteProvider([]),
         ),
       ],
-      child: AppWithTheme(),
+      child: const AppWithTheme(),
     );
   }
 }
 
 class AppWithTheme extends StatefulWidget {
+  const AppWithTheme({Key key}) : super(key: key);
+
   @override
   State<AppWithTheme> createState() => _AppWithThemeState();
 }
@@ -58,12 +62,14 @@ class _AppWithThemeState extends State<AppWithTheme>
 
   @override
   void didChangePlatformBrightness() {
-    Brightness brightness = WidgetsBinding.instance.window.platformBrightness;
+    final Brightness brightness =
+        WidgetsBinding.instance.window.platformBrightness;
 
     final theme = Provider.of<ThemeChanger>(context, listen: false);
 
     theme.setTheme(
-        brightness == Brightness.dark ? ThemeData.dark() : ThemeData.light());
+      brightness == Brightness.dark ? ThemeData.dark() : ThemeData.light(),
+    );
 
     super.didChangePlatformBrightness();
   }
@@ -75,7 +81,7 @@ class _AppWithThemeState extends State<AppWithTheme>
     return Platform.isIOS
         ? CupertinoApp(
             color: CupertinoColors.activeGreen,
-            home: BottomNavBar(),
+            home: const BottomNavBar(),
             theme: CupertinoThemeData(
               brightness: theme.getTheme() == ThemeData.dark()
                   ? Brightness.dark
@@ -86,7 +92,7 @@ class _AppWithThemeState extends State<AppWithTheme>
             title: 'Chanyan',
             theme: theme.getTheme(),
             debugShowCheckedModeBanner: false,
-            home: BottomNavBar(),
+            home: const BottomNavBar(),
           );
   }
 }
