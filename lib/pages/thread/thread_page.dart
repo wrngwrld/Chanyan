@@ -78,8 +78,6 @@ class ThreadPageState extends State<ThreadPage> {
         );
       }
     }
-
-    print(media.length);
   }
 
   @override
