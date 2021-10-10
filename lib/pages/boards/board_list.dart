@@ -101,7 +101,7 @@ class BoardListState extends State<BoardList> {
                                 BoardTile(board: board, favorites: true),
                               Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                                    const EdgeInsets.fromLTRB(15, 10, 5, 10),
                                 child: Text(
                                   'all',
                                   style: TextStyle(
