@@ -47,6 +47,10 @@ class ThreadPageState extends State<ThreadPage> {
   Favorite favorite;
 
   Future<void> getAllMedia() async {
+    media = [];
+    fileNames = [];
+    names = [];
+
     final List<Post> posts =
         await fetchAllPostsFromThread(widget.board, widget.thread);
 
@@ -74,6 +78,8 @@ class ThreadPageState extends State<ThreadPage> {
         );
       }
     }
+
+    print(media.length);
   }
 
   @override
