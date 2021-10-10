@@ -10,9 +10,29 @@ class FloatingActionButtons extends StatelessWidget {
   const FloatingActionButtons({
     Key key,
     this.scrollController,
+    this.goUp,
+    this.goDown,
   }) : super(key: key);
 
   final ScrollController scrollController;
+  final VoidCallback goUp;
+  final VoidCallback goDown;
+
+  void animateToTop() {
+    scrollController.animateTo(
+      scrollController.position.minScrollExtent,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  void animateToBottom() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +53,8 @@ class FloatingActionButtons extends StatelessWidget {
                   : AppColors.kGreen,
           foregroundColor:
               Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
-          onPressed: () {
-            scrollController.animateTo(
-              scrollController.position.minScrollExtent,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.fastOutSlowIn,
-            );
+          onPressed: () => {
+            if (goUp == null) animateToTop() else goUp(),
           },
           heroTag: null,
         ),
@@ -58,11 +74,7 @@ class FloatingActionButtons extends StatelessWidget {
           foregroundColor:
               Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
           onPressed: () => {
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.fastOutSlowIn,
-            )
+            if (goDown == null) animateToBottom() else goDown(),
           },
           heroTag: null,
         )

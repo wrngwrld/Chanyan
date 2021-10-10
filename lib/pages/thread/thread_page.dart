@@ -234,6 +234,16 @@ class ThreadPageState extends State<ThreadPage> {
             ),
       floatingActionButton: FloatingActionButtons(
         scrollController: scrollController,
+        goDown: () => {
+          scrollController.jumpTo(
+            scrollController.position.maxScrollExtent,
+          )
+        },
+        goUp: () => {
+          scrollController.jumpTo(
+            scrollController.position.minScrollExtent,
+          )
+        },
       ),
       body: FutureBuilder(
         future: fetchAllPostsFromThread(widget.board, widget.thread),
@@ -252,6 +262,7 @@ class ThreadPageState extends State<ThreadPage> {
               return Scrollbar(
                 controller: scrollController,
                 child: ListView(
+                  shrinkWrap: false,
                   controller: scrollController,
                   children: [
                     for (int i = 0; i < snapshot.data.length; i++)

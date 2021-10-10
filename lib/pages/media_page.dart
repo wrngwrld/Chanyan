@@ -62,6 +62,10 @@ class _MediaPageState extends State<MediaPage> {
 
     index = widget.fileNames.indexWhere((element) => element == widget.video);
 
+    if (index < 0) {
+      Navigator.of(context).pop();
+    }
+
     setStartVideo(widget.names[index]);
 
     controller = PreloadPageController(
