@@ -2,6 +2,7 @@
     package="com.example.flutter_chan">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />  
 
    <application
         android:label="Chanyan"
