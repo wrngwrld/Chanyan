@@ -9,6 +9,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/bookmark_button.dart';
+import 'package:flutter_chan/pages/thread/thread_grid_view.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
@@ -43,6 +44,8 @@ class ThreadPageState extends State<ThreadPage> {
   List<Widget> media = [];
   List<String> fileNames = [];
   List<String> names = [];
+  List<String> exts = [];
+  List<int> tims = [];
 
   Favorite favorite;
 
@@ -59,6 +62,8 @@ class ThreadPageState extends State<ThreadPage> {
         final String video = post.tim.toString() + post.ext;
 
         names.add(post.filename + post.ext);
+        tims.add(post.tim);
+        exts.add(post.ext);
         fileNames.add(post.tim.toString() + post.ext);
         media.add(
           post.ext == '.webm'
@@ -118,6 +123,25 @@ class ThreadPageState extends State<ThreadPage> {
                 children: [
                   BookmarkButton(
                     favorite: favorite,
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ThreadGridView(
+                            media: media,
+                            fileNames: fileNames,
+                            names: names,
+                            board: widget.board,
+                            tims: tims,
+                            prevTitle: unescape(cleanTags(widget.threadName)),
+                            exts: exts,
+                          ),
+                        ),
+                      ),
+                    },
+                    child: const Icon(Icons.apps),
                   ),
                   SizedBox(
                     width: 20,
@@ -190,6 +214,24 @@ class ThreadPageState extends State<ThreadPage> {
               actions: [
                 BookmarkButton(
                   favorite: favorite,
+                ),
+                IconButton(
+                  onPressed: () => {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ThreadGridView(
+                          media: media,
+                          fileNames: fileNames,
+                          names: names,
+                          board: widget.board,
+                          tims: tims,
+                          exts: exts,
+                          prevTitle: unescape(cleanTags(widget.threadName)),
+                        ),
+                      ),
+                    ),
+                  },
+                  icon: const Icon(Icons.apps),
                 ),
                 PopupMenuButton(
                   icon: const Icon(Icons.more_vert),
