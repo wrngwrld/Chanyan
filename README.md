@@ -6,6 +6,10 @@
 [![GitHub release](https://img.shields.io/github/release/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/releases/latest)
 [![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg?style=flat-square)](https://pub.dev/packages/lint)
 
+## Website
+
+[See all Features](https://chanyan.carrd.co/)
+
 ## Features
 
 - Boards and threads that can be favorised 
