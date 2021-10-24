@@ -25,6 +25,8 @@ class BookmarksPost extends StatefulWidget {
 }
 
 class _BookmarksPostState extends State<BookmarksPost> {
+  bool isDeleted = false;
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
@@ -44,26 +46,27 @@ class _BookmarksPostState extends State<BookmarksPost> {
       ],
       child: InkWell(
         onTap: () => {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ThreadPage(
-                post: Post(
-                  no: widget.favorite.no,
-                  sub: widget.favorite.sub,
-                  com: widget.favorite.com,
-                  tim: int.parse(
-                    widget.favorite.imageUrl
-                        .substring(0, widget.favorite.imageUrl.length - 5),
+          if (!isDeleted)
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ThreadPage(
+                  post: Post(
+                    no: widget.favorite.no,
+                    sub: widget.favorite.sub,
+                    com: widget.favorite.com,
+                    tim: int.parse(
+                      widget.favorite.imageUrl
+                          .substring(0, widget.favorite.imageUrl.length - 5),
+                    ),
+                    board: widget.favorite.board,
                   ),
+                  threadName: widget.favorite.sub ?? widget.favorite.com,
+                  thread: widget.favorite.no,
                   board: widget.favorite.board,
+                  fromFavorites: true,
                 ),
-                threadName: widget.favorite.sub ?? widget.favorite.com,
-                thread: widget.favorite.no,
-                board: widget.favorite.board,
-                fromFavorites: true,
               ),
-            ),
-          )
+            )
         },
         child: Container(
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
@@ -126,6 +129,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                         );
                                         break;
                                       case ThreadStatus.deleted:
+                                        isDeleted = true;
                                         return const Text(
                                           'deleted',
                                           style: TextStyle(
