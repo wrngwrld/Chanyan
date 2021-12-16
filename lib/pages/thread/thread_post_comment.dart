@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/thread/thread_replied_to.dart';
+import 'package:flutter_chan/services/string.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:provider/provider.dart';
 
@@ -9,15 +10,11 @@ class ThreadPostComment extends StatelessWidget {
   const ThreadPostComment({
     Key key,
     @required this.com,
-    // @required this.replies,
-    // @required this.post,
     @required this.thread,
     @required this.board,
   }) : super(key: key);
 
   final String com;
-  // final List<Post> replies;
-  // final Post post;
   final int thread;
   final String board;
 
@@ -61,7 +58,7 @@ class ThreadPostComment extends StatelessWidget {
       } else {
         formattedCom.add(
           SelectableText(
-            line,
+            unescape(cleanTags(line)),
             style: TextStyle(
               color: theme.getTheme() == ThemeData.dark()
                   ? Colors.white
