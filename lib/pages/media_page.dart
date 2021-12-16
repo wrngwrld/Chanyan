@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -76,18 +78,23 @@ class _MediaPageState extends State<MediaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor:
+          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
       appBar: Platform.isIOS
           ? CupertinoNavigationBar(
-              backgroundColor: isDark ? Colors.black : Colors.white,
+              backgroundColor: Colors.transparent,
               middle: Column(
                 children: [
                   Text(
                     widget.names[index],
                     style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: theme.getTheme() == ThemeData.dark()
+                          ? Colors.white
+                          : Colors.black,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -95,7 +102,9 @@ class _MediaPageState extends State<MediaPage> {
                   Text(
                     '${index + 1}/${widget.list.length}',
                     style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: theme.getTheme() == ThemeData.dark()
+                          ? Colors.white
+                          : Colors.black,
                     ),
                   ),
                 ],

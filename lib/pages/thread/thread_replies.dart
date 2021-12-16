@@ -79,22 +79,12 @@ class _ThreadRepliesState extends State<ThreadReplies> {
                   ? CupertinoColors.black.withOpacity(0.8)
                   : CupertinoColors.white.withOpacity(0.8),
               previousPageTitle: 'back',
-              middle: widget.post.com != null
-                  ? Text(
-                      unescape(cleanTags(widget.post.com)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  : const Text('Replies'),
+              middle: const Text('Replies'),
             )
           : AppBar(
               backgroundColor: AppColors.kGreen,
               foregroundColor: AppColors.kWhite,
-              title: widget.post.com != null
-                  ? Text(
-                      unescape(cleanTags(widget.post.com)),
-                    )
-                  : const Text('Replies'),
+              title: const Text('Replies'),
             ),
       body: Scrollbar(
         controller: scrollController,

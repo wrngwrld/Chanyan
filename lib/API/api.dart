@@ -109,6 +109,18 @@ Future<List<Board>> fetchAllBoards() async {
   }
 }
 
+Future<Post> fetchPost(String board, int thread, int post) async {
+  final List<Post> allPosts = await fetchAllPostsFromThread(board, thread);
+
+  for (final Post postLoop in allPosts) {
+    if (postLoop.no == post) {
+      return postLoop;
+    }
+  }
+
+  return null;
+}
+
 Future<void> launchURL(String url) async {
   if (await canLaunch(url)) {
     await launch(url);

@@ -8,6 +8,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/media_page.dart';
+import 'package:flutter_chan/pages/thread/thread_post_comment.dart';
 import 'package:flutter_chan/pages/thread/thread_replies.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -184,15 +185,10 @@ class ThreadPagePost extends StatelessWidget {
             if (post.com != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
-                child: SelectableHtml(
-                  data: post.com,
-                  style: {
-                    'body': Style(
-                      color: theme.getTheme() == ThemeData.dark()
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                  },
+                child: ThreadPostComment(
+                  com: post.com,
+                  board: board,
+                  thread: thread,
                 ),
               )
             else
