@@ -3,12 +3,15 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/media_page.dart';
+import 'package:flutter_chan/pages/thread/thread_replies.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -17,12 +20,14 @@ class ThreadPagePost extends StatelessWidget {
     Key key,
     @required this.board,
     @required this.post,
+    @required this.thread,
     @required this.names,
     @required this.fileNames,
     @required this.media,
   }) : super(key: key);
 
   final String board;
+  final int thread;
   final Post post;
   final List<String> names;
   final List<String> fileNames;
@@ -55,6 +60,7 @@ class ThreadPagePost extends StatelessWidget {
           ),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,6 +197,70 @@ class ThreadPagePost extends StatelessWidget {
               )
             else
               Container(),
+            FutureBuilder(
+              future: fetchAllRepliesToPost(
+                post.no,
+                board,
+                thread,
+              ),
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return Text(
+                      'Replies: loading...',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: theme.getTheme() == ThemeData.dark()
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    );
+                    break;
+                  default:
+                    if (snapshot.data.isNotEmpty)
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ThreadReplies(
+                                replies: snapshot.data,
+                                post: post,
+                                thread: thread,
+                                board: board,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Replies: ${snapshot.data.length} ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: theme.getTheme() == ThemeData.dark()
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      );
+                    else
+                      return Text(
+                        '',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: theme.getTheme() == ThemeData.dark()
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      );
+                }
+              },
+            ),
+            const Divider(
+              height: 20,
+            ),
           ],
         ),
       ),

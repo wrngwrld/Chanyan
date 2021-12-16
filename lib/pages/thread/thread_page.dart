@@ -310,6 +310,7 @@ class ThreadPageState extends State<ThreadPage> {
                     for (int i = 0; i < snapshot.data.length; i++)
                       ThreadPagePost(
                         board: widget.board,
+                        thread: widget.thread,
                         post: snapshot.data[i],
                         media: media,
                         names: names,

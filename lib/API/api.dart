@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:flutter_chan/models/post.dart';
+import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -70,6 +71,28 @@ Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
   } else {
     throw Exception('Failed to load posts.');
   }
+}
+
+Future<List<Post>> fetchAllRepliesToPost(
+  int post,
+  String board,
+  int thread,
+) async {
+  final List<Post> allPosts = await fetchAllPostsFromThread(board, thread);
+
+  final List<Post> list = [];
+
+  for (final Post postLoop in allPosts) {
+    if (postLoop.com != null) {
+      final document = parse(postLoop.com);
+
+      if (document.body.text.contains(post.toString())) {
+        list.add(postLoop);
+      }
+    }
+  }
+
+  return list;
 }
 
 Future<List<Board>> fetchAllBoards() async {
