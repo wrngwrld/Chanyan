@@ -40,8 +40,6 @@ class MediaPage extends StatefulWidget {
 class _MediaPageState extends State<MediaPage> {
   PreloadPageController controller;
 
-  bool isDark = true;
-
   final String page = '0';
   int index;
   String currentName = '';
@@ -112,18 +110,6 @@ class _MediaPageState extends State<MediaPage> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => {
-                      setState(() {
-                        isDark = !isDark;
-                      })
-                    },
-                    child: const Icon(
-                      Icons.wb_sunny,
-                      color: CupertinoColors.activeBlue,
-                    ),
-                  ),
                   SizedBox(
                     width: 20,
                     child: CupertinoButton(
@@ -181,8 +167,11 @@ class _MediaPageState extends State<MediaPage> {
               ),
             )
           : AppBar(
-              backgroundColor: isDark ? Colors.black : Colors.white,
-              foregroundColor: isDark ? Colors.white : AppColors.kBlack,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              foregroundColor: theme.getTheme() == ThemeData.dark()
+                  ? Colors.white
+                  : Colors.black,
               title: Column(
                 children: [
                   Text(widget.names[index]),
@@ -190,13 +179,6 @@ class _MediaPageState extends State<MediaPage> {
                 ],
               ),
               actions: [
-                IconButton(
-                    onPressed: () => {
-                          setState(() {
-                            isDark = !isDark;
-                          })
-                        },
-                    icon: const Icon(Icons.wb_sunny)),
                 PopupMenuButton(
                   icon: const Icon(Icons.share),
                   itemBuilder: (context) => [
