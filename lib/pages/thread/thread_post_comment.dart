@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/models/post.dart';
-import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/pages/thread/thread_replied_to.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:provider/provider.dart';
