@@ -33,6 +33,9 @@ class BottomNavBarState extends State<BottomNavBar> {
     final theme = Provider.of<ThemeChanger>(context);
 
     return Scaffold(
+      backgroundColor: theme.getTheme() == ThemeData.dark()
+          ? CupertinoColors.black
+          : CupertinoColors.white,
       bottomNavigationBar: PlatformNavBar(
         items: const [
           BottomNavigationBarItem(
