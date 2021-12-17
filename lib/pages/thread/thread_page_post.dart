@@ -14,7 +14,7 @@ import 'package:flutter_chan/services/string.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class ThreadPagePost extends StatelessWidget {
+class ThreadPagePost extends StatefulWidget {
   const ThreadPagePost({
     Key key,
     @required this.board,
@@ -42,6 +42,24 @@ class ThreadPagePost extends StatelessWidget {
   }
 
   @override
+  State<ThreadPagePost> createState() => _ThreadPagePostState();
+}
+
+class _ThreadPagePostState extends State<ThreadPagePost> {
+  Future<List<Post>> _fetchAllRepliesToPost;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchAllRepliesToPost = fetchAllRepliesToPost(
+      widget.post.no,
+      widget.board,
+      widget.thread,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
 
@@ -64,7 +82,7 @@ class ThreadPagePost extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (post.filename != null)
+                if (widget.post.filename != null)
                   SizedBox(
                     width: 125,
                     height: 125,
@@ -76,14 +94,15 @@ class ThreadPagePost extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MediaPage(
-                                video: post.tim.toString() + post.ext,
-                                ext: post.ext,
-                                board: board,
-                                height: post.h,
-                                width: post.w,
-                                names: names,
-                                list: media,
-                                fileNames: fileNames,
+                                video: widget.post.tim.toString() +
+                                    widget.post.ext,
+                                ext: widget.post.ext,
+                                board: widget.board,
+                                height: widget.post.h,
+                                width: widget.post.w,
+                                names: widget.names,
+                                list: widget.media,
+                                fileNames: widget.fileNames,
                               ),
                             ),
                           )
@@ -91,7 +110,7 @@ class ThreadPagePost extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                            'https://i.4cdn.org/$board/${post.tim}s.jpg',
+                            'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -104,10 +123,10 @@ class ThreadPagePost extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (post.filename != null)
+                      if (widget.post.filename != null)
                         Text(
-                          '${post.ext} (${formatBytes(
-                            post.fsize,
+                          '${widget.post.ext} (${ThreadPagePost.formatBytes(
+                            widget.post.fsize,
                             0,
                           )})',
                           style: TextStyle(
@@ -121,9 +140,9 @@ class ThreadPagePost extends StatelessWidget {
                         )
                       else
                         Container(),
-                      if (post.sub != null)
+                      if (widget.post.sub != null)
                         Text(
-                          unescape(cleanTags(post.sub)),
+                          unescape(cleanTags(widget.post.sub)),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -137,7 +156,7 @@ class ThreadPagePost extends StatelessWidget {
                       else
                         Container(),
                       Text(
-                        'No.${post.no}',
+                        'No.${widget.post.no}',
                         style: TextStyle(
                           fontSize: 12,
                           color: theme.getTheme() == ThemeData.dark()
@@ -148,7 +167,7 @@ class ThreadPagePost extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        post.name,
+                        widget.post.name,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -162,7 +181,7 @@ class ThreadPagePost extends StatelessWidget {
                       Text(
                         DateFormat('kk:mm - dd.MM.y').format(
                           DateTime.fromMillisecondsSinceEpoch(
-                            post.time * 1000,
+                            widget.post.time * 1000,
                           ),
                         ),
                         style: TextStyle(
@@ -180,23 +199,19 @@ class ThreadPagePost extends StatelessWidget {
                 ),
               ],
             ),
-            if (post.com != null)
+            if (widget.post.com != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
                 child: ThreadPostComment(
-                  com: post.com,
-                  board: board,
-                  thread: thread,
+                  com: widget.post.com,
+                  board: widget.board,
+                  thread: widget.thread,
                 ),
               )
             else
               Container(),
             FutureBuilder(
-              future: fetchAllRepliesToPost(
-                post.no,
-                board,
-                thread,
-              ),
+              future: _fetchAllRepliesToPost,
               builder:
                   (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
                 switch (snapshot.connectionState) {
@@ -220,9 +235,9 @@ class ThreadPagePost extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => ThreadReplies(
                                 replies: snapshot.data,
-                                post: post,
-                                thread: thread,
-                                board: board,
+                                post: widget.post,
+                                thread: widget.thread,
+                                board: widget.board,
                               ),
                             ),
                           );

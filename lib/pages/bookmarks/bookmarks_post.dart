@@ -27,6 +27,19 @@ class BookmarksPost extends StatefulWidget {
 class _BookmarksPostState extends State<BookmarksPost> {
   bool isDeleted = false;
 
+  Future<ThreadStatus> _fetchArchived;
+  Future<List<int>> _fetchReplies;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchArchived =
+        fetchArchived(widget.favorite.board, widget.favorite.no.toString());
+    _fetchReplies =
+        fetchReplies(widget.favorite.board, widget.favorite.no.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
@@ -109,8 +122,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           FutureBuilder<ThreadStatus>(
-                              future: fetchArchived(widget.favorite.board,
-                                  widget.favorite.no.toString()),
+                              future: _fetchArchived,
                               builder: (BuildContext context,
                                   AsyncSnapshot<ThreadStatus> snapshot) {
                                 switch (snapshot.connectionState) {
@@ -171,8 +183,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                           else
                             Container(),
                           FutureBuilder<List<int>>(
-                            future: fetchReplies(widget.favorite.board,
-                                widget.favorite.no.toString()),
+                            future: _fetchReplies,
                             builder: (BuildContext context,
                                 AsyncSnapshot<List<int>> snapshot1) {
                               switch (snapshot1.connectionState) {

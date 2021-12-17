@@ -15,6 +15,8 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class VideoPlayerState extends State<VideoPlayer> {
+  Future<ChewieController> _getVideo;
+
   VideoPlayerController videoPlayerController;
 
   ChewieController chewieController;
@@ -38,6 +40,13 @@ class VideoPlayerState extends State<VideoPlayer> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _getVideo = getVideo();
+  }
+
+  @override
   void dispose() {
     videoPlayerController.dispose();
     chewieController.dispose();
@@ -47,7 +56,7 @@ class VideoPlayerState extends State<VideoPlayer> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ChewieController>(
-      future: getVideo(),
+      future: _getVideo,
       builder: (
         BuildContext context,
         AsyncSnapshot<ChewieController> snapshot,

@@ -19,6 +19,15 @@ class BoardList extends StatefulWidget {
 }
 
 class BoardListState extends State<BoardList> {
+  Future<List<Board>> _fetchAllBoards;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchAllBoards = fetchAllBoards();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
@@ -61,7 +70,7 @@ class BoardListState extends State<BoardList> {
               delegate: SliverChildListDelegate(
                 [
                   FutureBuilder(
-                    future: fetchAllBoards(),
+                    future: _fetchAllBoards,
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Board>> snapshot) {
                       switch (snapshot.connectionState) {

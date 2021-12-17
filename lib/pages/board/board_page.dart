@@ -31,10 +31,19 @@ class BoardPage extends StatefulWidget {
 class BoardPageState extends State<BoardPage> {
   final ScrollController scrollController = ScrollController();
 
+  Future<List<Post>> _fetchAllThreadsFromBoard;
+
   Sort sortBy = Sort.byImagesCount;
   View view = View.gridView;
 
   bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +299,7 @@ class BoardPageState extends State<BoardPage> {
         scrollController: scrollController,
       ),
       body: FutureBuilder(
-        future: fetchAllThreadsFromBoard(sortBy, widget.board),
+        future: _fetchAllThreadsFromBoard,
         builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:

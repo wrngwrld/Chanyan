@@ -41,6 +41,8 @@ class ThreadPage extends StatefulWidget {
 class ThreadPageState extends State<ThreadPage> {
   final ScrollController scrollController = ScrollController();
 
+  Future<List<Post>> _fetchAllPostsFromThread;
+
   List<Widget> media = [];
   List<String> fileNames = [];
   List<String> names = [];
@@ -88,6 +90,9 @@ class ThreadPageState extends State<ThreadPage> {
   @override
   void initState() {
     super.initState();
+
+    _fetchAllPostsFromThread =
+        fetchAllPostsFromThread(widget.board, widget.thread);
 
     favorite = Favorite(
       no: widget.post.no,
@@ -288,7 +293,7 @@ class ThreadPageState extends State<ThreadPage> {
         },
       ),
       body: FutureBuilder(
-        future: fetchAllPostsFromThread(widget.board, widget.thread),
+        future: _fetchAllPostsFromThread,
         builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:

@@ -30,6 +30,8 @@ class ThreadRepliesTo extends StatefulWidget {
 class _ThreadRepliesToState extends State<ThreadRepliesTo> {
   final ScrollController scrollController = ScrollController();
 
+  Future<Post> _fetchPost;
+
   List<Widget> media = [];
   List<String> fileName = [];
   List<String> name = [];
@@ -61,6 +63,13 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _fetchPost = fetchPost(widget.board, widget.thread, widget.post);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
 
@@ -82,7 +91,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
               title: const Text('Replies'),
             ),
       body: FutureBuilder(
-        future: fetchPost(widget.board, widget.thread, widget.post),
+        future: _fetchPost,
         builder: (BuildContext context, AsyncSnapshot<Post> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
