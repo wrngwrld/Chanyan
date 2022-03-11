@@ -23,6 +23,7 @@ class ThreadPagePost extends StatefulWidget {
     @required this.names,
     @required this.fileNames,
     @required this.media,
+    @required this.allPosts,
   }) : super(key: key);
 
   final String board;
@@ -31,6 +32,7 @@ class ThreadPagePost extends StatefulWidget {
   final List<String> names;
   final List<String> fileNames;
   final List<Widget> media;
+  final List<Post> allPosts;
 
   static String formatBytes(int bytes, int decimals) {
     if (bytes <= 0) {
@@ -56,6 +58,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
       widget.post.no,
       widget.board,
       widget.thread,
+      widget.allPosts,
     );
   }
 
@@ -206,6 +209,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                   com: widget.post.com,
                   board: widget.board,
                   thread: widget.thread,
+                  allPosts: widget.allPosts,
                 ),
               )
             else
@@ -238,6 +242,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                                 post: widget.post,
                                 thread: widget.thread,
                                 board: widget.board,
+                                allPosts: widget.allPosts,
                               ),
                             ),
                           );

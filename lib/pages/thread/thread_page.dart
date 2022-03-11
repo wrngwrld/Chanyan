@@ -320,6 +320,7 @@ class ThreadPageState extends State<ThreadPage> {
                         media: media,
                         names: names,
                         fileNames: fileNames,
+                        allPosts: snapshot.data,
                       ),
                   ],
                 ),

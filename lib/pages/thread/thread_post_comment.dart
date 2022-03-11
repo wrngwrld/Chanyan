@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_replied_to.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:html/parser.dart' show parse;
@@ -12,11 +13,13 @@ class ThreadPostComment extends StatelessWidget {
     @required this.com,
     @required this.thread,
     @required this.board,
+    @required this.allPosts,
   }) : super(key: key);
 
   final String com;
   final int thread;
   final String board;
+  final List<Post> allPosts;
 
   List<Widget> formatComment(
     String com,
@@ -42,6 +45,7 @@ class ThreadPostComment extends StatelessWidget {
                     post: int.parse(urlNo),
                     thread: thread,
                     board: board,
+                    allPosts: allPosts,
                   ),
                 ),
               );

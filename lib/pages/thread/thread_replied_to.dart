@@ -17,11 +17,13 @@ class ThreadRepliesTo extends StatefulWidget {
     @required this.post,
     @required this.thread,
     @required this.board,
+    @required this.allPosts,
   }) : super(key: key);
 
   final int post;
   final int thread;
   final String board;
+  final List<Post> allPosts;
 
   @override
   State<ThreadRepliesTo> createState() => _ThreadRepliesToState();
@@ -117,6 +119,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
                       media: media,
                       names: name,
                       fileNames: fileName,
+                      allPosts: widget.allPosts,
                     ),
                   ),
                 ],

@@ -77,9 +77,8 @@ Future<List<Post>> fetchAllRepliesToPost(
   int post,
   String board,
   int thread,
+  List<Post> allPosts,
 ) async {
-  final List<Post> allPosts = await fetchAllPostsFromThread(board, thread);
-
   final List<Post> list = [];
 
   for (final Post postLoop in allPosts) {
