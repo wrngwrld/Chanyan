@@ -23,7 +23,11 @@ class SettingsProvider with ChangeNotifier {
   }
 
   bool getNSFW() {
-    return allowNSFW;
+    if (allowNSFW == null) {
+      return false;
+    } else {
+      return allowNSFW;
+    }
   }
 
   Future<void> setNSFW(bool boolean) async {
