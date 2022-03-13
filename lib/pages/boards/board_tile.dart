@@ -78,17 +78,42 @@ class _BoardTileState extends State<BoardTile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '/${widget.board.board}/  -  ${widget.board.title}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: Platform.isIOS
-                                  ? FontWeight.w700
-                                  : FontWeight.w600,
-                              color: theme.getTheme() == ThemeData.dark()
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                '/${widget.board.board}/  -  ${widget.board.title}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: Platform.isIOS
+                                      ? FontWeight.w700
+                                      : FontWeight.w600,
+                                  color: theme.getTheme() == ThemeData.dark()
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                              Expanded(child: Container()),
+                              if (widget.board.wsBoard == 0)
+                                Row(
+                                  children: const [
+                                    Icon(
+                                      CupertinoIcons.exclamationmark_triangle,
+                                      size: 12,
+                                      color: CupertinoColors.systemRed,
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      'NSFW',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: CupertinoColors.systemRed,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              else
+                                Container()
+                            ],
                           ),
                           const SizedBox(
                             height: 5,

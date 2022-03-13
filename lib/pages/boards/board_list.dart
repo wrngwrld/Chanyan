@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/blocs/favorite_model.dart';
+import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/board.dart';
@@ -32,6 +33,7 @@ class BoardListState extends State<BoardList> {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
     final favorites = Provider.of<FavoriteProvider>(context);
+    final settings = Provider.of<SettingsProvider>(context);
 
     return CupertinoPageScaffold(
       child: Scrollbar(
@@ -107,7 +109,12 @@ class BoardListState extends State<BoardList> {
                                 ),
                               ),
                               for (Board board in snapshot.data)
-                                BoardTile(board: board, favorites: true),
+                                settings.getNSFW()
+                                    ? BoardTile(board: board, favorites: true)
+                                    : board.wsBoard == 0
+                                        ? Container()
+                                        : BoardTile(
+                                            board: board, favorites: true),
                               Padding(
                                 padding:
                                     const EdgeInsets.fromLTRB(15, 10, 5, 10),
@@ -123,7 +130,12 @@ class BoardListState extends State<BoardList> {
                                 ),
                               ),
                               for (Board board in snapshot.data)
-                                BoardTile(board: board, favorites: false),
+                                settings.getNSFW()
+                                    ? BoardTile(board: board, favorites: false)
+                                    : board.wsBoard == 0
+                                        ? Container()
+                                        : BoardTile(
+                                            board: board, favorites: false),
                             ],
                           );
                       }

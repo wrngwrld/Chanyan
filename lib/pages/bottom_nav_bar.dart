@@ -4,6 +4,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/boards/board_list.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
+import 'package:flutter_chan/pages/settings/settings.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ class BottomNavBarState extends State<BottomNavBar> {
   final List<Widget> _pages = [
     const BoardList(),
     const Bookmarks(),
+    const Settings(),
   ];
 
   void _onItemTapped(int index) {
@@ -45,6 +47,10 @@ class BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Bookmarks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.settings),
+            label: 'Settingss',
           ),
         ],
         currentIndex: _selectedIndex,
