@@ -50,7 +50,7 @@ class BottomNavBarState extends State<BottomNavBar> {
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.settings),
-            label: 'Settingss',
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
