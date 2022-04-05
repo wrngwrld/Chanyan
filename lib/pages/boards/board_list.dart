@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/blocs/favorite_model.dart';
@@ -39,7 +40,16 @@ class BoardListState extends State<BoardList> {
       child: Scrollbar(
         child: CustomScrollView(
           slivers: [
-            if (Platform.isIOS)
+            if (kIsWeb)
+              const SliverAppBar(
+                backgroundColor: AppColors.kGreen,
+                foregroundColor: AppColors.kWhite,
+                title: Text(
+                  'Chanyan',
+                ),
+                pinned: true,
+              )
+            else if (Platform.isIOS)
               CupertinoSliverNavigationBar(
                 border: Border.all(color: Colors.transparent),
                 largeTitle: const Text(

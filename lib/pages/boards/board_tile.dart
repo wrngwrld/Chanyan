@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
@@ -84,9 +85,11 @@ class _BoardTileState extends State<BoardTile> {
                                 '/${widget.board.board}/  -  ${widget.board.title}',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  fontWeight: Platform.isIOS
-                                      ? FontWeight.w700
-                                      : FontWeight.w600,
+                                  fontWeight: kIsWeb
+                                      ? FontWeight.w600
+                                      : Platform.isIOS
+                                          ? FontWeight.w700
+                                          : FontWeight.w600,
                                   color: theme.getTheme() == ThemeData.dark()
                                       ? Colors.white
                                       : Colors.black,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/models/board.dart';
@@ -95,8 +96,8 @@ Future<List<Post>> fetchAllRepliesToPost(
 }
 
 Future<List<Board>> fetchAllBoards() async {
-  final Response response =
-      await get(Uri.parse('https://a.4cdn.org/boards.json'));
+  final Response response = await get(Uri.parse(
+      'https://cors-proxy.htmldriven.com/?url=https://a.4cdn.org/boards.json'));
 
   if (response.statusCode == 200) {
     final List<Board> boards = (jsonDecode(response.body)['boards'] as List)

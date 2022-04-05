@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
@@ -82,21 +83,28 @@ class _AppWithThemeState extends State<AppWithTheme>
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
 
-    return Platform.isIOS
-        ? CupertinoApp(
-            color: CupertinoColors.activeGreen,
-            home: const BottomNavBar(),
-            theme: CupertinoThemeData(
-              brightness: theme.getTheme() == ThemeData.dark()
-                  ? Brightness.dark
-                  : Brightness.light,
-            ),
-          )
-        : MaterialApp(
+    return kIsWeb
+        ? MaterialApp(
             title: 'Chanyan',
             theme: theme.getTheme(),
             debugShowCheckedModeBanner: false,
             home: const BottomNavBar(),
-          );
+          )
+        : Platform.isIOS
+            ? CupertinoApp(
+                color: CupertinoColors.activeGreen,
+                home: const BottomNavBar(),
+                theme: CupertinoThemeData(
+                  brightness: theme.getTheme() == ThemeData.dark()
+                      ? Brightness.dark
+                      : Brightness.light,
+                ),
+              )
+            : MaterialApp(
+                title: 'Chanyan',
+                theme: theme.getTheme(),
+                debugShowCheckedModeBanner: false,
+                home: const BottomNavBar(),
+              );
   }
 }
