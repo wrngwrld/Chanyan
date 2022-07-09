@@ -78,6 +78,7 @@ class _AppWithThemeState extends State<AppWithTheme>
 
     return CupertinoApp(
       color: CupertinoColors.activeGreen,
+      debugShowCheckedModeBanner: false,
       home: const BottomNavBar(),
       theme: CupertinoThemeData(
         brightness: theme.getTheme() == ThemeData.dark()

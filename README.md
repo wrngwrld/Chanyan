@@ -22,16 +22,9 @@
 
 ## Screenshots
 
-### iOS
 <p>
   <img src="./screenshots/ios_screenshot_1.jpg" width="40%">
   <img src="./screenshots/ios_screenshot_2.jpg" width="40%">
-</p>
-
-### Android
-<p>
-  <img src="./screenshots/android_screenshot_1.jpg" width="40%">
-  <img src="./screenshots/android_screenshot_2.jpg" width="40%">
 </p>
 
 ### Gallery
