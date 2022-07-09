@@ -60,14 +60,30 @@ class BoardPageState extends State<BoardPage> {
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
       appBar: CupertinoNavigationBar(
-        previousPageTitle: 'Boards',
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              previousPageTitle: 'Boards',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
         backgroundColor: theme.getTheme() == ThemeData.dark()
             ? CupertinoColors.black.withOpacity(0.8)
             : CupertinoColors.white.withOpacity(0.8),
-        middle: Text(
-          '/${widget.board}/ - ${widget.boardName}',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        middle: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Text(
+            '/${widget.board}/ - ${widget.boardName}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,

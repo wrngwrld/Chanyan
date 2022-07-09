@@ -22,14 +22,30 @@ class PrivacySettingsState extends State<PrivacySettings> {
       backgroundColor:
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       navigationBar: CupertinoNavigationBar(
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              previousPageTitle: 'Settings',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
         backgroundColor: Colors.transparent,
-        previousPageTitle: 'Settings',
-        middle: Text(
-          'Privacy',
-          style: TextStyle(
-            color: theme.getTheme() == ThemeData.dark()
-                ? Colors.white
-                : Colors.black,
+        middle: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Text(
+            'Privacy',
+            style: TextStyle(
+              color: theme.getTheme() == ThemeData.dark()
+                  ? Colors.white
+                  : Colors.black,
+            ),
           ),
         ),
       ),

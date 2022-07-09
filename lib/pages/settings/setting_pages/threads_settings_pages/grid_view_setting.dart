@@ -24,13 +24,29 @@ class GridViewSettingsState extends State<GridViewSettings> {
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       navigationBar: CupertinoNavigationBar(
         backgroundColor: Colors.transparent,
-        previousPageTitle: 'Threads',
-        middle: Text(
-          'Grid View',
-          style: TextStyle(
-            color: theme.getTheme() == ThemeData.dark()
-                ? Colors.white
-                : Colors.black,
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              previousPageTitle: 'Threads',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
+        middle: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Text(
+            'Grid View',
+            style: TextStyle(
+              color: theme.getTheme() == ThemeData.dark()
+                  ? Colors.white
+                  : Colors.black,
+            ),
           ),
         ),
       ),

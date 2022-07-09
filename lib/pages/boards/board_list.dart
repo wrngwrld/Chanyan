@@ -44,12 +44,17 @@ class BoardListState extends State<BoardList> {
           slivers: [
             CupertinoSliverNavigationBar(
               border: Border.all(color: Colors.transparent),
-              largeTitle: Text(
-                'Chanyan',
-                style: TextStyle(
-                  color: theme.getTheme() == ThemeData.dark()
-                      ? CupertinoColors.white
-                      : CupertinoColors.black,
+              largeTitle: MediaQuery(
+                data: MediaQueryData(
+                  textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                ),
+                child: Text(
+                  'Chanyan',
+                  style: TextStyle(
+                    color: theme.getTheme() == ThemeData.dark()
+                        ? CupertinoColors.white
+                        : CupertinoColors.black,
+                  ),
                 ),
               ),
               backgroundColor: theme.getTheme() == ThemeData.dark()

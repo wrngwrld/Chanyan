@@ -22,9 +22,26 @@ class _SettingsState extends State<Settings> {
       child: CustomScrollView(
         slivers: [
           CupertinoSliverNavigationBar(
+            leading: MediaQuery(
+              data: MediaQueryData(
+                textScaleFactor: MediaQuery.textScaleFactorOf(context),
+              ),
+              child: Transform.translate(
+                offset: const Offset(-16, 0),
+                child: CupertinoNavigationBarBackButton(
+                  previousPageTitle: 'Home',
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ),
             border: Border.all(color: Colors.transparent),
-            largeTitle: const Text(
-              'Settings',
+            largeTitle: MediaQuery(
+              data: MediaQueryData(
+                textScaleFactor: MediaQuery.textScaleFactorOf(context),
+              ),
+              child: const Text(
+                'Settings',
+              ),
             ),
             backgroundColor: theme.getTheme() == ThemeData.dark()
                 ? CupertinoColors.black.withOpacity(0.8)

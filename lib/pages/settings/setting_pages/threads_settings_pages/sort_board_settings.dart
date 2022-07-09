@@ -23,14 +23,30 @@ class SortBoardSettingsState extends State<SortBoardSettings> {
       backgroundColor:
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       navigationBar: CupertinoNavigationBar(
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              previousPageTitle: 'Threads',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
         backgroundColor: Colors.transparent,
-        previousPageTitle: 'Threads',
-        middle: Text(
-          'Default board sort',
-          style: TextStyle(
-            color: theme.getTheme() == ThemeData.dark()
-                ? Colors.white
-                : Colors.black,
+        middle: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Text(
+            'Default board sort',
+            style: TextStyle(
+              color: theme.getTheme() == ThemeData.dark()
+                  ? Colors.white
+                  : Colors.black,
+            ),
           ),
         ),
       ),
