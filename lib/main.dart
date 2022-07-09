@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,10 +17,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return ChangeNotifierProvider<ThemeChanger>(
-    //   create: (_) => ThemeChanger(ThemeData.dark()),
-    //   child: AppWithTheme(),
-    // );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ThemeChanger>(

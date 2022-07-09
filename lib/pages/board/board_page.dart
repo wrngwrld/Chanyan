@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/enums/enums.dart';
@@ -34,7 +33,6 @@ class BoardPageState extends State<BoardPage> {
   Future<List<Post>> _fetchAllThreadsFromBoard;
 
   Sort sortBy = Sort.byImagesCount;
-  View view = View.gridView;
 
   bool isFavorite = false;
 
@@ -42,12 +40,17 @@ class BoardPageState extends State<BoardPage> {
   void initState() {
     super.initState();
 
+    fetchThreads();
+  }
+
+  fetchThreads() {
     _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
+    final settings = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
       backgroundColor:
@@ -67,74 +70,6 @@ class BoardPageState extends State<BoardPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FavoriteButton(board: widget.board),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (BuildContext context) => CupertinoActionSheet(
-                    message: const Text(
-                      'Sort by',
-                      style: TextStyle(color: AppColors.kBlack),
-                    ),
-                    actions: [
-                      CupertinoActionSheetAction(
-                        child: const Text('Image Count'),
-                        onPressed: () {
-                          setState(() {
-                            sortBy = Sort.byImagesCount;
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
-                      CupertinoActionSheetAction(
-                        child: const Text('Reply Count'),
-                        onPressed: () {
-                          setState(() {
-                            sortBy = Sort.byReplyCount;
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
-                      CupertinoActionSheetAction(
-                        child: const Text('Bump Order'),
-                        onPressed: () {
-                          setState(() {
-                            sortBy = Sort.byBumpOrder;
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
-                      CupertinoActionSheetAction(
-                        child: const Text('Newest'),
-                        onPressed: () {
-                          setState(() {
-                            sortBy = Sort.byNewest;
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
-                      CupertinoActionSheetAction(
-                        child: const Text('Oldest'),
-                        onPressed: () {
-                          setState(() {
-                            sortBy = Sort.byOldest;
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                    cancelButton: CupertinoActionSheetAction(
-                      child: const Text('Cancel'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                );
-              },
-              child: const Icon(Icons.sort),
-            ),
             SizedBox(
               width: 20,
               child: CupertinoButton(
@@ -143,29 +78,57 @@ class BoardPageState extends State<BoardPage> {
                   showCupertinoModalPopup(
                     context: context,
                     builder: (BuildContext context) => CupertinoActionSheet(
+                      message: const Text(
+                        'Sort by',
+                      ),
                       actions: [
                         CupertinoActionSheetAction(
-                          child: const Text('Reload'),
+                          child: const Text('Image Count'),
                           onPressed: () {
-                            setState(() {});
+                            setState(() {
+                              sortBy = Sort.byImagesCount;
+                            });
+                            fetchThreads();
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('Grid View'),
+                          child: const Text('Reply Count'),
                           onPressed: () {
                             setState(() {
-                              view = View.gridView;
+                              sortBy = Sort.byReplyCount;
                             });
+                            fetchThreads();
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('List View'),
+                          child: const Text('Bump Order'),
                           onPressed: () {
                             setState(() {
-                              view = View.listView;
+                              sortBy = Sort.byBumpOrder;
                             });
+                            fetchThreads();
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Newest'),
+                          onPressed: () {
+                            setState(() {
+                              sortBy = Sort.byNewest;
+                            });
+                            fetchThreads();
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Oldest'),
+                          onPressed: () {
+                            setState(() {
+                              sortBy = Sort.byOldest;
+                            });
+                            fetchThreads();
                             Navigator.pop(context);
                           },
                         ),
@@ -179,7 +142,7 @@ class BoardPageState extends State<BoardPage> {
                     ),
                   );
                 },
-                child: const Icon(Icons.more_vert),
+                child: const Icon(Icons.sort),
               ),
             ),
           ],
@@ -201,7 +164,7 @@ class BoardPageState extends State<BoardPage> {
               );
               break;
             default:
-              switch (view) {
+              switch (settings.getBoardView()) {
                 case View.listView:
                   return BoardListView(
                     scrollController: scrollController,
@@ -210,14 +173,8 @@ class BoardPageState extends State<BoardPage> {
                   );
                   break;
                 case View.gridView:
-                  return BoardGridView(
-                    scrollController: scrollController,
-                    board: widget.board,
-                    snapshot: snapshot,
-                  );
-                  break;
                 default:
-                  return BoardListView(
+                  return BoardGridView(
                     scrollController: scrollController,
                     board: widget.board,
                     snapshot: snapshot,

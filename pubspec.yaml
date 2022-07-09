@@ -45,6 +45,10 @@ dependencies:
   flutter_slidable: ^0.6.0
   intl: ^0.17.0
   lint: ^1.7.2
+  ce_settings: 
+    git:
+        url: https://github.com/wrngwrld/ce_settings
+        ref: main # branch name
 
 dev_dependencies:
   flutter_test:
