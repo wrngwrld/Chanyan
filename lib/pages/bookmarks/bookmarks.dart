@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks_post.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +18,6 @@ class Bookmarks extends StatefulWidget {
 
 class _BookmarksState extends State<Bookmarks> {
   final ScrollController scrollController = ScrollController();
-
-  Sort sortBy = Sort.byNewest;
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +54,6 @@ class _BookmarksState extends State<Bookmarks> {
                               CupertinoActionSheet(
                             message: const Text(
                               'Sort by',
-                              style: TextStyle(
-                                color: CupertinoColors.activeBlue,
-                              ),
                             ),
                             actions: [
                               CupertinoActionSheetAction(

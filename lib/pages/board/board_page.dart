@@ -32,18 +32,19 @@ class BoardPageState extends State<BoardPage> {
 
   Future<List<Post>> _fetchAllThreadsFromBoard;
 
-  Sort sortBy = Sort.byImagesCount;
-
   bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
-
-    fetchThreads();
   }
 
-  fetchThreads() {
+  void fetchThreads(sortBy) {
+    _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board);
+  }
+
+  void setSort(sortBy, settings) {
+    settings.setBoardSort(sortBy);
     _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board);
   }
 
@@ -51,6 +52,8 @@ class BoardPageState extends State<BoardPage> {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
     final settings = Provider.of<SettingsProvider>(context);
+
+    fetchThreads(settings.getBoardSort());
 
     return Scaffold(
       backgroundColor:
@@ -85,50 +88,35 @@ class BoardPageState extends State<BoardPage> {
                         CupertinoActionSheetAction(
                           child: const Text('Image Count'),
                           onPressed: () {
-                            setState(() {
-                              sortBy = Sort.byImagesCount;
-                            });
-                            fetchThreads();
+                            setSort(Sort.byImagesCount, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
                           child: const Text('Reply Count'),
                           onPressed: () {
-                            setState(() {
-                              sortBy = Sort.byReplyCount;
-                            });
-                            fetchThreads();
+                            setSort(Sort.byReplyCount, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
                           child: const Text('Bump Order'),
                           onPressed: () {
-                            setState(() {
-                              sortBy = Sort.byBumpOrder;
-                            });
-                            fetchThreads();
+                            setSort(Sort.byBumpOrder, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
                           child: const Text('Newest'),
                           onPressed: () {
-                            setState(() {
-                              sortBy = Sort.byNewest;
-                            });
-                            fetchThreads();
+                            setSort(Sort.byNewest, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
                           child: const Text('Oldest'),
                           onPressed: () {
-                            setState(() {
-                              sortBy = Sort.byOldest;
-                            });
-                            fetchThreads();
+                            setSort(Sort.byOldest, settings);
                             Navigator.pop(context);
                           },
                         ),

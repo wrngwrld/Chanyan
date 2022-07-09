@@ -9,6 +9,7 @@ class SettingsProvider with ChangeNotifier {
 
   bool allowNSFW = false;
   View boardView = View.gridView;
+  Sort boardSort = Sort.byImagesCount;
 
   Future<void> loadPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -17,27 +18,25 @@ class SettingsProvider with ChangeNotifier {
     final View boardViewPrefs = View.values.firstWhere(
       (element) => element.name == prefs.getString('boardView'),
     );
+    final Sort boardSortPrefs = Sort.values.firstWhere(
+      (element) => element.name == prefs.getString('boardSort'),
+    );
 
-    if (allowNSFWPrefs == null) {
-      allowNSFW = false;
+    if (allowNSFWPrefs != null) {
+      allowNSFW = allowNSFWPrefs;
     }
-
-    if (boardViewPrefs == null) {
-      boardView = View.gridView;
+    if (boardViewPrefs != null) {
+      boardView = boardViewPrefs;
     }
-
-    allowNSFW = allowNSFWPrefs;
-    boardView = boardViewPrefs;
+    if (boardSortPrefs != null) {
+      boardSort = boardSortPrefs;
+    }
 
     notifyListeners();
   }
 
   bool getNSFW() {
-    if (allowNSFW == null) {
-      return false;
-    } else {
-      return allowNSFW;
-    }
+    return allowNSFW;
   }
 
   Future<void> setNSFW(bool boolean) async {
@@ -50,11 +49,7 @@ class SettingsProvider with ChangeNotifier {
   }
 
   View getBoardView() {
-    if (boardView == null) {
-      return View.gridView;
-    } else {
-      return boardView;
-    }
+    return boardView;
   }
 
   Future<void> setBoardView(View view) async {
@@ -62,6 +57,19 @@ class SettingsProvider with ChangeNotifier {
 
     boardView = view;
     prefs.setString('boardView', view.name);
+
+    notifyListeners();
+  }
+
+  Sort getBoardSort() {
+    return boardSort;
+  }
+
+  Future<void> setBoardSort(Sort sort) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    boardSort = sort;
+    prefs.setString('boardSort', sort.name);
 
     notifyListeners();
   }

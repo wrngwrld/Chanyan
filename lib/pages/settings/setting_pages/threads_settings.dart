@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/threads_settings_pages/grid_view_setting.dart';
+import 'package:flutter_chan/pages/settings/setting_pages/threads_settings_pages/sort_board_settings.dart';
 import 'package:provider/provider.dart';
 
 class ThreadsSettings extends StatefulWidget {
@@ -41,15 +43,12 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
               items: [
                 CESettingsItem(
                   leading: const CESettingsIcon(
-                    icon: CupertinoIcons.exclamationmark_triangle,
-                    color: CupertinoColors.systemRed,
+                    icon: CupertinoIcons.viewfinder,
+                    color: CupertinoColors.systemTeal,
                   ),
                   text: 'Thread View',
-                  lastItem: true,
                   trailing: Text(
-                    settings.getBoardView().name == 'gridView'
-                        ? 'Grid View'
-                        : 'List View',
+                    getBoardViewName(settings.getBoardView()),
                     style: const TextStyle(color: CupertinoColors.inactiveGray),
                   ),
                   onTap: () => {
@@ -60,11 +59,65 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
                     ),
                   },
                 ),
+                CESettingsItem(
+                  leading: const CESettingsIcon(
+                    icon: CupertinoIcons.sort_down,
+                    color: CupertinoColors.systemOrange,
+                  ),
+                  text: 'Default board sort',
+                  lastItem: true,
+                  trailing: Text(
+                    getSortByName(settings.getBoardSort()),
+                    style: const TextStyle(color: CupertinoColors.inactiveGray),
+                  ),
+                  onTap: () => {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => const SortBoardSettings(),
+                      ),
+                    ),
+                  },
+                ),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  String getBoardViewName(View view) {
+    switch (view) {
+      case View.gridView:
+        return 'Grid View';
+        break;
+      case View.listView:
+        return 'List View';
+        break;
+      default:
+        return '';
+    }
+  }
+
+  String getSortByName(Sort sort) {
+    switch (sort) {
+      case Sort.byImagesCount:
+        return 'Images Count';
+        break;
+      case Sort.byBumpOrder:
+        return 'Bump Order';
+        break;
+      case Sort.byReplyCount:
+        return 'Reply Count';
+        break;
+      case Sort.byNewest:
+        return 'Newest';
+        break;
+      case Sort.byOldest:
+        return 'Oldest';
+        break;
+      default:
+        return '';
+    }
   }
 }
