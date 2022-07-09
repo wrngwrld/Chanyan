@@ -28,14 +28,21 @@ class _BookmarksState extends State<Bookmarks> {
     final theme = Provider.of<ThemeChanger>(context);
     final bookmarks = Provider.of<BookmarksProvider>(context);
 
-    return CupertinoPageScaffold(
-      child: Scrollbar(
-        child: CustomScrollView(
-          slivers: [
-            if (Platform.isIOS)
+    return Scaffold(
+      body: CupertinoPageScaffold(
+        child: Scrollbar(
+          child: CustomScrollView(
+            slivers: [
               CupertinoSliverNavigationBar(
                 border: Border.all(color: Colors.transparent),
-                largeTitle: const Text('Bookmarks'),
+                largeTitle: Text(
+                  'Bookmarks',
+                  style: TextStyle(
+                    color: theme.getTheme() == ThemeData.dark()
+                        ? CupertinoColors.white
+                        : CupertinoColors.black,
+                  ),
+                ),
                 backgroundColor: theme.getTheme() == ThemeData.dark()
                     ? CupertinoColors.black.withOpacity(0.8)
                     : CupertinoColors.white.withOpacity(0.8),
@@ -114,109 +121,53 @@ class _BookmarksState extends State<Bookmarks> {
                     ),
                   ],
                 ),
-              )
-            else
-              SliverAppBar(
-                backgroundColor: AppColors.kGreen,
-                foregroundColor: AppColors.kWhite,
-                title: const Text('Bookmarks'),
-                actions: [
-                  PopupMenuButton(
-                    icon: const Icon(Icons.sort),
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        child: Text('Sort by newest'),
-                        value: 0,
-                      ),
-                      const PopupMenuItem(
-                        child: Text('Sort by oldest'),
-                        value: 1,
-                      ),
-                    ],
-                    onSelected: (int result) {
-                      switch (result) {
-                        case 0:
-                          setState(() {
-                            sortBy = Sort.byNewest;
-                          });
-
-                          break;
-                        case 1:
-                          setState(() {
-                            sortBy = Sort.byOldest;
-                          });
-
-                          break;
-                        default:
-                      }
-                    },
-                  ),
-                  PopupMenuButton(
-                    icon: const Icon(Icons.more_vert),
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        child: Text('Clear bookmarks'),
-                        value: 0,
-                      ),
-                    ],
-                    onSelected: (int result) {
-                      switch (result) {
-                        case 0:
-                          bookmarks.clearBookmarks();
-
-                          break;
-                        default:
-                      }
-                    },
-                  ),
-                ],
-                pinned: true,
               ),
-            CupertinoSliverRefreshControl(
-              onRefresh: () {
-                return Future.delayed(const Duration(seconds: 1))
-                  ..then((_) {
-                    if (mounted) {
-                      bookmarks.loadPreferences();
-                    }
-                  });
-              },
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  if (bookmarks.getBookmarks().isEmpty)
-                    Column(
-                      children: [
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Text(
-                          'Add bookmarks first!',
-                          style: TextStyle(
-                            fontSize: 26,
-                            color: theme.getTheme() == ThemeData.dark()
-                                ? Colors.white
-                                : Colors.black,
+              CupertinoSliverRefreshControl(
+                onRefresh: () {
+                  return Future.delayed(const Duration(seconds: 1))
+                    ..then((_) {
+                      if (mounted) {
+                        bookmarks.loadPreferences();
+                      }
+                    });
+                },
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    if (bookmarks.getBookmarks().isEmpty)
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 30,
                           ),
-                        ),
-                      ],
-                    )
-                  else
-                    Column(
-                      children: [
-                        for (String string in bookmarks.getBookmarks())
-                          BookmarksPost(
-                            favorite: Favorite.fromJson(
-                              json.decode(string) as Map<String, dynamic>,
+                          Text(
+                            'Add bookmarks first!',
+                            style: TextStyle(
+                              fontSize: 26,
+                              color: theme.getTheme() == ThemeData.dark()
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
-                          )
-                      ],
-                    )
-                ],
-              ),
-            )
-          ],
+                          ),
+                        ],
+                      )
+                    else
+                      Column(
+                        children: [
+                          for (String string in bookmarks.getBookmarks())
+                            BookmarksPost(
+                              favorite: Favorite.fromJson(
+                                json.decode(string) as Map<String, dynamic>,
+                              ),
+                            )
+                        ],
+                      )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

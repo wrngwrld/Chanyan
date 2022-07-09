@@ -9,8 +9,11 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/board.dart';
 import 'package:flutter_chan/pages/boards/board_tile.dart';
+import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
+
+import '../settings/settings.dart';
 
 class BoardList extends StatefulWidget {
   const BoardList({Key key}) : super(key: key);
@@ -39,25 +42,50 @@ class BoardListState extends State<BoardList> {
       child: Scrollbar(
         child: CustomScrollView(
           slivers: [
-            if (Platform.isIOS)
-              CupertinoSliverNavigationBar(
-                border: Border.all(color: Colors.transparent),
-                largeTitle: const Text(
-                  '4chan',
+            CupertinoSliverNavigationBar(
+              border: Border.all(color: Colors.transparent),
+              largeTitle: Text(
+                'Chanyan',
+                style: TextStyle(
+                  color: theme.getTheme() == ThemeData.dark()
+                      ? CupertinoColors.white
+                      : CupertinoColors.black,
                 ),
-                backgroundColor: theme.getTheme() == ThemeData.dark()
-                    ? CupertinoColors.black.withOpacity(0.8)
-                    : CupertinoColors.white.withOpacity(0.8),
-              )
-            else
-              const SliverAppBar(
-                backgroundColor: AppColors.kGreen,
-                foregroundColor: AppColors.kWhite,
-                title: Text(
-                  'Chanyan',
-                ),
-                pinned: true,
               ),
+              backgroundColor: theme.getTheme() == ThemeData.dark()
+                  ? CupertinoColors.black.withOpacity(0.8)
+                  : CupertinoColors.white.withOpacity(0.8),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const Bookmarks(),
+                        ),
+                      );
+                    },
+                    child: const Icon(CupertinoIcons.heart),
+                  ),
+                  SizedBox(
+                    width: 20,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const Settings(),
+                          ),
+                        );
+                      },
+                      child: const Icon(CupertinoIcons.settings),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             CupertinoSliverRefreshControl(
               onRefresh: () {
                 return Future.delayed(const Duration(seconds: 1))

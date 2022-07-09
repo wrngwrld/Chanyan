@@ -53,248 +53,138 @@ class BoardPageState extends State<BoardPage> {
       backgroundColor:
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
-      appBar: Platform.isIOS
-          ? CupertinoNavigationBar(
-              previousPageTitle: 'Boards',
-              backgroundColor: theme.getTheme() == ThemeData.dark()
-                  ? CupertinoColors.black.withOpacity(0.8)
-                  : CupertinoColors.white.withOpacity(0.8),
-              middle: Text(
-                '/${widget.board}/ - ${widget.boardName}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FavoriteButton(board: widget.board),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                        context: context,
-                        builder: (BuildContext context) => CupertinoActionSheet(
-                          message: const Text(
-                            'Sort by',
-                            style: TextStyle(color: AppColors.kBlack),
-                          ),
-                          actions: [
-                            CupertinoActionSheetAction(
-                              child: const Text('Image Count'),
-                              onPressed: () {
-                                setState(() {
-                                  sortBy = Sort.byImagesCount;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            CupertinoActionSheetAction(
-                              child: const Text('Reply Count'),
-                              onPressed: () {
-                                setState(() {
-                                  sortBy = Sort.byReplyCount;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            CupertinoActionSheetAction(
-                              child: const Text('Bump Order'),
-                              onPressed: () {
-                                setState(() {
-                                  sortBy = Sort.byBumpOrder;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            CupertinoActionSheetAction(
-                              child: const Text('Newest'),
-                              onPressed: () {
-                                setState(() {
-                                  sortBy = Sort.byNewest;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            CupertinoActionSheetAction(
-                              child: const Text('Oldest'),
-                              onPressed: () {
-                                setState(() {
-                                  sortBy = Sort.byOldest;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                          cancelButton: CupertinoActionSheetAction(
-                            child: const Text('Cancel'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.sort),
-                  ),
-                  SizedBox(
-                    width: 20,
-                    child: CupertinoButton(
-                      padding: EdgeInsets.zero,
+      appBar: CupertinoNavigationBar(
+        previousPageTitle: 'Boards',
+        backgroundColor: theme.getTheme() == ThemeData.dark()
+            ? CupertinoColors.black.withOpacity(0.8)
+            : CupertinoColors.white.withOpacity(0.8),
+        middle: Text(
+          '/${widget.board}/ - ${widget.boardName}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FavoriteButton(board: widget.board),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (BuildContext context) => CupertinoActionSheet(
+                    message: const Text(
+                      'Sort by',
+                      style: TextStyle(color: AppColors.kBlack),
+                    ),
+                    actions: [
+                      CupertinoActionSheetAction(
+                        child: const Text('Image Count'),
+                        onPressed: () {
+                          setState(() {
+                            sortBy = Sort.byImagesCount;
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                      CupertinoActionSheetAction(
+                        child: const Text('Reply Count'),
+                        onPressed: () {
+                          setState(() {
+                            sortBy = Sort.byReplyCount;
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                      CupertinoActionSheetAction(
+                        child: const Text('Bump Order'),
+                        onPressed: () {
+                          setState(() {
+                            sortBy = Sort.byBumpOrder;
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                      CupertinoActionSheetAction(
+                        child: const Text('Newest'),
+                        onPressed: () {
+                          setState(() {
+                            sortBy = Sort.byNewest;
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                      CupertinoActionSheetAction(
+                        child: const Text('Oldest'),
+                        onPressed: () {
+                          setState(() {
+                            sortBy = Sort.byOldest;
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                    cancelButton: CupertinoActionSheetAction(
+                      child: const Text('Cancel'),
                       onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              CupertinoActionSheet(
-                            actions: [
-                              CupertinoActionSheetAction(
-                                child: const Text('Reload'),
-                                onPressed: () {
-                                  setState(() {});
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: const Text('Grid View'),
-                                onPressed: () {
-                                  setState(() {
-                                    view = View.gridView;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: const Text('List View'),
-                                onPressed: () {
-                                  setState(() {
-                                    view = View.listView;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                            cancelButton: CupertinoActionSheetAction(
-                              child: const Text('Cancel'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        );
+                        Navigator.pop(context);
                       },
-                      child: const Icon(Icons.more_vert),
                     ),
                   ),
-                ],
-              ),
-            )
-          : AppBar(
-              backgroundColor: AppColors.kGreen,
-              foregroundColor: AppColors.kWhite,
-              title: Text(
-                '/${widget.board}/ - ${widget.boardName}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              actions: [
-                FavoriteButton(board: widget.board),
-                PopupMenuButton(
-                  icon: const Icon(Icons.sort),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      child: Text('Sort by image count'),
-                      value: 0,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Sort by reply count'),
-                      value: 1,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Sort by bump order'),
-                      value: 2,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Sort by newest'),
-                      value: 3,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Sort by oldest'),
-                      value: 4,
-                    ),
-                  ],
-                  onSelected: (int result) {
-                    switch (result) {
-                      case 0:
-                        setState(() {
-                          sortBy = Sort.byImagesCount;
-                        });
-                        break;
-                      case 1:
-                        setState(() {
-                          sortBy = Sort.byReplyCount;
-                        });
-
-                        break;
-                      case 2:
-                        setState(() {
-                          sortBy = Sort.byBumpOrder;
-                        });
-
-                        break;
-                      case 3:
-                        setState(() {
-                          sortBy = Sort.byNewest;
-                        });
-
-                        break;
-                      case 4:
-                        setState(() {
-                          sortBy = Sort.byOldest;
-                        });
-
-                        break;
-                      default:
-                    }
-                  },
-                ),
-                PopupMenuButton(
-                  icon: const Icon(Icons.more_vert),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      child: Text('Reload'),
-                      value: 0,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Grid view'),
-                      value: 1,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('List view'),
-                      value: 2,
-                    ),
-                  ],
-                  onSelected: (int result) {
-                    switch (result) {
-                      case 0:
-                        setState(() {});
-                        break;
-                      case 1:
-                        setState(() {
-                          view = View.listView;
-                        });
-
-                        break;
-                      case 2:
-                        setState(() {
-                          view = View.listView;
-                        });
-
-                        break;
-                      default:
-                    }
-                  },
-                )
-              ],
+                );
+              },
+              child: const Icon(Icons.sort),
             ),
+            SizedBox(
+              width: 20,
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  showCupertinoModalPopup(
+                    context: context,
+                    builder: (BuildContext context) => CupertinoActionSheet(
+                      actions: [
+                        CupertinoActionSheetAction(
+                          child: const Text('Reload'),
+                          onPressed: () {
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Grid View'),
+                          onPressed: () {
+                            setState(() {
+                              view = View.gridView;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('List View'),
+                          onPressed: () {
+                            setState(() {
+                              view = View.listView;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.more_vert),
+              ),
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButtons(
         scrollController: scrollController,
       ),

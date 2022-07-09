@@ -36,30 +36,18 @@ class _BookmarkButtonState extends State<BookmarkButton> {
 
     isFavorite = bookmarks.getBookmarks().contains(favoriteString);
 
-    return Platform.isIOS
-        ? CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () => {
-              if (isFavorite)
-                bookmarks.removeBookmarks(widget.favorite)
-              else
-                bookmarks.addBookmarks(widget.favorite),
-            },
-            child: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
-              color: CupertinoColors.systemRed,
-            ),
-          )
-        : IconButton(
-            onPressed: () => {
-              if (isFavorite)
-                bookmarks.removeBookmarks(widget.favorite)
-              else
-                bookmarks.addBookmarks(widget.favorite),
-            },
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
-            ),
-          );
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () => {
+        if (isFavorite)
+          bookmarks.removeBookmarks(widget.favorite)
+        else
+          bookmarks.addBookmarks(widget.favorite),
+      },
+      child: Icon(
+        isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+        color: CupertinoColors.systemRed,
+      ),
+    );
   }
 }

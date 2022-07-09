@@ -164,9 +164,7 @@ class _GridPostState extends State<GridPost> {
                               isFavorite
                                   ? Icons.favorite
                                   : Icons.favorite_border_outlined,
-                              color: Platform.isIOS
-                                  ? CupertinoColors.systemRed
-                                  : AppColors.kWhite,
+                              color: CupertinoColors.systemRed,
                             ),
                           )
                         ],

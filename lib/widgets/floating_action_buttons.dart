@@ -45,14 +45,9 @@ class FloatingActionButtons extends StatelessWidget {
           child: const Icon(Icons.expand_less, size: 35),
           elevation: 0,
           backgroundColor: theme.getTheme() == ThemeData.dark()
-              ? Platform.isIOS
-                  ? CupertinoColors.black.withOpacity(0.85)
-                  : AppColors.kGreen
-              : Platform.isIOS
-                  ? CupertinoColors.white.withOpacity(0.85)
-                  : AppColors.kGreen,
-          foregroundColor:
-              Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
+              ? CupertinoColors.black.withOpacity(0.85)
+              : CupertinoColors.white.withOpacity(0.85),
+          foregroundColor: CupertinoColors.activeBlue,
           onPressed: () => {
             if (goUp == null) animateToTop() else goUp(),
           },
@@ -65,14 +60,9 @@ class FloatingActionButtons extends StatelessWidget {
           child: const Icon(Icons.expand_more, size: 35),
           elevation: 0,
           backgroundColor: theme.getTheme() == ThemeData.dark()
-              ? Platform.isIOS
-                  ? CupertinoColors.black.withOpacity(0.85)
-                  : AppColors.kGreen
-              : Platform.isIOS
-                  ? CupertinoColors.white.withOpacity(0.85)
-                  : AppColors.kGreen,
-          foregroundColor:
-              Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
+              ? CupertinoColors.black.withOpacity(0.85)
+              : CupertinoColors.white.withOpacity(0.85),
+          foregroundColor: CupertinoColors.activeBlue,
           onPressed: () => {
             if (goDown == null) animateToBottom() else goDown(),
           },

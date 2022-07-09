@@ -228,15 +228,9 @@ class VLCPlayerState extends State<VLCPlayer> {
                                   ),
                                   Expanded(
                                     child: Slider(
-                                      activeColor: Platform.isIOS
-                                          ? CupertinoColors.systemGrey
-                                          : AppColors.kGreen,
-                                      inactiveColor: Platform.isIOS
-                                          ? CupertinoColors.systemFill
-                                          : AppColors.kWhite,
-                                      thumbColor: Platform.isIOS
-                                          ? CupertinoColors.white
-                                          : AppColors.kWhite,
+                                      activeColor: CupertinoColors.systemGrey,
+                                      inactiveColor: CupertinoColors.systemFill,
+                                      thumbColor: CupertinoColors.white,
                                       value: sliderValue,
                                       min: 0.0,
                                       max: (!validPosition &&

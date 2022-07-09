@@ -111,174 +111,103 @@ class ThreadPageState extends State<ThreadPage> {
       backgroundColor:
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
-      appBar: Platform.isIOS
-          ? CupertinoNavigationBar(
-              backgroundColor: theme.getTheme() == ThemeData.dark()
-                  ? CupertinoColors.black.withOpacity(0.8)
-                  : CupertinoColors.white.withOpacity(0.8),
-              previousPageTitle:
-                  widget.fromFavorites ? 'bookmarks' : '/${widget.board}/',
-              middle: Text(
-                unescape(cleanTags(widget.threadName)),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  BookmarkButton(
-                    favorite: favorite,
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ThreadGridView(
-                            media: media,
-                            fileNames: fileNames,
-                            names: names,
-                            board: widget.board,
-                            tims: tims,
-                            prevTitle: unescape(cleanTags(widget.threadName)),
-                            exts: exts,
-                          ),
-                        ),
-                      ),
-                    },
-                    child: const Icon(Icons.apps),
-                  ),
-                  SizedBox(
-                    width: 20,
-                    child: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              CupertinoActionSheet(
-                            actions: [
-                              CupertinoActionSheetAction(
-                                child: const Text('Reload'),
-                                onPressed: () {
-                                  setState(() {});
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: const Text('Share'),
-                                onPressed: () {
-                                  Share.share(
-                                      'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: const Text(
-                                  'Open in Browser',
-                                ),
-                                onPressed: () {
-                                  launchURL(
-                                      'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: const Text('Download all Images'),
-                                onPressed: () {
-                                  saveAllMedia(
-                                    'https://i.4cdn.org/${widget.board}/',
-                                    fileNames,
-                                    context,
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                            cancelButton: CupertinoActionSheetAction(
-                              child: const Text('Cancel'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Icon(Icons.more_vert),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : AppBar(
-              backgroundColor: AppColors.kGreen,
-              foregroundColor: AppColors.kWhite,
-              title: Text(
-                unescape(cleanTags(widget.threadName)),
-              ),
-              actions: [
-                BookmarkButton(
-                  favorite: favorite,
-                ),
-                IconButton(
-                  onPressed: () => {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ThreadGridView(
-                          media: media,
-                          fileNames: fileNames,
-                          names: names,
-                          board: widget.board,
-                          tims: tims,
-                          exts: exts,
-                          prevTitle: unescape(cleanTags(widget.threadName)),
-                        ),
-                      ),
-                    ),
-                  },
-                  icon: const Icon(Icons.apps),
-                ),
-                PopupMenuButton(
-                  icon: const Icon(Icons.more_vert),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      child: Text('Open in Browser'),
-                      value: 0,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Share'),
-                      value: 1,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Download all Images'),
-                      value: 2,
-                    ),
-                  ],
-                  onSelected: (int result) {
-                    final String clipboardText =
-                        'https://boards.4chan.org/${widget.board}/thread/${widget.thread}';
-
-                    switch (result) {
-                      case 0:
-                        launchURL(
-                            'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
-                        break;
-                      case 1:
-                        Share.share(clipboardText);
-                        break;
-                      case 2:
-                        saveAllMedia(
-                          'https://i.4cdn.org/${widget.board}/',
-                          fileNames,
-                          context,
-                        );
-                        break;
-                      default:
-                    }
-                  },
-                )
-              ],
+      appBar: CupertinoNavigationBar(
+        backgroundColor: theme.getTheme() == ThemeData.dark()
+            ? CupertinoColors.black.withOpacity(0.8)
+            : CupertinoColors.white.withOpacity(0.8),
+        previousPageTitle:
+            widget.fromFavorites ? 'bookmarks' : '/${widget.board}/',
+        middle: Text(
+          unescape(cleanTags(widget.threadName)),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BookmarkButton(
+              favorite: favorite,
             ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ThreadGridView(
+                      media: media,
+                      fileNames: fileNames,
+                      names: names,
+                      board: widget.board,
+                      tims: tims,
+                      prevTitle: unescape(cleanTags(widget.threadName)),
+                      exts: exts,
+                    ),
+                  ),
+                ),
+              },
+              child: const Icon(Icons.apps),
+            ),
+            SizedBox(
+              width: 20,
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  showCupertinoModalPopup(
+                    context: context,
+                    builder: (BuildContext context) => CupertinoActionSheet(
+                      actions: [
+                        CupertinoActionSheetAction(
+                          child: const Text('Reload'),
+                          onPressed: () {
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Share'),
+                          onPressed: () {
+                            Share.share(
+                                'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text(
+                            'Open in Browser',
+                          ),
+                          onPressed: () {
+                            launchURL(
+                                'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Download all Images'),
+                          onPressed: () {
+                            saveAllMedia(
+                              'https://i.4cdn.org/${widget.board}/',
+                              fileNames,
+                              context,
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.more_vert),
+              ),
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButtons(
         scrollController: scrollController,
         goDown: () => {

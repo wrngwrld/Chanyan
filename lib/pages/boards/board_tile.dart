@@ -84,9 +84,7 @@ class _BoardTileState extends State<BoardTile> {
                                 '/${widget.board.board}/  -  ${widget.board.title}',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  fontWeight: Platform.isIOS
-                                      ? FontWeight.w700
-                                      : FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   color: theme.getTheme() == ThemeData.dark()
                                       ? Colors.white
                                       : Colors.black,

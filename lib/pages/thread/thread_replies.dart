@@ -74,19 +74,13 @@ class _ThreadRepliesState extends State<ThreadReplies> {
       backgroundColor:
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
-      appBar: Platform.isIOS
-          ? CupertinoNavigationBar(
-              backgroundColor: theme.getTheme() == ThemeData.dark()
-                  ? CupertinoColors.black.withOpacity(0.8)
-                  : CupertinoColors.white.withOpacity(0.8),
-              previousPageTitle: 'back',
-              middle: const Text('Replies'),
-            )
-          : AppBar(
-              backgroundColor: AppColors.kGreen,
-              foregroundColor: AppColors.kWhite,
-              title: const Text('Replies'),
-            ),
+      appBar: CupertinoNavigationBar(
+        backgroundColor: theme.getTheme() == ThemeData.dark()
+            ? CupertinoColors.black.withOpacity(0.8)
+            : CupertinoColors.white.withOpacity(0.8),
+        previousPageTitle: 'back',
+        middle: const Text('Replies'),
+      ),
       body: Scrollbar(
         controller: scrollController,
         child: ListView(

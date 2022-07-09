@@ -132,11 +132,9 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                             widget.post.fsize,
                             0,
                           )})',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
-                            color: Platform.isIOS
-                                ? CupertinoColors.activeBlue
-                                : AppColors.kGreen,
+                            color: CupertinoColors.activeBlue,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

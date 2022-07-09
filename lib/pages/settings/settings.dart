@@ -20,10 +20,10 @@ class _SettingsState extends State<Settings> {
     final theme = Provider.of<ThemeChanger>(context);
     final settings = Provider.of<SettingsProvider>(context);
 
-    return CupertinoPageScaffold(
-      child: CustomScrollView(
-        slivers: [
-          if (Platform.isIOS)
+    return Scaffold(
+      body: CupertinoPageScaffold(
+        child: CustomScrollView(
+          slivers: [
             CupertinoSliverNavigationBar(
               border: Border.all(color: Colors.transparent),
               largeTitle: const Text(
@@ -32,47 +32,39 @@ class _SettingsState extends State<Settings> {
               backgroundColor: theme.getTheme() == ThemeData.dark()
                   ? CupertinoColors.black.withOpacity(0.8)
                   : CupertinoColors.white.withOpacity(0.8),
-            )
-          else
-            const SliverAppBar(
-              backgroundColor: AppColors.kGreen,
-              foregroundColor: AppColors.kWhite,
-              title: Text(
-                'Settings',
-              ),
-              pinned: true,
             ),
-          CupertinoSliverRefreshControl(
-            onRefresh: () {
-              return Future.delayed(const Duration(seconds: 1))
-                ..then((_) {
-                  if (mounted) {}
-                });
-            },
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                ListTile(
-                  title: Text(
-                    'Allow NSFW-Boards',
-                    style: TextStyle(
-                      color: theme.getTheme() == ThemeData.dark()
-                          ? Colors.white
-                          : Colors.black,
+            CupertinoSliverRefreshControl(
+              onRefresh: () {
+                return Future.delayed(const Duration(seconds: 1))
+                  ..then((_) {
+                    if (mounted) {}
+                  });
+              },
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  ListTile(
+                    title: Text(
+                      'Allow NSFW-Boards',
+                      style: TextStyle(
+                        color: theme.getTheme() == ThemeData.dark()
+                            ? Colors.white
+                            : Colors.black,
+                      ),
                     ),
-                  ),
-                  trailing: CupertinoSwitch(
-                    onChanged: (value) => {
-                      settings.setNSFW(value),
-                    },
-                    value: settings.getNSFW(),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+                    trailing: CupertinoSwitch(
+                      onChanged: (value) => {
+                        settings.setNSFW(value),
+                      },
+                      value: settings.getNSFW(),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -81,145 +81,88 @@ class _MediaPageState extends State<MediaPage> {
       backgroundColor:
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       extendBodyBehindAppBar: true,
-      appBar: Platform.isIOS
-          ? CupertinoNavigationBar(
-              backgroundColor: Colors.transparent,
-              middle: Column(
-                children: [
-                  Text(
-                    widget.names[index],
-                    style: TextStyle(
-                      color: theme.getTheme() == ThemeData.dark()
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '${index + 1}/${widget.list.length}',
-                    style: TextStyle(
-                      color: theme.getTheme() == ThemeData.dark()
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                  ),
-                ],
+      appBar: CupertinoNavigationBar(
+        backgroundColor: Colors.transparent,
+        middle: Column(
+          children: [
+            Text(
+              widget.names[index],
+              style: TextStyle(
+                color: theme.getTheme() == ThemeData.dark()
+                    ? Colors.white
+                    : Colors.black,
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 20,
-                    child: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              CupertinoActionSheet(
-                            actions: [
-                              CupertinoActionSheetAction(
-                                child: const Text('Open in Browser'),
-                                onPressed: () {
-                                  launchURL(
-                                    'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: const Text('Share'),
-                                onPressed: () {
-                                  Share.share(
-                                    'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: const Text('Download'),
-                                onPressed: () {
-                                  saveVideo(
-                                    'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                                    widget.fileNames[index],
-                                    context,
-                                    true,
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                            cancelButton: CupertinoActionSheetAction(
-                              child: const Text('Cancel'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Icon(Icons.ios_share),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              foregroundColor: theme.getTheme() == ThemeData.dark()
-                  ? Colors.white
-                  : Colors.black,
-              title: Column(
-                children: [
-                  Text(widget.names[index]),
-                  Text('${index + 1}/${widget.list.length}'),
-                ],
-              ),
-              actions: [
-                PopupMenuButton(
-                  icon: const Icon(Icons.share),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      child: Text('Open in Browser'),
-                      value: 0,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Share'),
-                      value: 1,
-                    ),
-                    const PopupMenuItem(
-                      child: Text('Download'),
-                      value: 2,
-                    ),
-                  ],
-                  onSelected: (int result) {
-                    switch (result) {
-                      case 0:
-                        launchURL(
-                          'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                        );
-                        break;
-                      case 1:
-                        Share.share(
-                          'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                        );
-                        break;
-                      case 2:
-                        saveVideo(
-                          'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                          widget.fileNames[index],
-                          context,
-                          true,
-                        );
-                        break;
-                      default:
-                    }
-                  },
-                )
-              ],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+            Text(
+              '${index + 1}/${widget.list.length}',
+              style: TextStyle(
+                color: theme.getTheme() == ThemeData.dark()
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 20,
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  showCupertinoModalPopup(
+                    context: context,
+                    builder: (BuildContext context) => CupertinoActionSheet(
+                      actions: [
+                        CupertinoActionSheetAction(
+                          child: const Text('Open in Browser'),
+                          onPressed: () {
+                            launchURL(
+                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Share'),
+                          onPressed: () {
+                            Share.share(
+                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Download'),
+                          onPressed: () {
+                            saveVideo(
+                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
+                              widget.fileNames[index],
+                              context,
+                              true,
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.ios_share),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: PreloadPageView(
         scrollDirection: Axis.horizontal,
         controller: controller,
