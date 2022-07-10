@@ -73,6 +73,20 @@ Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
   }
 }
 
+Future<List<Post>> fetchThreadFromURL(String board, String thread) async {
+  final Response response =
+      await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
+
+  if (response.statusCode == 200) {
+    final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
+        .map((model) => Post.fromJson(model))
+        .toList();
+    return posts;
+  } else {
+    throw Exception('Failed to load posts.');
+  }
+}
+
 Future<List<Post>> fetchAllRepliesToPost(
   int post,
   String board,

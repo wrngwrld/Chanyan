@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
@@ -8,8 +6,10 @@ import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/models/board.dart';
+import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/boards/board_tile.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
+import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +24,10 @@ class BoardList extends StatefulWidget {
 
 class BoardListState extends State<BoardList> {
   Future<List<Board>> _fetchAllBoards;
+  TextEditingController controller = TextEditingController();
+
+  bool showWarning = false;
+  String warningText = 'This link is not supported';
 
   @override
   void initState() {
@@ -38,12 +42,152 @@ class BoardListState extends State<BoardList> {
     final favorites = Provider.of<FavoriteProvider>(context);
     final settings = Provider.of<SettingsProvider>(context);
 
+    Future<bool> openURL() async {
+      try {
+        controller.text = controller.text.trim();
+        final regExDomains =
+            RegExp(r'^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www.)?([^:\/\n?]+)');
+        final matchDomain = regExDomains.firstMatch(controller.text);
+        final domain = matchDomain.group(1);
+
+        if (domain == 'boards.4chan.org' || domain == 'boards.4channel.org') {
+          final regEx = RegExp(r'^https?:\/\/[A-Za-z0-9:.]*([\/]{1}.*\/?)$');
+          final match = regEx.firstMatch(controller.text);
+          final removedFirst = match.group(1).replaceFirst('/', '');
+          final splitted = removedFirst.split('/');
+
+          List<Post> response;
+
+          try {
+            response = await fetchThreadFromURL(splitted.first, splitted.last);
+          } catch (e) {
+            showWarning = true;
+            warningText = e.toString();
+            return true;
+          }
+
+          controller.clear();
+
+          Navigator.of(context).pop();
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ThreadPage(
+                post: response[0],
+                threadName: response[0].sub ?? response[0].com,
+                thread: response[0].no,
+                board: splitted.first,
+              ),
+            ),
+          );
+
+          return false;
+        } else {
+          warningText = 'This link is not supported';
+          return true;
+        }
+      } catch (e) {
+        showWarning = true;
+        warningText = e.toString();
+        return true;
+      }
+    }
+
     return CupertinoPageScaffold(
       child: Scrollbar(
         child: CustomScrollView(
           slivers: [
             CupertinoSliverNavigationBar(
               border: Border.all(color: Colors.transparent),
+              leading: MediaQuery(
+                data: MediaQueryData(
+                  textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () => {
+                        showWarning = false,
+                        showCupertinoDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (context) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return CupertinoAlertDialog(
+                                  title: const Text('Open Link'),
+                                  content: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Visibility(
+                                        visible: showWarning,
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              warningText,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Card(
+                                        color: Colors.transparent,
+                                        elevation: 0.0,
+                                        child: Column(
+                                          children: [
+                                            CupertinoTextField(
+                                              controller: controller,
+                                              placeholder: 'Insert Board URL',
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    CupertinoDialogAction(
+                                      child: const Text(
+                                        'Open',
+                                        style: TextStyle(
+                                          color: CupertinoColors.activeBlue,
+                                        ),
+                                      ),
+                                      onPressed: () => {
+                                        openURL().then(
+                                          (value) => {
+                                            if (value)
+                                              {
+                                                setState(() {
+                                                  showWarning = true;
+                                                }),
+                                              },
+                                          },
+                                        )
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      },
+                      child: const Text(
+                        'Open Link',
+                        style: TextStyle(color: CupertinoColors.activeBlue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               largeTitle: MediaQuery(
                 data: MediaQueryData(
                   textScaleFactor: MediaQuery.textScaleFactorOf(context),
