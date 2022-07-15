@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -78,9 +76,10 @@ class _SettingsState extends State<Settings> {
                           ),
                         ],
                       ),
-                      // trailing: Container(),
                       mainText: 'Chanyan',
                       subText: 'View on GitHub',
+                      mainTextFontSize: 22,
+                      subTextFontSize: 16,
                       onTap: () => {
                         launchURL('https://github.com/wrngwrld/Chanyan'),
                       },
