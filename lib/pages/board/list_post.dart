@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
@@ -150,14 +151,42 @@ class _ListPostState extends State<ListPost> {
                             )
                           else
                             Container(),
-                          Text(
-                            'R: ${widget.post.replies} / I: ${widget.post.images}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: theme.getTheme() == ThemeData.dark()
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
+                          Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.reply,
+                                color: Colors.white,
+                                size: 12,
+                              ),
+                              Text(
+                                ' ${widget.post.replies}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Icon(
+                                CupertinoIcons.camera,
+                                color: Colors.white,
+                                size: 12,
+                              ),
+                              Text(
+                                ' ${widget.post.images}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                           Text(
                             DateFormat('kk:mm - dd.MM.y').format(

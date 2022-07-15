@@ -143,15 +143,42 @@ class _GridPostState extends State<GridPost> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'R: ${widget.post.replies} / I: ${widget.post.images}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
+                          Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.reply,
+                                color: Colors.white,
+                                size: 13,
+                              ),
+                              Text(
+                                ' ${widget.post.replies}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Icon(
+                                CupertinoIcons.camera,
+                                color: Colors.white,
+                                size: 13,
+                              ),
+                              Text(
+                                ' ${widget.post.images}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                           GestureDetector(
                             onTap: () => {
