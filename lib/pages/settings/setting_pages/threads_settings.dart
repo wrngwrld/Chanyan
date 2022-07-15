@@ -26,18 +26,18 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
           theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
       navigationBar: CupertinoNavigationBar(
         backgroundColor: Colors.transparent,
-        // leading: MediaQuery(
-        //   data: MediaQueryData(
-        //     textScaleFactor: MediaQuery.textScaleFactorOf(context),
-        //   ),
-        //   child: Transform.translate(
-        //     offset: const Offset(-16, 0),
-        //     child: CupertinoNavigationBarBackButton(
-        //       previousPageTitle: 'Settings',
-        //       onPressed: () => Navigator.of(context).pop(),
-        //     ),
-        //   ),
-        // ),
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              previousPageTitle: 'Settings',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
         previousPageTitle: 'Settings',
         middle: MediaQuery(
           data: MediaQueryData(

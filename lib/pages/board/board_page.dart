@@ -53,6 +53,8 @@ class BoardPageState extends State<BoardPage> {
     final theme = Provider.of<ThemeChanger>(context);
     final settings = Provider.of<SettingsProvider>(context);
 
+    final Sort boardSort = settings.getBoardSort();
+
     fetchThreads(settings.getBoardSort());
 
     return Scaffold(
@@ -103,35 +105,65 @@ class BoardPageState extends State<BoardPage> {
                       ),
                       actions: [
                         CupertinoActionSheetAction(
-                          child: const Text('Image Count'),
+                          child: Text(
+                            'Image Count',
+                            style: boardSort == Sort.byImagesCount
+                                ? const TextStyle(fontWeight: FontWeight.w700)
+                                : const TextStyle(
+                                    fontWeight: FontWeight.normal),
+                          ),
                           onPressed: () {
                             setSort(Sort.byImagesCount, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('Reply Count'),
+                          child: Text(
+                            'Reply Count',
+                            style: boardSort == Sort.byReplyCount
+                                ? const TextStyle(fontWeight: FontWeight.w700)
+                                : const TextStyle(
+                                    fontWeight: FontWeight.normal),
+                          ),
                           onPressed: () {
                             setSort(Sort.byReplyCount, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('Bump Order'),
+                          child: Text(
+                            'Bump Order',
+                            style: boardSort == Sort.byBumpOrder
+                                ? const TextStyle(fontWeight: FontWeight.w700)
+                                : const TextStyle(
+                                    fontWeight: FontWeight.normal),
+                          ),
                           onPressed: () {
                             setSort(Sort.byBumpOrder, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('Newest'),
+                          child: Text(
+                            'Newest',
+                            style: boardSort == Sort.byNewest
+                                ? const TextStyle(fontWeight: FontWeight.w700)
+                                : const TextStyle(
+                                    fontWeight: FontWeight.normal),
+                          ),
                           onPressed: () {
                             setSort(Sort.byNewest, settings);
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('Oldest'),
+                          child: Text(
+                            'Oldest',
+                            style: boardSort == Sort.byOldest
+                                ? const TextStyle(fontWeight: FontWeight.w700)
+                                : const TextStyle(
+                                    fontWeight: FontWeight.normal),
+                          ),
                           onPressed: () {
                             setSort(Sort.byOldest, settings);
                             Navigator.pop(context);

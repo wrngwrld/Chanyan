@@ -55,7 +55,105 @@ class _BookmarksPostState extends State<BookmarksPost> {
               (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
-                return Container();
+                return Container(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: theme.getTheme() == ThemeData.dark()
+                            ? CupertinoColors.systemGrey
+                            : const Color(0x1F000000),
+                        width: 0.15,
+                      ),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.favorite.imageUrl != null)
+                            SizedBox(
+                              width: 125,
+                              height: 125,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            Container(),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(),
+                                  Text(
+                                    'No.${widget.favorite.no}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          theme.getTheme() == ThemeData.dark()
+                                              ? Colors.white
+                                              : Colors.black,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (widget.favorite.sub != null)
+                                    Text(
+                                      unescape(cleanTags(widget.favorite.sub)),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            theme.getTheme() == ThemeData.dark()
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
+                                    )
+                                  else
+                                    Container(),
+                                  Text(
+                                    'R: - / I: -',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          theme.getTheme() == ThemeData.dark()
+                                              ? Colors.white
+                                              : Colors.black,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (widget.favorite.com != null)
+                        Html(
+                          data: widget.favorite.com,
+                          style: {
+                            'body': Style(
+                              color: theme.getTheme() == ThemeData.dark()
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          },
+                        )
+                      else
+                        Container(),
+                    ],
+                  ),
+                );
                 break;
               default:
                 if (snapshot.data[0] == ThreadStatus.deleted) {
