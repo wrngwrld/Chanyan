@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/privacy_settings.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/threads_settings.dart';
@@ -22,18 +25,19 @@ class _SettingsState extends State<Settings> {
       child: CustomScrollView(
         slivers: [
           CupertinoSliverNavigationBar(
-            leading: MediaQuery(
-              data: MediaQueryData(
-                textScaleFactor: MediaQuery.textScaleFactorOf(context),
-              ),
-              child: Transform.translate(
-                offset: const Offset(-16, 0),
-                child: CupertinoNavigationBarBackButton(
-                  previousPageTitle: 'Home',
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ),
+            // leading: MediaQuery(
+            //   data: MediaQueryData(
+            //     textScaleFactor: MediaQuery.textScaleFactorOf(context),
+            //   ),
+            //   child: Transform.translate(
+            //     offset: const Offset(-16, 0),
+            //     child: CupertinoNavigationBarBackButton(
+            //       previousPageTitle: 'Home',
+            //       onPressed: () => Navigator.of(context).pop(),
+            //     ),
+            //   ),
+            // ),
+            previousPageTitle: 'Home',
             border: Border.all(color: Colors.transparent),
             largeTitle: MediaQuery(
               data: MediaQueryData(
@@ -74,9 +78,12 @@ class _SettingsState extends State<Settings> {
                           ),
                         ],
                       ),
-                      trailing: Container(),
+                      // trailing: Container(),
                       mainText: 'Chanyan',
-                      subText: '',
+                      subText: 'View on GitHub',
+                      onTap: () => {
+                        launchURL('https://github.com/wrngwrld/Chanyan'),
+                      },
                     ),
                     CESettingsItem(
                       leading: const CESettingsIcon(

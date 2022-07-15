@@ -49,7 +49,7 @@ class BookmarksProvider with ChangeNotifier {
 
     prefs.setStringList('favoriteThreads', list);
 
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<void> clearBookmarks() async {

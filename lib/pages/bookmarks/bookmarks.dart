@@ -30,18 +30,19 @@ class _BookmarksState extends State<Bookmarks> {
           child: CustomScrollView(
             slivers: [
               CupertinoSliverNavigationBar(
-                leading: MediaQuery(
-                  data: MediaQueryData(
-                    textScaleFactor: MediaQuery.textScaleFactorOf(context),
-                  ),
-                  child: Transform.translate(
-                    offset: const Offset(-16, 0),
-                    child: CupertinoNavigationBarBackButton(
-                      previousPageTitle: 'Home',
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                ),
+                // leading: MediaQuery(
+                //   data: MediaQueryData(
+                //     textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                //   ),
+                //   child: Transform.translate(
+                //     offset: const Offset(-16, 0),
+                //     child: CupertinoNavigationBarBackButton(
+                //       previousPageTitle: 'Home',
+                //       onPressed: () => Navigator.of(context).pop(),
+                //     ),
+                //   ),
+                // ),
+                previousPageTitle: 'Home',
                 border: Border.all(color: Colors.transparent),
                 largeTitle: MediaQuery(
                   data: MediaQueryData(

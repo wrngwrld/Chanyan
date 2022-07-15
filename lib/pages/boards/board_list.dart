@@ -182,7 +182,10 @@ class BoardListState extends State<BoardList> {
                       },
                       child: const Text(
                         'Open Link',
-                        style: TextStyle(color: CupertinoColors.activeBlue),
+                        style: TextStyle(
+                          color: CupertinoColors.activeBlue,
+                          fontSize: 17,
+                        ),
                       ),
                     ),
                   ],
