@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';

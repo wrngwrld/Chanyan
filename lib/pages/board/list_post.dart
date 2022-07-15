@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';

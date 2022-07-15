@@ -27,6 +27,7 @@ class Post {
     this.country,
     this.board,
     this.archived,
+    this.repliedPosts,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
@@ -57,6 +58,7 @@ class Post {
         country: json['country'],
         board: json['board'],
         archived: json['archived'],
+        repliedPosts: json['repliedPosts'],
       );
 
   int no;
@@ -86,6 +88,7 @@ class Post {
   String country;
   String board;
   int archived;
+  List<Post> repliedPosts;
 
   Map<String, dynamic> toJson() => {
         'no': no,
@@ -113,5 +116,6 @@ class Post {
         'unique_ips': uniqueIps,
         'board': board,
         'archived': archived,
+        'repliedPosts': repliedPosts,
       };
 }

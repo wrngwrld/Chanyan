@@ -1,13 +1,13 @@
-import 'dart:io';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/bookmark_button.dart';
 import 'package:flutter_chan/pages/thread/thread_grid_view.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
@@ -250,6 +250,7 @@ class ThreadPageState extends State<ThreadPage> {
                         names: names,
                         fileNames: fileNames,
                         allPosts: snapshot.data,
+                        replies: snapshot.data[i].repliedPosts,
                       ),
                   ],
                 ),

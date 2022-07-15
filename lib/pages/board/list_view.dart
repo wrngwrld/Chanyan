@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
-import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/board/list_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

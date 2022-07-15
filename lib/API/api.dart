@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:flutter_chan/Models/board.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/enums/enums.dart';
-import 'package:flutter_chan/models/board.dart';
-import 'package:flutter_chan/models/post.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -67,20 +68,18 @@ Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
     final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
         .map((model) => Post.fromJson(model))
         .toList();
-    return posts;
-  } else {
-    throw Exception('Failed to load posts.');
-  }
-}
 
-Future<List<Post>> fetchThreadFromURL(String board, String thread) async {
-  final Response response =
-      await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
+    for (int i = 0; i < posts.length; i++) {
+      final replies = await fetchAllRepliesToPost(
+        posts[i].no,
+        board,
+        thread,
+        posts,
+      );
 
-  if (response.statusCode == 200) {
-    final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
-        .map((model) => Post.fromJson(model))
-        .toList();
+      posts[i].repliedPosts = replies;
+    }
+
     return posts;
   } else {
     throw Exception('Failed to load posts.');

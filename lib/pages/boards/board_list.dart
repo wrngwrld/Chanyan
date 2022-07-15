@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/Models/board.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/models/board.dart';
-import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/boards/board_tile.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
@@ -59,7 +59,8 @@ class BoardListState extends State<BoardList> {
           List<Post> response;
 
           try {
-            response = await fetchThreadFromURL(splitted.first, splitted.last);
+            response = await fetchAllPostsFromThread(
+                splitted.first, int.parse(splitted.last));
           } catch (e) {
             showWarning = true;
             warningText = e.toString();
@@ -145,7 +146,7 @@ class BoardListState extends State<BoardList> {
                                           children: [
                                             CupertinoTextField(
                                               controller: controller,
-                                              placeholder: 'Insert Board URL',
+                                              placeholder: 'Insert Thread URL',
                                             )
                                           ],
                                         ),

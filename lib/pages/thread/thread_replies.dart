@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:provider/provider.dart';
@@ -88,14 +86,25 @@ class _ThreadRepliesState extends State<ThreadReplies> {
           controller: scrollController,
           children: [
             for (int i = 0; i < widget.replies.length; i++)
-              ThreadPagePost(
-                board: widget.board,
-                thread: widget.thread,
-                post: widget.replies[i],
-                media: media,
-                names: names,
-                fileNames: fileNames,
-                allPosts: widget.allPosts,
+              FutureBuilder(
+                future: fetchAllRepliesToPost(
+                  widget.replies[i].no,
+                  widget.board,
+                  widget.thread,
+                  widget.allPosts,
+                ),
+                builder: (context, snapshot) {
+                  return ThreadPagePost(
+                    board: widget.board,
+                    thread: widget.thread,
+                    post: widget.replies[i],
+                    media: media,
+                    names: names,
+                    fileNames: fileNames,
+                    allPosts: widget.allPosts,
+                    replies: snapshot.data,
+                  );
+                },
               ),
           ],
         ),
