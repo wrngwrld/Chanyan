@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +33,7 @@ class FavoriteProvider with ChangeNotifier {
       list.add(board);
       prefs.setStringList('favoriteBoards', list);
     }
+    log('Removed $board from favorites');
 
     notifyListeners();
   }
@@ -42,6 +45,7 @@ class FavoriteProvider with ChangeNotifier {
 
     prefs.setStringList('favoriteBoards', list);
 
+    log('Removed $board from favorites');
     notifyListeners();
   }
 }

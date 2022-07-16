@@ -6,6 +6,7 @@ import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/Models/post.dart';
+import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -151,42 +152,9 @@ class _ListPostState extends State<ListPost> {
                             )
                           else
                             Container(),
-                          Row(
-                            children: [
-                              const Icon(
-                                CupertinoIcons.reply,
-                                color: Colors.white,
-                                size: 12,
-                              ),
-                              Text(
-                                ' ${widget.post.replies}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Icon(
-                                CupertinoIcons.camera,
-                                color: Colors.white,
-                                size: 12,
-                              ),
-                              Text(
-                                ' ${widget.post.images}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                          RepliesRow(
+                            replies: widget.post.replies,
+                            imageReplies: widget.post.images,
                           ),
                           Text(
                             DateFormat('kk:mm - dd.MM.y').format(

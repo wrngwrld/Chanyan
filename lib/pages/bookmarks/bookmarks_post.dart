@@ -6,6 +6,7 @@ import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/enums/enums.dart';
+import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -120,16 +121,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                     )
                                   else
                                     Container(),
-                                  Text(
-                                    'R: - / I: -',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color:
-                                          theme.getTheme() == ThemeData.dark()
-                                              ? Colors.white
-                                              : Colors.black,
-                                    ),
-                                  )
+                                  const RepliesRow(),
                                 ],
                               ),
                             ),
@@ -289,27 +281,12 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                         Container(),
                                       if (isDeleted ||
                                           snapshot.data[1][0] == null)
-                                        Text(
-                                          'R: - / I: -',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: theme.getTheme() ==
-                                                    ThemeData.dark()
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                        )
+                                        const RepliesRow()
                                       else
-                                        Text(
-                                          'R:${snapshot.data[1][0]} / I: ${snapshot.data[1][1]}',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: theme.getTheme() ==
-                                                    ThemeData.dark()
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                        )
+                                        RepliesRow(
+                                          replies: snapshot.data[1][0],
+                                          imageReplies: snapshot.data[1][1],
+                                        ),
                                     ],
                                   ),
                                 ),

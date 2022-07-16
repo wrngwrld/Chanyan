@@ -7,6 +7,7 @@ import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/Models/post.dart';
+import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
@@ -143,42 +144,9 @@ class _GridPostState extends State<GridPost> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                CupertinoIcons.reply,
-                                color: Colors.white,
-                                size: 13,
-                              ),
-                              Text(
-                                ' ${widget.post.replies}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Icon(
-                                CupertinoIcons.camera,
-                                color: Colors.white,
-                                size: 13,
-                              ),
-                              Text(
-                                ' ${widget.post.images}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                          RepliesRow(
+                            replies: widget.post.replies,
+                            imageReplies: widget.post.images,
                           ),
                           GestureDetector(
                             onTap: () => {

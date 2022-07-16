@@ -6,6 +6,7 @@ import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/media_page.dart';
+import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_post_comment.dart';
 import 'package:flutter_chan/pages/thread/thread_replies.dart';
 import 'package:flutter_chan/services/string.dart';
@@ -219,15 +220,9 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                       ),
                     );
                   },
-                  child: Text(
-                    'Replies: ${widget.replies.length} ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: theme.getTheme() == ThemeData.dark()
-                          ? Colors.white
-                          : Colors.black,
-                    ),
+                  child: RepliesRow(
+                    replies: widget.replies.length,
+                    showImageReplies: false,
                   ),
                 )
               else
