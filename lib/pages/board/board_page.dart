@@ -37,15 +37,18 @@ class BoardPageState extends State<BoardPage> {
   @override
   void initState() {
     super.initState();
+
+    final settings = Provider.of<SettingsProvider>(context, listen: false);
+
+    _fetchAllThreadsFromBoard =
+        fetchAllThreadsFromBoard(settings.getBoardSort(), widget.board);
   }
 
-  void fetchThreads(sortBy) {
-    _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board);
-  }
-
-  void setSort(sortBy, settings) {
-    settings.setBoardSort(sortBy);
-    _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board);
+  void setSort(Sort sortBy, SettingsProvider settings) {
+    setState(() {
+      _fetchAllThreadsFromBoard =
+          fetchAllThreadsFromBoard(sortBy, widget.board);
+    });
   }
 
   @override
@@ -54,8 +57,6 @@ class BoardPageState extends State<BoardPage> {
     final settings = Provider.of<SettingsProvider>(context);
 
     final Sort boardSort = settings.getBoardSort();
-
-    fetchThreads(settings.getBoardSort());
 
     return Scaffold(
       backgroundColor:

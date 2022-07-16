@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 class ThreadReplies extends StatefulWidget {
@@ -30,17 +31,26 @@ class ThreadReplies extends StatefulWidget {
 class _ThreadRepliesState extends State<ThreadReplies> {
   final ScrollController scrollController = ScrollController();
 
-  List<Widget> media = [];
-  List<String> fileNames = [];
-  List<String> names = [];
+  Future<List<List<String>>> _fetchMedia;
 
-  Future<void> getMedia(List<Post> list) async {
+  List<Widget> media = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchMedia = fetchMedia(widget.replies);
+  }
+
+  Future<List<List<String>>> fetchMedia(List<Post> list) async {
+    final List<List<String>> fileNamesAndNames = [[], []];
+
     for (final Post post in list) {
       if (post.tim != null) {
         final String video = post.tim.toString() + post.ext;
 
-        names.add(post.filename + post.ext);
-        fileNames.add(post.tim.toString() + post.ext);
+        fileNamesAndNames[1].add(post.filename + post.ext);
+        fileNamesAndNames[0].add(post.tim.toString() + post.ext);
         media.add(
           post.ext == '.webm'
               ? VLCPlayer(
@@ -60,55 +70,61 @@ class _ThreadRepliesState extends State<ThreadReplies> {
         );
       }
     }
+
+    return fileNamesAndNames;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
 
-    getMedia(widget.replies);
-
-    return Scaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
-      extendBodyBehindAppBar: true,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: theme.getTheme() == ThemeData.dark()
-            ? CupertinoColors.black.withOpacity(0.8)
-            : CupertinoColors.white.withOpacity(0.8),
-        previousPageTitle: 'back',
-        middle: const Text('Replies'),
-      ),
-      body: Scrollbar(
-        controller: scrollController,
-        child: ListView(
-          shrinkWrap: false,
-          controller: scrollController,
-          children: [
-            for (int i = 0; i < widget.replies.length; i++)
-              FutureBuilder(
-                future: fetchAllRepliesToPost(
-                  widget.replies[i].no,
-                  widget.board,
-                  widget.thread,
-                  widget.allPosts,
-                ),
-                builder: (context, snapshot) {
-                  return ThreadPagePost(
-                    board: widget.board,
-                    thread: widget.thread,
-                    post: widget.replies[i],
-                    media: media,
-                    names: names,
-                    fileNames: fileNames,
-                    allPosts: widget.allPosts,
-                    replies: snapshot.data,
-                  );
-                },
+    return FutureBuilder<List<List<String>>>(
+      future: _fetchMedia,
+      builder: (context, AsyncSnapshot<List<List<String>>> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(
+              child: PlatformCircularProgressIndicator(
+                material: (_, __) =>
+                    MaterialProgressIndicatorData(color: AppColors.kGreen),
               ),
-          ],
-        ),
-      ),
+            );
+            break;
+          default:
+            return Scaffold(
+              backgroundColor: theme.getTheme() == ThemeData.light()
+                  ? Colors.white
+                  : Colors.black,
+              extendBodyBehindAppBar: true,
+              appBar: CupertinoNavigationBar(
+                backgroundColor: theme.getTheme() == ThemeData.dark()
+                    ? CupertinoColors.black.withOpacity(0.8)
+                    : CupertinoColors.white.withOpacity(0.8),
+                previousPageTitle: 'back',
+                middle: const Text('Replies'),
+              ),
+              body: Scrollbar(
+                controller: scrollController,
+                child: ListView(
+                  shrinkWrap: false,
+                  controller: scrollController,
+                  children: [
+                    for (int i = 0; i < widget.replies.length; i++)
+                      ThreadPagePost(
+                        board: widget.board,
+                        thread: widget.thread,
+                        post: widget.replies[i],
+                        media: media,
+                        names: snapshot.data[1],
+                        fileNames: snapshot.data[0],
+                        allPosts: widget.allPosts,
+                      ),
+                  ],
+                ),
+              ),
+            );
+        }
+      },
     );
   }
 }

@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
-import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -88,7 +86,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
       ),
       body: FutureBuilder(
         future: _fetchPost,
-        builder: (BuildContext context, AsyncSnapshot<Post> snapshot) {
+        builder: (BuildContext context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return Center(

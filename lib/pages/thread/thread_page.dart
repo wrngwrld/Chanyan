@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
@@ -46,7 +44,6 @@ class ThreadPageState extends State<ThreadPage> {
   List<Widget> media = [];
   List<String> fileNames = [];
   List<String> names = [];
-  List<String> exts = [];
   List<int> tims = [];
 
   Favorite favorite;
@@ -55,6 +52,7 @@ class ThreadPageState extends State<ThreadPage> {
     media = [];
     fileNames = [];
     names = [];
+    tims = [];
 
     final List<Post> posts =
         await fetchAllPostsFromThread(widget.board, widget.thread);
@@ -65,7 +63,6 @@ class ThreadPageState extends State<ThreadPage> {
 
         names.add(post.filename + post.ext);
         tims.add(post.tim);
-        exts.add(post.ext);
         fileNames.add(post.tim.toString() + post.ext);
         media.add(
           post.ext == '.webm'
@@ -93,6 +90,7 @@ class ThreadPageState extends State<ThreadPage> {
 
     _fetchAllPostsFromThread =
         fetchAllPostsFromThread(widget.board, widget.thread);
+    getAllMedia();
 
     favorite = Favorite(
       no: widget.post.no,
@@ -140,7 +138,6 @@ class ThreadPageState extends State<ThreadPage> {
                       board: widget.board,
                       tims: tims,
                       prevTitle: unescape(cleanTags(widget.threadName)),
-                      exts: exts,
                     ),
                   ),
                 ),
@@ -234,7 +231,6 @@ class ThreadPageState extends State<ThreadPage> {
               );
               break;
             default:
-              getAllMedia();
               return Scrollbar(
                 controller: scrollController,
                 child: ListView(
@@ -250,7 +246,6 @@ class ThreadPageState extends State<ThreadPage> {
                         names: names,
                         fileNames: fileNames,
                         allPosts: snapshot.data,
-                        replies: snapshot.data[i].repliedPosts,
                       ),
                   ],
                 ),

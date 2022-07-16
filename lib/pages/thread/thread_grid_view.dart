@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/media_page.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +13,6 @@ class ThreadGridView extends StatefulWidget {
     @required this.board,
     @required this.names,
     @required this.tims,
-    @required this.exts,
     @required this.prevTitle,
   }) : super(key: key);
 
@@ -24,7 +20,6 @@ class ThreadGridView extends StatefulWidget {
   final List<String> fileNames;
   final List<String> names;
   final List<int> tims;
-  final List<String> exts;
   final String board;
   final String prevTitle;
 
@@ -131,7 +126,7 @@ class _ThreadGridViewState extends State<ThreadGridView> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MediaPage(
-                      video: widget.tims[i].toString() + widget.exts[i],
+                      video: widget.fileNames[i],
                       ext: 'webm',
                       board: widget.board,
                       height: 500,
