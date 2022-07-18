@@ -43,7 +43,7 @@ class RepliesRow extends StatelessWidget {
                 size: 13,
               ),
               Text(
-                ' $replies',
+                ' $imageReplies',
                 style: const TextStyle(
                   color: CupertinoColors.white,
                   fontSize: 13,
