@@ -185,7 +185,7 @@ class BoardListState extends State<BoardList> {
                         'Open Link',
                         style: TextStyle(
                           color: CupertinoColors.activeBlue,
-                          fontSize: 17,
+                          fontSize: 20,
                         ),
                       ),
                     ),
