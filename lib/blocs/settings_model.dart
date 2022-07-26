@@ -14,22 +14,25 @@ class SettingsProvider with ChangeNotifier {
   Future<void> loadPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    final bool allowNSFWPrefs = prefs.getBool('allowNSFW');
-    final View boardViewPrefs = View.values.firstWhere(
-      (element) => element.name == prefs.getString('boardView'),
-    );
-    final Sort boardSortPrefs = Sort.values.firstWhere(
-      (element) => element.name == prefs.getString('boardSort'),
-    );
+    if (prefs.getString('boardView') != null) {
+      final View boardViewPrefs = View.values.firstWhere(
+        (element) => element.name == prefs.getString('boardView'),
+      );
 
-    if (allowNSFWPrefs != null) {
-      allowNSFW = allowNSFWPrefs;
-    }
-    if (boardViewPrefs != null) {
       boardView = boardViewPrefs;
     }
-    if (boardSortPrefs != null) {
+
+    if (prefs.getString('boardSort') != null) {
+      final Sort boardSortPrefs = Sort.values.firstWhere(
+        (element) => element.name == prefs.getString('boardSort'),
+      );
       boardSort = boardSortPrefs;
+    }
+
+    if (prefs.getBool('allowNSFW') != null) {
+      final bool allowNSFWPrefs = prefs.getBool('allowNSFW');
+
+      allowNSFW = allowNSFWPrefs;
     }
 
     notifyListeners();

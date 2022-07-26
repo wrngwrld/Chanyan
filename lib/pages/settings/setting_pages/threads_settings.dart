@@ -22,10 +22,14 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
     final settings = Provider.of<SettingsProvider>(context);
 
     return CupertinoPageScaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
+      backgroundColor: theme.getTheme() == ThemeData.dark()
+          ? CupertinoColors.black
+          : CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: CupertinoColors.systemGroupedBackground,
+        brightness: theme.getTheme() == ThemeData.dark()
+            ? Brightness.dark
+            : Brightness.light,
         leading: MediaQuery(
           data: MediaQueryData(
             textScaleFactor: MediaQuery.textScaleFactorOf(context),
@@ -38,6 +42,7 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
             ),
           ),
         ),
+        border: Border.all(color: Colors.transparent),
         previousPageTitle: 'Settings',
         middle: MediaQuery(
           data: MediaQueryData(

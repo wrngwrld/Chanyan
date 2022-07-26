@@ -1,3 +1,4 @@
+import 'package:cupertino_lists/cupertino_lists.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
@@ -95,103 +96,11 @@ class BoardListState extends State<BoardList> {
     }
 
     return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
       child: Scrollbar(
         child: CustomScrollView(
           slivers: [
             CupertinoSliverNavigationBar(
-              border: Border.all(color: Colors.transparent),
-              leading: MediaQuery(
-                data: MediaQueryData(
-                  textScaleFactor: MediaQuery.textScaleFactorOf(context),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () => {
-                        showWarning = false,
-                        showCupertinoDialog(
-                          barrierDismissible: true,
-                          context: context,
-                          builder: (context) {
-                            return StatefulBuilder(
-                              builder: (context, setState) {
-                                return CupertinoAlertDialog(
-                                  title: const Text('Open Link'),
-                                  content: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Visibility(
-                                        visible: showWarning,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              warningText,
-                                              style: const TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Card(
-                                        color: Colors.transparent,
-                                        elevation: 0.0,
-                                        child: Column(
-                                          children: [
-                                            CupertinoTextField(
-                                              controller: controller,
-                                              placeholder: 'Insert Thread URL',
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    CupertinoDialogAction(
-                                      child: const Text(
-                                        'Open',
-                                        style: TextStyle(
-                                          color: CupertinoColors.activeBlue,
-                                        ),
-                                      ),
-                                      onPressed: () => {
-                                        openURL().then(
-                                          (value) => {
-                                            if (value)
-                                              {
-                                                setState(() {
-                                                  showWarning = true;
-                                                }),
-                                              },
-                                          },
-                                        )
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      },
-                      child: const Text(
-                        'Open Link',
-                        style: TextStyle(
-                          color: CupertinoColors.activeBlue,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               largeTitle: MediaQuery(
                 data: MediaQueryData(
                   textScaleFactor: MediaQuery.textScaleFactorOf(context),
@@ -205,9 +114,91 @@ class BoardListState extends State<BoardList> {
                   ),
                 ),
               ),
-              backgroundColor: theme.getTheme() == ThemeData.dark()
-                  ? CupertinoColors.black.withOpacity(0.8)
-                  : CupertinoColors.white.withOpacity(0.8),
+              leading: CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: MediaQuery(
+                  data: MediaQueryData(
+                    textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                  ),
+                  child: const Text(
+                    'Open Link',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                onPressed: () => {
+                  showWarning = false,
+                  showCupertinoDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (context) {
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return CupertinoAlertDialog(
+                            title: const Text('Open Link'),
+                            content: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Visibility(
+                                  visible: showWarning,
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        warningText,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Card(
+                                  color: Colors.transparent,
+                                  elevation: 0.0,
+                                  child: Column(
+                                    children: [
+                                      CupertinoTextField(
+                                        controller: controller,
+                                        placeholder: 'Insert Thread URL',
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              CupertinoDialogAction(
+                                child: const Text(
+                                  'Open',
+                                  style: TextStyle(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ),
+                                onPressed: () => {
+                                  openURL().then(
+                                    (value) => {
+                                      if (value)
+                                        {
+                                          setState(() {
+                                            showWarning = true;
+                                          }),
+                                        },
+                                    },
+                                  )
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                },
+              ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -223,7 +214,6 @@ class BoardListState extends State<BoardList> {
                     child: const Icon(CupertinoIcons.heart),
                   ),
                   SizedBox(
-                    width: 20,
                     child: CupertinoButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
@@ -238,16 +228,9 @@ class BoardListState extends State<BoardList> {
                   ),
                 ],
               ),
-            ),
-            CupertinoSliverRefreshControl(
-              onRefresh: () {
-                return Future.delayed(const Duration(seconds: 1))
-                  ..then((_) {
-                    if (mounted) {
-                      favorites.loadPreferences();
-                    }
-                  });
-              },
+              backgroundColor: CupertinoColors.systemGroupedBackground,
+              border: null,
+              stretch: true,
             ),
             SliverList(
               delegate: SliverChildListDelegate(
@@ -273,55 +256,71 @@ class BoardListState extends State<BoardList> {
                           break;
                         default:
                           return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 10, 5, 10),
-                                child: Text(
-                                  'favorites',
+                              if (favorites.getFavorites().isNotEmpty)
+                                CupertinoListSection.insetGrouped(
+                                  header: Text(
+                                    'Favorites',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          theme.getTheme() == ThemeData.dark()
+                                              ? CupertinoColors.white
+                                              : CupertinoColors.black,
+                                    ),
+                                  ),
+                                  children: [
+                                    for (Board board in snapshot.data)
+                                      if (favorites
+                                          .getFavorites()
+                                          .contains(board.board))
+                                        if (settings.getNSFW())
+                                          BoardTile(
+                                              board: board,
+                                              favorites: favorites
+                                                  .getFavorites()
+                                                  .contains(board.board))
+                                        else if (board.wsBoard != 0)
+                                          BoardTile(
+                                              board: board,
+                                              favorites: favorites
+                                                  .getFavorites()
+                                                  .contains(board.board))
+                                  ],
+                                ),
+                              CupertinoListSection.insetGrouped(
+                                header: Text(
+                                  'Boards',
                                   style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w800,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                     color: theme.getTheme() == ThemeData.dark()
-                                        ? Colors.white
-                                        : Colors.black,
+                                        ? CupertinoColors.white
+                                        : CupertinoColors.black,
                                   ),
                                 ),
+                                children: [
+                                  for (Board board in snapshot.data)
+                                    if (settings.getNSFW())
+                                      BoardTile(
+                                          board: board,
+                                          favorites: favorites
+                                              .getFavorites()
+                                              .contains(board.board))
+                                    else if (board.wsBoard != 0)
+                                      BoardTile(
+                                          board: board,
+                                          favorites: favorites
+                                              .getFavorites()
+                                              .contains(board.board))
+                                ],
                               ),
-                              for (Board board in snapshot.data)
-                                settings.getNSFW()
-                                    ? BoardTile(board: board, favorites: true)
-                                    : board.wsBoard == 0
-                                        ? Container()
-                                        : BoardTile(
-                                            board: board, favorites: true),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 10, 5, 10),
-                                child: Text(
-                                  'all',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w800,
-                                    color: theme.getTheme() == ThemeData.dark()
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ),
-                              for (Board board in snapshot.data)
-                                settings.getNSFW()
-                                    ? BoardTile(board: board, favorites: false)
-                                    : board.wsBoard == 0
-                                        ? Container()
-                                        : BoardTile(
-                                            board: board, favorites: false),
                             ],
                           );
                       }
                     },
-                  )
+                  ),
                 ],
               ),
             )

@@ -20,6 +20,9 @@ class _SettingsState extends State<Settings> {
     final theme = Provider.of<ThemeChanger>(context);
 
     return CupertinoPageScaffold(
+      backgroundColor: theme.getTheme() == ThemeData.dark()
+          ? CupertinoColors.black
+          : CupertinoColors.systemGroupedBackground,
       child: CustomScrollView(
         slivers: [
           CupertinoSliverNavigationBar(
@@ -46,24 +49,13 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             backgroundColor: theme.getTheme() == ThemeData.dark()
-                ? CupertinoColors.black.withOpacity(0.8)
-                : CupertinoColors.white.withOpacity(0.8),
-          ),
-          CupertinoSliverRefreshControl(
-            onRefresh: () {
-              return Future.delayed(const Duration(seconds: 1))
-                ..then((_) {
-                  if (mounted) {}
-                });
-            },
+                ? CupertinoColors.black
+                : CupertinoColors.systemGroupedBackground,
           ),
           SliverToBoxAdapter(
             child: CESettingsContainer(
               groups: [
                 CESettingsGroup(
-                  color: theme.getTheme() == ThemeData.dark()
-                      ? CupertinoColors.darkBackgroundGray
-                      : CupertinoColors.extraLightBackgroundGray,
                   items: [
                     CESettingsMultiline(
                       leading: Stack(

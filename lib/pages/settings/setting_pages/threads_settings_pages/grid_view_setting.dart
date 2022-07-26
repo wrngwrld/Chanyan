@@ -20,10 +20,15 @@ class GridViewSettingsState extends State<GridViewSettings> {
     final settings = Provider.of<SettingsProvider>(context);
 
     return CupertinoPageScaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
+      backgroundColor: theme.getTheme() == ThemeData.dark()
+          ? CupertinoColors.black
+          : CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: CupertinoColors.systemGroupedBackground,
+        brightness: theme.getTheme() == ThemeData.dark()
+            ? Brightness.dark
+            : Brightness.light,
+        border: Border.all(color: Colors.transparent),
         leading: MediaQuery(
           data: MediaQueryData(
             textScaleFactor: MediaQuery.textScaleFactorOf(context),
@@ -41,7 +46,7 @@ class GridViewSettingsState extends State<GridViewSettings> {
             textScaleFactor: MediaQuery.textScaleFactorOf(context),
           ),
           child: Text(
-            'Grid View',
+            'Thread View',
             style: TextStyle(
               color: theme.getTheme() == ThemeData.dark()
                   ? Colors.white

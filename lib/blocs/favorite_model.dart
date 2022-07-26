@@ -33,7 +33,6 @@ class FavoriteProvider with ChangeNotifier {
       list.add(board);
       prefs.setStringList('favoriteBoards', list);
     }
-    log('Removed $board from favorites');
 
     notifyListeners();
   }
@@ -45,7 +44,6 @@ class FavoriteProvider with ChangeNotifier {
 
     prefs.setStringList('favoriteBoards', list);
 
-    log('Removed $board from favorites');
     notifyListeners();
   }
 }

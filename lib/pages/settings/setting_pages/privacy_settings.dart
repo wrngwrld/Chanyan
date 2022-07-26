@@ -19,9 +19,14 @@ class PrivacySettingsState extends State<PrivacySettings> {
     final settings = Provider.of<SettingsProvider>(context);
 
     return CupertinoPageScaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
+      backgroundColor: theme.getTheme() == ThemeData.dark()
+          ? CupertinoColors.black
+          : CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemGroupedBackground,
+        brightness: theme.getTheme() == ThemeData.dark()
+            ? Brightness.dark
+            : Brightness.light,
         leading: MediaQuery(
           data: MediaQueryData(
             textScaleFactor: MediaQuery.textScaleFactorOf(context),
@@ -34,8 +39,8 @@ class PrivacySettingsState extends State<PrivacySettings> {
             ),
           ),
         ),
+        border: Border.all(color: Colors.transparent),
         previousPageTitle: 'Settings',
-        backgroundColor: Colors.transparent,
         middle: MediaQuery(
           data: MediaQueryData(
             textScaleFactor: MediaQuery.textScaleFactorOf(context),
