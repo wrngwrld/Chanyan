@@ -106,13 +106,15 @@ class ThreadPageState extends State<ThreadPage> {
     final theme = Provider.of<ThemeChanger>(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
+      backgroundColor: theme.getTheme() == ThemeData.light()
+          ? CupertinoColors.systemGroupedBackground
+          : Colors.black,
       extendBodyBehindAppBar: true,
       appBar: CupertinoNavigationBar(
-        backgroundColor: theme.getTheme() == ThemeData.dark()
-            ? CupertinoColors.black.withOpacity(0.8)
-            : CupertinoColors.white.withOpacity(0.8),
+        backgroundColor: theme.getTheme() == ThemeData.light()
+            ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+            : CupertinoColors.black.withOpacity(0.7),
+        border: Border.all(color: Colors.transparent),
         previousPageTitle:
             widget.fromFavorites ? 'bookmarks' : '/${widget.board}/',
         middle: Text(

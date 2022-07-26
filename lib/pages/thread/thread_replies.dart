@@ -93,13 +93,14 @@ class _ThreadRepliesState extends State<ThreadReplies> {
           default:
             return Scaffold(
               backgroundColor: theme.getTheme() == ThemeData.light()
-                  ? Colors.white
-                  : Colors.black,
+                  ? CupertinoColors.systemGroupedBackground
+                  : CupertinoColors.black,
               extendBodyBehindAppBar: true,
               appBar: CupertinoNavigationBar(
-                backgroundColor: theme.getTheme() == ThemeData.dark()
-                    ? CupertinoColors.black.withOpacity(0.8)
-                    : CupertinoColors.white.withOpacity(0.8),
+                border: Border.all(color: Colors.transparent),
+                backgroundColor: theme.getTheme() == ThemeData.light()
+                    ? CupertinoColors.systemGroupedBackground.withOpacity(0.5)
+                    : CupertinoColors.black.withOpacity(0.7),
                 previousPageTitle: 'back',
                 middle: const Text('Replies'),
               ),

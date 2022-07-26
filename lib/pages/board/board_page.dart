@@ -59,26 +59,15 @@ class BoardPageState extends State<BoardPage> {
     final Sort boardSort = settings.getBoardSort();
 
     return Scaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
+      backgroundColor: theme.getTheme() == ThemeData.light()
+          ? CupertinoColors.systemGroupedBackground
+          : Colors.black,
       extendBodyBehindAppBar: true,
       appBar: CupertinoNavigationBar(
-        // leading: MediaQuery(
-        //   data: MediaQueryData(
-        //     textScaleFactor: MediaQuery.textScaleFactorOf(context),
-        //   ),
-        //   child: Transform.translate(
-        //     offset: const Offset(-16, 0),
-        //     child: CupertinoNavigationBarBackButton(
-        //       previousPageTitle: 'Boards',
-        //       onPressed: () => Navigator.of(context).pop(),
-        //     ),
-        //   ),
-        // ),
         previousPageTitle: 'Boards',
-        backgroundColor: theme.getTheme() == ThemeData.dark()
-            ? CupertinoColors.black.withOpacity(0.8)
-            : CupertinoColors.white.withOpacity(0.8),
+        backgroundColor: theme.getTheme() == ThemeData.light()
+            ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+            : CupertinoColors.black.withOpacity(0.7),
         middle: MediaQuery(
           data: MediaQueryData(
             textScaleFactor: MediaQuery.textScaleFactorOf(context),
@@ -89,6 +78,7 @@ class BoardPageState extends State<BoardPage> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        border: Border.all(color: Colors.transparent),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

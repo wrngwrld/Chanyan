@@ -26,6 +26,9 @@ class _SettingsState extends State<Settings> {
       child: CustomScrollView(
         slivers: [
           CupertinoSliverNavigationBar(
+            backgroundColor: theme.getTheme() == ThemeData.light()
+                ? CupertinoColors.systemGroupedBackground.withOpacity(0.5)
+                : CupertinoColors.black.withOpacity(0.7),
             leading: MediaQuery(
               data: MediaQueryData(
                 textScaleFactor: MediaQuery.textScaleFactorOf(context),
@@ -48,9 +51,6 @@ class _SettingsState extends State<Settings> {
                 'Settings',
               ),
             ),
-            backgroundColor: theme.getTheme() == ThemeData.dark()
-                ? CupertinoColors.black
-                : CupertinoColors.systemGroupedBackground,
           ),
           SliverToBoxAdapter(
             child: CESettingsContainer(

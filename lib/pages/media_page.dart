@@ -77,11 +77,15 @@ class _MediaPageState extends State<MediaPage> {
     final theme = Provider.of<ThemeChanger>(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
+      backgroundColor: theme.getTheme() == ThemeData.light()
+          ? CupertinoColors.systemGroupedBackground
+          : CupertinoColors.black,
       extendBodyBehindAppBar: true,
       appBar: CupertinoNavigationBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: theme.getTheme() == ThemeData.light()
+            ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+            : CupertinoColors.black.withOpacity(0.7),
+        border: Border.all(color: Colors.transparent),
         middle: Column(
           children: [
             Text(

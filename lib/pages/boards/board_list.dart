@@ -96,11 +96,16 @@ class BoardListState extends State<BoardList> {
     }
 
     return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.systemGroupedBackground,
+      backgroundColor: theme.getTheme() == ThemeData.light()
+          ? CupertinoColors.systemGroupedBackground
+          : Colors.black,
       child: Scrollbar(
         child: CustomScrollView(
           slivers: [
             CupertinoSliverNavigationBar(
+              backgroundColor: theme.getTheme() == ThemeData.light()
+                  ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+                  : CupertinoColors.black.withOpacity(0.7),
               largeTitle: MediaQuery(
                 data: MediaQueryData(
                   textScaleFactor: MediaQuery.textScaleFactorOf(context),
@@ -228,7 +233,6 @@ class BoardListState extends State<BoardList> {
                   ),
                 ],
               ),
-              backgroundColor: CupertinoColors.systemGroupedBackground,
               border: null,
               stretch: true,
             ),

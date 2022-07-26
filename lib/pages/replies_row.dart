@@ -1,4 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_chan/blocs/theme.dart';
+import 'package:provider/provider.dart';
 
 class RepliesRow extends StatelessWidget {
   const RepliesRow({
@@ -6,25 +9,33 @@ class RepliesRow extends StatelessWidget {
     this.replies = '-',
     this.imageReplies = '-',
     this.showImageReplies = true,
+    this.invertTextColor = false,
   }) : super(key: key);
 
   final replies;
   final imageReplies;
   final bool showImageReplies;
+  final bool invertTextColor;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
+    final darkColor = invertTextColor
+        ? theme.getTheme() == ThemeData.dark()
+        : theme.getTheme() != ThemeData.dark();
+
     return Row(
       children: [
-        const Icon(
+        Icon(
           CupertinoIcons.reply,
-          color: CupertinoColors.white,
+          color: darkColor ? CupertinoColors.black : CupertinoColors.white,
           size: 13,
         ),
         Text(
           ' $replies',
-          style: const TextStyle(
-            color: CupertinoColors.white,
+          style: TextStyle(
+            color: darkColor ? CupertinoColors.black : CupertinoColors.white,
             fontSize: 13,
           ),
           maxLines: 1,
@@ -37,15 +48,17 @@ class RepliesRow extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              const Icon(
+              Icon(
                 CupertinoIcons.camera,
-                color: CupertinoColors.white,
+                color:
+                    darkColor ? CupertinoColors.black : CupertinoColors.white,
                 size: 13,
               ),
               Text(
                 ' $imageReplies',
-                style: const TextStyle(
-                  color: CupertinoColors.white,
+                style: TextStyle(
+                  color:
+                      darkColor ? CupertinoColors.black : CupertinoColors.white,
                   fontSize: 13,
                 ),
                 maxLines: 1,

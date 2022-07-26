@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/replies_row.dart';
@@ -49,6 +50,7 @@ class _GridPostState extends State<GridPost> {
   @override
   Widget build(BuildContext context) {
     final bookmarks = Provider.of<BookmarksProvider>(context);
+    final theme = Provider.of<ThemeChanger>(context);
 
     isFavorite = bookmarks.getBookmarks().contains(favoriteString);
 
@@ -147,6 +149,10 @@ class _GridPostState extends State<GridPost> {
                           RepliesRow(
                             replies: widget.post.replies,
                             imageReplies: widget.post.images,
+                            invertTextColor:
+                                theme.getTheme() == ThemeData.dark()
+                                    ? false
+                                    : true,
                           ),
                           GestureDetector(
                             onTap: () => {

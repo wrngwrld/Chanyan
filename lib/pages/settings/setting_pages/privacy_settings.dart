@@ -23,7 +23,9 @@ class PrivacySettingsState extends State<PrivacySettings> {
           ? CupertinoColors.black
           : CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.systemGroupedBackground,
+        backgroundColor: theme.getTheme() == ThemeData.light()
+            ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+            : CupertinoColors.black.withOpacity(0.7),
         brightness: theme.getTheme() == ThemeData.dark()
             ? Brightness.dark
             : Brightness.light,

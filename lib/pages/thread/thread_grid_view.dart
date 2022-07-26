@@ -35,13 +35,15 @@ class _ThreadGridViewState extends State<ThreadGridView> {
     final theme = Provider.of<ThemeChanger>(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.getTheme() == ThemeData.light() ? Colors.white : Colors.black,
+      backgroundColor: theme.getTheme() == ThemeData.light()
+          ? CupertinoColors.systemGroupedBackground
+          : Colors.black,
       appBar: CupertinoNavigationBar(
-        backgroundColor: theme.getTheme() == ThemeData.dark()
-            ? CupertinoColors.black.withOpacity(0.8)
-            : CupertinoColors.white.withOpacity(0.8),
+        backgroundColor: theme.getTheme() == ThemeData.light()
+            ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+            : CupertinoColors.black.withOpacity(0.7),
         previousPageTitle: '${widget.prevTitle.substring(0, 9)}...',
+        border: Border.all(color: Colors.transparent),
         middle: const Text(
           'Media Gallery',
           maxLines: 1,

@@ -259,6 +259,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                     ),
                   const Divider(
                     height: 20,
+                    color: Colors.transparent,
                   ),
                 ],
               ),

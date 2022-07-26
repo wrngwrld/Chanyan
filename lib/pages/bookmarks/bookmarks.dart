@@ -26,6 +26,9 @@ class _BookmarksState extends State<Bookmarks> {
 
     return Scaffold(
       body: CupertinoPageScaffold(
+        backgroundColor: theme.getTheme() == ThemeData.light()
+            ? CupertinoColors.systemGroupedBackground
+            : CupertinoColors.black,
         child: Scrollbar(
           child: CustomScrollView(
             slivers: [
@@ -57,9 +60,9 @@ class _BookmarksState extends State<Bookmarks> {
                     ),
                   ),
                 ),
-                backgroundColor: theme.getTheme() == ThemeData.dark()
-                    ? CupertinoColors.black.withOpacity(0.8)
-                    : CupertinoColors.white.withOpacity(0.8),
+                backgroundColor: theme.getTheme() == ThemeData.light()
+                    ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+                    : CupertinoColors.black.withOpacity(0.7),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
