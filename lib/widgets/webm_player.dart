@@ -51,7 +51,7 @@ class VLCPlayerState extends State<VLCPlayer> {
     try {
       _videoPlayerController = VlcPlayerController.network(
         'https://i.4cdn.org/${widget.board}/${widget.video}',
-        hwAcc: HwAcc.FULL,
+        hwAcc: HwAcc.full,
         autoPlay: true,
         options: VlcPlayerOptions(
           advanced: VlcAdvancedOptions([

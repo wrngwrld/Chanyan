@@ -68,17 +68,6 @@ Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
         .map((model) => Post.fromJson(model))
         .toList();
 
-    for (int i = 0; i < posts.length; i++) {
-      final replies = await fetchAllRepliesToPost(
-        posts[i].no,
-        board,
-        thread,
-        posts,
-      );
-
-      posts[i].repliedPosts = replies;
-    }
-
     return posts;
   } else {
     throw Exception('Failed to load posts.');

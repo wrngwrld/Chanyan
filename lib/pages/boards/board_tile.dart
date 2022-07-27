@@ -32,27 +32,35 @@ class _BoardTileState extends State<BoardTile> {
     isFavorite = favorites.getFavorites().contains(widget.board.board);
 
     return Slidable(
-      actionPane: const SlidableDrawerActionPane(),
-      secondaryActions: [
-        if (isFavorite)
-          IconSlideAction(
-            caption: 'Delete',
-            color: Colors.red,
-            icon: Icons.delete,
-            onTap: () => {
-              favorites.removeFavorites(widget.board.board),
-            },
-          )
-        else
-          IconSlideAction(
-            caption: 'Add',
-            color: Colors.green,
-            icon: Icons.add,
-            onTap: () => {
-              favorites.addFavorites(widget.board.board),
-            },
-          ),
-      ],
+      endActionPane: isFavorite
+          ? ActionPane(
+              extentRatio: 0.3,
+              motion: const BehindMotion(),
+              children: [
+                SlidableAction(
+                  label: 'Remove',
+                  backgroundColor: Colors.red,
+                  icon: Icons.delete,
+                  onPressed: (context) => {
+                    favorites.removeFavorites(widget.board.board),
+                  },
+                )
+              ],
+            )
+          : ActionPane(
+              extentRatio: 0.3,
+              motion: const BehindMotion(),
+              children: [
+                SlidableAction(
+                  label: 'Add',
+                  backgroundColor: Colors.green,
+                  icon: Icons.add,
+                  onPressed: (context) => {
+                    favorites.addFavorites(widget.board.board),
+                  },
+                )
+              ],
+            ),
       child: CupertinoListTile.notched(
         title: Row(
           children: [

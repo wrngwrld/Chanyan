@@ -56,27 +56,35 @@ class _ListPostState extends State<ListPost> {
     isFavorite = bookmarks.getBookmarks().contains(favoriteString);
 
     return Slidable(
-      actionPane: const SlidableDrawerActionPane(),
-      secondaryActions: [
-        if (isFavorite)
-          IconSlideAction(
-            caption: 'Remove',
-            color: Colors.red,
-            icon: Icons.delete,
-            onTap: () => {
-              bookmarks.removeBookmarks(favorite),
-            },
-          )
-        else
-          IconSlideAction(
-            caption: 'Add',
-            color: Colors.green,
-            icon: Icons.add,
-            onTap: () => {
-              bookmarks.addBookmarks(favorite),
-            },
-          )
-      ],
+      endActionPane: isFavorite
+          ? ActionPane(
+              extentRatio: 0.3,
+              motion: const BehindMotion(),
+              children: [
+                SlidableAction(
+                  label: 'Remove',
+                  backgroundColor: Colors.red,
+                  icon: Icons.delete,
+                  onPressed: (context) => {
+                    bookmarks.removeBookmarks(favorite),
+                  },
+                )
+              ],
+            )
+          : ActionPane(
+              extentRatio: 0.3,
+              motion: const BehindMotion(),
+              children: [
+                SlidableAction(
+                  label: 'Add',
+                  backgroundColor: Colors.green,
+                  icon: Icons.add,
+                  onPressed: (context) => {
+                    bookmarks.addBookmarks(favorite),
+                  },
+                )
+              ],
+            ),
       child: InkWell(
         onTap: () => {
           Navigator.of(context).push(

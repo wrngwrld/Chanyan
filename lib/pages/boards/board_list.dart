@@ -26,15 +26,18 @@ class BoardList extends StatefulWidget {
 class BoardListState extends State<BoardList> {
   Future<List<Board>> _fetchAllBoards;
   TextEditingController controller = TextEditingController();
+  final TextEditingController _searchBarController = TextEditingController();
 
   bool showWarning = false;
   String warningText = 'This link is not supported';
+
+  List<Board> filterdBoards;
 
   @override
   void initState() {
     super.initState();
 
-    _fetchAllBoards = fetchAllBoards();
+    _fetchAllBoards = fetchAllBoards().then((value) => filterdBoards = value);
   }
 
   @override
@@ -44,6 +47,16 @@ class BoardListState extends State<BoardList> {
     final settings = Provider.of<SettingsProvider>(context);
 
     Future<bool> openURL() async {
+      if (controller.text.isEmpty) {
+        showWarning = true;
+
+        setState(() {
+          warningText = 'Please enter a link';
+        });
+
+        return true;
+      }
+
       try {
         controller.text = controller.text.trim();
         final regExDomains =
@@ -95,12 +108,34 @@ class BoardListState extends State<BoardList> {
       }
     }
 
+    void _updateUserList(String value, List<Board> data) {
+      if (value.isNotEmpty) {
+        filterdBoards = data
+            .where((element) =>
+                element.board.toLowerCase().contains(value.toLowerCase()) ||
+                element.metaDescription
+                    .toLowerCase()
+                    .contains(value.toLowerCase()) ||
+                element.metaDescription
+                    .toLowerCase()
+                    .contains(value.toLowerCase()) ||
+                element.title.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      } else {
+        _searchBarController.clear();
+        filterdBoards = data;
+      }
+
+      setState(() {});
+    }
+
     return CupertinoPageScaffold(
       backgroundColor: theme.getTheme() == ThemeData.light()
           ? CupertinoColors.systemGroupedBackground
           : Colors.black,
       child: Scrollbar(
         child: CustomScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           slivers: [
             CupertinoSliverNavigationBar(
               backgroundColor: theme.getTheme() == ThemeData.light()
@@ -176,6 +211,18 @@ class BoardListState extends State<BoardList> {
                               ],
                             ),
                             actions: [
+                              CupertinoDialogAction(
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ),
+                                onPressed: () => {
+                                  controller.clear(),
+                                  Navigator.pop(context),
+                                },
+                              ),
                               CupertinoDialogAction(
                                 child: const Text(
                                   'Open',
@@ -261,6 +308,26 @@ class BoardListState extends State<BoardList> {
                         default:
                           return Column(
                             children: [
+                              FractionallySizedBox(
+                                widthFactor: 0.9,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: ClipRect(
+                                    child: CupertinoSearchTextField(
+                                      controller: _searchBarController,
+                                      onChanged: (value) {
+                                        _updateUserList(value, snapshot.data);
+                                      },
+                                      onSubmitted: (value) {
+                                        _updateUserList(value, snapshot.data);
+                                      },
+                                      onSuffixTap: () {
+                                        _updateUserList('', snapshot.data);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
                               if (favorites.getFavorites().isNotEmpty)
                                 CupertinoListSection.insetGrouped(
                                   header: Text(
@@ -275,7 +342,7 @@ class BoardListState extends State<BoardList> {
                                     ),
                                   ),
                                   children: [
-                                    for (Board board in snapshot.data)
+                                    for (Board board in filterdBoards)
                                       if (favorites
                                           .getFavorites()
                                           .contains(board.board))
@@ -305,7 +372,7 @@ class BoardListState extends State<BoardList> {
                                   ),
                                 ),
                                 children: [
-                                  for (Board board in snapshot.data)
+                                  for (Board board in filterdBoards)
                                     if (settings.getNSFW())
                                       BoardTile(
                                           board: board,

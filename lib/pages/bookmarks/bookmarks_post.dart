@@ -150,21 +150,23 @@ class _BookmarksPostState extends State<BookmarksPost> {
                   isDeleted = true;
                 }
                 return Slidable(
-                  actionPane: const SlidableDrawerActionPane(),
-                  secondaryActions: <Widget>[
-                    IconSlideAction(
-                      caption: 'Delete',
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () {
-                        bookmarks.removeBookmarks(widget.favorite);
-
-                        setState(() {
-                          isRemoved = true;
-                        });
-                      },
-                    ),
-                  ],
+                  endActionPane: ActionPane(
+                    extentRatio: 0.3,
+                    motion: const BehindMotion(),
+                    children: [
+                      SlidableAction(
+                        label: 'Delete',
+                        backgroundColor: Colors.red,
+                        icon: Icons.delete,
+                        onPressed: (context) => {
+                          bookmarks.removeBookmarks(widget.favorite),
+                          setState(() {
+                            isRemoved = true;
+                          }),
+                        },
+                      )
+                    ],
+                  ),
                   child: InkWell(
                     onTap: () => {
                       if (!isDeleted)
