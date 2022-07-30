@@ -50,6 +50,7 @@ dependencies:
         url: https://github.com/wrngwrld/ce_settings
         ref: main # branch name
   cupertino_lists: ^1.0.1
+  scrollable_positioned_list: ^0.3.2
 
 dev_dependencies:
   flutter_test:

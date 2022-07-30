@@ -114,6 +114,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
                       names: name,
                       fileNames: fileName,
                       allPosts: widget.allPosts,
+                      onDismiss: (i) => {},
                     ),
                   ),
                 ],

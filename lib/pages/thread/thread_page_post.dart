@@ -23,6 +23,7 @@ class ThreadPagePost extends StatefulWidget {
     @required this.fileNames,
     @required this.media,
     @required this.allPosts,
+    @required this.onDismiss,
   }) : super(key: key);
 
   final String board;
@@ -32,6 +33,7 @@ class ThreadPagePost extends StatefulWidget {
   final List<String> fileNames;
   final List<Widget> media;
   final List<Post> allPosts;
+  final Function(String index) onDismiss;
 
   static String formatBytes(int bytes, int decimals) {
     if (bytes <= 0) {
@@ -110,6 +112,10 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                                       fileNames: widget.fileNames,
                                     ),
                                   ),
+                                ).then(
+                                  (value) => {
+                                    widget.onDismiss(value),
+                                  },
                                 )
                               },
                               child: ClipRRect(

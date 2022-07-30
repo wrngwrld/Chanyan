@@ -4,6 +4,7 @@ import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/Models/post.dart';
+import 'package:flutter_chan/blocs/gallery_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/bookmark_button.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ThreadPage extends StatefulWidget {
@@ -38,6 +40,9 @@ class ThreadPage extends StatefulWidget {
 
 class ThreadPageState extends State<ThreadPage> {
   final ScrollController scrollController = ScrollController();
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
 
   Future<List<Post>> _fetchAllPostsFromThread;
 
@@ -46,7 +51,10 @@ class ThreadPageState extends State<ThreadPage> {
   List<String> names = [];
   List<int> tims = [];
 
+  List<Post> allPosts = [];
+
   Favorite favorite;
+  Post currentPage;
 
   Future<void> getAllMedia() async {
     media = [];
@@ -104,6 +112,7 @@ class ThreadPageState extends State<ThreadPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
+    final gallery = Provider.of<GalleryProvider>(context);
 
     return Scaffold(
       backgroundColor: theme.getTheme() == ThemeData.light()
@@ -210,14 +219,20 @@ class ThreadPageState extends State<ThreadPage> {
       floatingActionButton: FloatingActionButtons(
         scrollController: scrollController,
         goDown: () => {
-          scrollController.jumpTo(
-            scrollController.position.maxScrollExtent,
-          )
+          itemScrollController.scrollTo(
+            index: allPosts.length,
+            alignment: 1,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOutCubic,
+          ),
         },
         goUp: () => {
-          scrollController.jumpTo(
-            scrollController.position.minScrollExtent,
-          )
+          itemScrollController.scrollTo(
+            index: 0,
+            alignment: 0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOutCubic,
+          ),
         },
       ),
       body: FutureBuilder(
@@ -233,23 +248,45 @@ class ThreadPageState extends State<ThreadPage> {
               );
               break;
             default:
-              return Scrollbar(
-                controller: scrollController,
-                child: ListView(
+              allPosts = snapshot.data;
+              return SafeArea(
+                top: true,
+                bottom: false,
+                child: ScrollablePositionedList.builder(
                   shrinkWrap: false,
-                  controller: scrollController,
-                  children: [
-                    for (int i = 0; i < snapshot.data.length; i++)
-                      ThreadPagePost(
-                        board: widget.board,
-                        thread: widget.thread,
-                        post: snapshot.data[i],
-                        media: media,
-                        names: names,
-                        fileNames: fileNames,
-                        allPosts: snapshot.data,
-                      ),
-                  ],
+                  itemCount: snapshot.data.length,
+                  physics: const ClampingScrollPhysics(),
+                  itemScrollController: itemScrollController,
+                  itemPositionsListener: itemPositionsListener,
+                  itemBuilder: (context, index) => ThreadPagePost(
+                    board: widget.board,
+                    thread: widget.thread,
+                    post: snapshot.data[index],
+                    media: media,
+                    names: names,
+                    fileNames: fileNames,
+                    allPosts: snapshot.data,
+                    onDismiss: (i) => {
+                      if (gallery.getCurrentMedia() != '')
+                        {
+                          currentPage = allPosts
+                              .where(
+                                (element) =>
+                                    element.tim.toString() ==
+                                    gallery.getCurrentMedia(),
+                              )
+                              .toList()[0],
+                          itemScrollController.scrollTo(
+                            index: allPosts.indexOf(currentPage),
+                            alignment: 0,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOutCubic,
+                          ),
+                        },
+                      gallery.setCurrentMedia(''),
+                      gallery.setCurrentPage(0),
+                    },
+                  ),
                 ),
               );
           }

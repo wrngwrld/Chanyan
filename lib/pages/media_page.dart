@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/blocs/gallery_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,10 @@ class _MediaPageState extends State<MediaPage> {
   int index;
   String currentName = '';
 
-  void onPageChanged(int i) {
+  void onPageChanged(int i, String media, GalleryProvider gallery) {
+    gallery.setCurrentPage(i);
+    gallery.setCurrentMedia(media);
+
     setState(() {
       index = i;
     });
@@ -75,6 +79,7 @@ class _MediaPageState extends State<MediaPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
+    final gallery = Provider.of<GalleryProvider>(context);
 
     return Scaffold(
       backgroundColor: theme.getTheme() == ThemeData.light()
@@ -171,7 +176,7 @@ class _MediaPageState extends State<MediaPage> {
         controller: controller,
         children: widget.list,
         physics: const ClampingScrollPhysics(),
-        onPageChanged: (i) => onPageChanged(i),
+        onPageChanged: (i) => onPageChanged(i, widget.fileNames[i], gallery),
         preloadPagesCount: 2,
       ),
     );
