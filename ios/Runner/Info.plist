@@ -33,6 +33,10 @@
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME)photos description</string>
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) requires access to your phone’s camera.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>$(PRODUCT_NAME) requires to play music.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
