@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/pages/settings/setting_pages/data_settings.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/privacy_settings.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/threads_settings.dart';
 import 'package:provider/provider.dart';
@@ -96,11 +97,25 @@ class _SettingsState extends State<Settings> {
                         color: CupertinoColors.activeGreen,
                       ),
                       text: 'Privacy',
-                      lastItem: true,
                       onTap: () => {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const PrivacySettings(),
+                          ),
+                        ),
+                      },
+                    ),
+                    CESettingsItem(
+                      leading: const CESettingsIcon(
+                        icon: CupertinoIcons.doc,
+                        color: CupertinoColors.systemYellow,
+                      ),
+                      text: 'Data',
+                      lastItem: true,
+                      onTap: () => {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const DataSettings(),
                           ),
                         ),
                       },
