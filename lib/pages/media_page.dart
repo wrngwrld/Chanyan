@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class MediaPage extends StatefulWidget {
   const MediaPage({
     Key key,
@@ -82,6 +84,7 @@ class _MediaPageState extends State<MediaPage> {
     final gallery = Provider.of<GalleryProvider>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: theme.getTheme() == ThemeData.light()
           ? CupertinoColors.systemGroupedBackground
           : CupertinoColors.black,
@@ -137,20 +140,25 @@ class _MediaPageState extends State<MediaPage> {
                         CupertinoActionSheetAction(
                           child: const Text('Share'),
                           onPressed: () {
-                            Share.share(
+                            saveVideo(
                               'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
+                              widget.fileNames[index],
+                              _scaffoldKey.currentContext,
+                              share: true,
                             );
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('Download'),
+                          child: Text(widget.ext == '.webm'
+                              ? 'Download as mp4'
+                              : 'Download'),
                           onPressed: () {
                             saveVideo(
                               'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                               widget.fileNames[index],
-                              context,
-                              true,
+                              _scaffoldKey.currentContext,
+                              showSnackBar: true,
                             );
                             Navigator.pop(context);
                           },
