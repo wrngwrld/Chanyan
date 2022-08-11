@@ -218,17 +218,17 @@ class ThreadPageState extends State<ThreadPage> {
       ),
       floatingActionButton: FloatingActionButtons(
         scrollController: scrollController,
-        goDown: () => {
+        goUp: () => {
           itemScrollController.scrollTo(
-            index: allPosts.length,
-            alignment: 1,
+            index: 0,
+            alignment: 0,
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOutCubic,
           ),
         },
-        goUp: () => {
+        goDown: () => {
           itemScrollController.scrollTo(
-            index: 0,
+            index: allPosts.length,
             alignment: 0,
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOutCubic,

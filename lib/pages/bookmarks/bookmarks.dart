@@ -19,6 +19,12 @@ class Bookmarks extends StatefulWidget {
 class _BookmarksState extends State<Bookmarks> {
   final ScrollController scrollController = ScrollController();
 
+  Future<Iterable<String>> getBookmarks() {
+    final bookmarks = Provider.of<BookmarksProvider>(context, listen: false);
+
+    return Future.value(bookmarks.getBookmarks());
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
@@ -136,16 +142,6 @@ class _BookmarksState extends State<Bookmarks> {
                   ],
                 ),
               ),
-              CupertinoSliverRefreshControl(
-                onRefresh: () {
-                  return Future.delayed(const Duration(seconds: 1))
-                    ..then((_) {
-                      if (mounted) {
-                        bookmarks.loadPreferences();
-                      }
-                    });
-                },
-              ),
               SliverList(
                 delegate: SliverChildListDelegate(
                   [
@@ -169,14 +165,30 @@ class _BookmarksState extends State<Bookmarks> {
                     else
                       Column(
                         children: [
-                          for (String string in bookmarks.getBookmarks())
-                            BookmarksPost(
-                              favorite: Favorite.fromJson(
-                                json.decode(string) as Map<String, dynamic>,
-                              ),
-                            )
+                          FutureBuilder<Iterable<String>>(
+                              future: getBookmarks(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<Iterable<String>> snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return Container();
+                                    break;
+                                  default:
+                                    return Column(
+                                      children: [
+                                        for (String string in snapshot.data)
+                                          BookmarksPost(
+                                            favorite: Favorite.fromJson(
+                                              json.decode(string)
+                                                  as Map<String, dynamic>,
+                                            ),
+                                          )
+                                      ],
+                                    );
+                                }
+                              }),
                         ],
-                      )
+                      ),
                   ],
                 ),
               )
