@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/blocs/gallery_model.dart';
+import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -15,23 +15,15 @@ class MediaPage extends StatefulWidget {
   const MediaPage({
     Key key,
     @required this.video,
-    @required this.ext,
-    @required this.board,
-    @required this.height,
-    @required this.width,
+    this.board,
     @required this.list,
-    @required this.names,
     @required this.fileNames,
   }) : super(key: key);
 
   final String video;
-  final String ext;
   final String board;
-  final int height;
-  final int width;
 
   final List<Widget> list;
-  final List<String> names;
   final List<String> fileNames;
 
   @override
@@ -44,6 +36,7 @@ class _MediaPageState extends State<MediaPage> {
   final String page = '0';
   int index;
   String currentName = '';
+  bool isSaved = false;
 
   void onPageChanged(int i, String media, GalleryProvider gallery) {
     gallery.setCurrentPage(i);
@@ -70,7 +63,7 @@ class _MediaPageState extends State<MediaPage> {
       Navigator.of(context).pop();
     }
 
-    setStartVideo(widget.names[index]);
+    setStartVideo(getNameWithoutExtension(widget.fileNames[index]));
 
     controller = PreloadPageController(
       initialPage: index,
@@ -82,6 +75,14 @@ class _MediaPageState extends State<MediaPage> {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
     final gallery = Provider.of<GalleryProvider>(context);
+    final savedAttachments = Provider.of<SavedAttachmentsProvider>(context);
+
+    isSaved = false;
+    for (final element in savedAttachments.getSavedAttachments()) {
+      if (element.fileName == widget.fileNames[index]) {
+        isSaved = true;
+      }
+    }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -97,7 +98,7 @@ class _MediaPageState extends State<MediaPage> {
         middle: Column(
           children: [
             Text(
-              widget.names[index],
+              widget.fileNames[index],
               style: TextStyle(
                 color: theme.getTheme() == ThemeData.dark()
                     ? Colors.white
@@ -119,6 +120,69 @@ class _MediaPageState extends State<MediaPage> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (!isSaved)
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(CupertinoIcons.bookmark),
+                onPressed: () => {
+                  savedAttachments.addSavedAttachments(
+                    _scaffoldKey.currentContext,
+                    widget.board,
+                    widget.fileNames[index],
+                  )
+                },
+              )
+            else
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(CupertinoIcons.bookmark_fill),
+                onPressed: () => {
+                  showCupertinoDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (context) {
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return CupertinoAlertDialog(
+                            title: const Text('Delete Attachment?'),
+                            actions: [
+                              CupertinoDialogAction(
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ),
+                                onPressed: () => {
+                                  Navigator.pop(context),
+                                },
+                              ),
+                              CupertinoDialogAction(
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ),
+                                onPressed: () => {
+                                  savedAttachments
+                                      .removeSavedAttachments(
+                                          widget.fileNames[index])
+                                      .then(
+                                        (value) => {
+                                          Navigator.pop(context),
+                                        },
+                                      ),
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                },
+              ),
             SizedBox(
               width: 20,
               child: CupertinoButton(
@@ -128,37 +192,37 @@ class _MediaPageState extends State<MediaPage> {
                     context: context,
                     builder: (BuildContext context) => CupertinoActionSheet(
                       actions: [
-                        CupertinoActionSheetAction(
-                          child: const Text('Open in Browser'),
-                          onPressed: () {
-                            launchURL(
-                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                            );
-                            Navigator.pop(context);
-                          },
-                        ),
+                        if (!isSaved)
+                          CupertinoActionSheetAction(
+                            child: const Text('Open in Browser'),
+                            onPressed: () {
+                              launchURL(
+                                'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
+                              );
+                              Navigator.pop(context);
+                            },
+                          ),
                         CupertinoActionSheetAction(
                           child: const Text('Share'),
                           onPressed: () {
-                            saveVideo(
+                            shareMedia(
                               'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                               widget.fileNames[index],
                               _scaffoldKey.currentContext,
-                              share: true,
+                              isSaved: isSaved,
                             );
                             Navigator.pop(context);
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: Text(widget.ext == '.webm'
-                              ? 'Download as mp4'
-                              : 'Download'),
+                          child: const Text('Download'),
                           onPressed: () {
                             saveVideo(
                               'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                               widget.fileNames[index],
                               _scaffoldKey.currentContext,
                               showSnackBar: true,
+                              isSaved: isSaved,
                             );
                             Navigator.pop(context);
                           },

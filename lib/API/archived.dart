@@ -31,28 +31,6 @@ Future<ThreadStatus> fetchArchived(String board, String thread) async {
   }
 }
 
-Future<List<Favorite>> fetchFavoriteThreads(Sort sort) async {
-  List<Favorite> favorites = [];
-
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  final List<String> favoriteThreadsPrefs =
-      prefs.getStringList('favoriteThreads');
-
-  if (favoriteThreadsPrefs != null)
-    for (final String string in favoriteThreadsPrefs) {
-      final Favorite favorite = Favorite.fromJson(json.decode(string));
-
-      favorites.add(favorite);
-    }
-
-  if (sort == Sort.byNewest) {
-    favorites = favorites.reversed.toList();
-  }
-
-  return favorites;
-}
-
 Future<List<int>> fetchReplies(String board, String thread) async {
   final Response response =
       await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));

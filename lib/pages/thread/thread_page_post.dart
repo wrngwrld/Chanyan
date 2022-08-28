@@ -19,7 +19,6 @@ class ThreadPagePost extends StatefulWidget {
     @required this.board,
     @required this.post,
     @required this.thread,
-    @required this.names,
     @required this.fileNames,
     @required this.media,
     @required this.allPosts,
@@ -29,7 +28,6 @@ class ThreadPagePost extends StatefulWidget {
   final String board;
   final int thread;
   final Post post;
-  final List<String> names;
   final List<String> fileNames;
   final List<Widget> media;
   final List<Post> allPosts;
@@ -103,11 +101,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                                     builder: (context) => MediaPage(
                                       video: widget.post.tim.toString() +
                                           widget.post.ext,
-                                      ext: widget.post.ext,
                                       board: widget.board,
-                                      height: widget.post.h,
-                                      width: widget.post.w,
-                                      names: widget.names,
                                       list: widget.media,
                                       fileNames: widget.fileNames,
                                     ),

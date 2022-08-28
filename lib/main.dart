@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/blocs/gallery_model.dart';
+import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/bottom_nav_bar.dart';
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<GalleryProvider>(
           create: (_) => GalleryProvider(),
+        ),
+        ChangeNotifierProvider<SavedAttachmentsProvider>(
+          create: (_) => SavedAttachmentsProvider([]),
         ),
       ],
       child: const AppWithTheme(),

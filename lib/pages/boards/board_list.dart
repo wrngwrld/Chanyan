@@ -10,6 +10,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/boards/board_tile.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
+import 'package:flutter_chan/pages/savedAttachments/saved_attachments.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
@@ -254,6 +255,17 @@ class BoardListState extends State<BoardList> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const SavedAttachments(),
+                        ),
+                      );
+                    },
+                    child: const Icon(CupertinoIcons.bookmark),
+                  ),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: () {

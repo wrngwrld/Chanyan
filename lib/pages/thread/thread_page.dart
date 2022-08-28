@@ -18,6 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class ThreadPage extends StatefulWidget {
   const ThreadPage({
     Key key,
@@ -48,7 +50,6 @@ class ThreadPageState extends State<ThreadPage> {
 
   List<Widget> media = [];
   List<String> fileNames = [];
-  List<String> names = [];
   List<int> tims = [];
 
   List<Post> allPosts = [];
@@ -59,7 +60,6 @@ class ThreadPageState extends State<ThreadPage> {
   Future<void> getAllMedia() async {
     media = [];
     fileNames = [];
-    names = [];
     tims = [];
 
     final List<Post> posts =
@@ -69,7 +69,6 @@ class ThreadPageState extends State<ThreadPage> {
       if (post.tim != null) {
         final String video = post.tim.toString() + post.ext;
 
-        names.add(post.filename + post.ext);
         tims.add(post.tim);
         fileNames.add(post.tim.toString() + post.ext);
         media.add(
@@ -115,6 +114,7 @@ class ThreadPageState extends State<ThreadPage> {
     final gallery = Provider.of<GalleryProvider>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: theme.getTheme() == ThemeData.light()
           ? CupertinoColors.systemGroupedBackground
           : Colors.black,
@@ -145,7 +145,6 @@ class ThreadPageState extends State<ThreadPage> {
                     builder: (context) => ThreadGridView(
                       media: media,
                       fileNames: fileNames,
-                      names: names,
                       board: widget.board,
                       tims: tims,
                       prevTitle: unescape(cleanTags(widget.threadName)),
@@ -190,14 +189,14 @@ class ThreadPageState extends State<ThreadPage> {
                           },
                         ),
                         CupertinoActionSheetAction(
-                          child: const Text('Download all Images'),
+                          child: const Text('Download all Media'),
                           onPressed: () {
+                            Navigator.pop(context);
                             saveAllMedia(
                               'https://i.4cdn.org/${widget.board}/',
                               fileNames,
-                              context,
+                              _scaffoldKey.currentContext,
                             );
-                            Navigator.pop(context);
                           },
                         ),
                       ],
@@ -263,7 +262,6 @@ class ThreadPageState extends State<ThreadPage> {
                     thread: widget.thread,
                     post: snapshot.data[index],
                     media: media,
-                    names: names,
                     fileNames: fileNames,
                     allPosts: snapshot.data,
                     onDismiss: (i) => {

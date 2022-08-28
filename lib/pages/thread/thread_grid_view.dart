@@ -11,14 +11,12 @@ class ThreadGridView extends StatefulWidget {
     @required this.media,
     @required this.fileNames,
     @required this.board,
-    @required this.names,
     @required this.tims,
     @required this.prevTitle,
   }) : super(key: key);
 
   final List<Widget> media;
   final List<String> fileNames;
-  final List<String> names;
   final List<int> tims;
   final String board;
   final String prevTitle;
@@ -129,12 +127,8 @@ class _ThreadGridViewState extends State<ThreadGridView> {
                   MaterialPageRoute(
                     builder: (context) => MediaPage(
                       video: widget.fileNames[i],
-                      ext: 'webm',
                       board: widget.board,
-                      height: 500,
-                      width: 500,
                       list: widget.media,
-                      names: widget.names,
                       fileNames: widget.fileNames,
                     ),
                   ),

@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:provider/provider.dart';
 
 class FloatingActionButtons extends StatelessWidget {

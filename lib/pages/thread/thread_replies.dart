@@ -31,7 +31,7 @@ class ThreadReplies extends StatefulWidget {
 class _ThreadRepliesState extends State<ThreadReplies> {
   final ScrollController scrollController = ScrollController();
 
-  Future<List<List<String>>> _fetchMedia;
+  Future<List<String>> _fetchMedia;
 
   List<Widget> media = [];
 
@@ -42,15 +42,14 @@ class _ThreadRepliesState extends State<ThreadReplies> {
     _fetchMedia = fetchMedia(widget.replies);
   }
 
-  Future<List<List<String>>> fetchMedia(List<Post> list) async {
-    final List<List<String>> fileNamesAndNames = [[], []];
+  Future<List<String>> fetchMedia(List<Post> list) async {
+    final List<String> fileNames = [];
 
     for (final Post post in list) {
       if (post.tim != null) {
         final String video = post.tim.toString() + post.ext;
 
-        fileNamesAndNames[1].add(post.filename + post.ext);
-        fileNamesAndNames[0].add(post.tim.toString() + post.ext);
+        fileNames.add(post.tim.toString() + post.ext);
         media.add(
           post.ext == '.webm'
               ? VLCPlayer(
@@ -71,16 +70,16 @@ class _ThreadRepliesState extends State<ThreadReplies> {
       }
     }
 
-    return fileNamesAndNames;
+    return fileNames;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
 
-    return FutureBuilder<List<List<String>>>(
+    return FutureBuilder<List<String>>(
       future: _fetchMedia,
-      builder: (context, AsyncSnapshot<List<List<String>>> snapshot) {
+      builder: (context, AsyncSnapshot<List<String>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Center(
@@ -116,8 +115,7 @@ class _ThreadRepliesState extends State<ThreadReplies> {
                         thread: widget.thread,
                         post: widget.replies[i],
                         media: media,
-                        names: snapshot.data[1],
-                        fileNames: snapshot.data[0],
+                        fileNames: snapshot.data,
                         allPosts: widget.allPosts,
                         onDismiss: (i) => {},
                       ),

@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -12,10 +15,12 @@ class VLCPlayer extends StatefulWidget {
   const VLCPlayer({
     Key key,
     @required this.video,
-    @required this.board,
+    this.board,
     @required this.height,
     @required this.width,
     @required this.fileName,
+    this.isAsset = false,
+    this.directory,
   }) : super(key: key);
 
   final String video;
@@ -23,6 +28,8 @@ class VLCPlayer extends StatefulWidget {
   final int height;
   final int width;
   final String fileName;
+  final Directory directory;
+  final bool isAsset;
 
   @override
   VLCPlayerState createState() => VLCPlayerState();
@@ -31,9 +38,9 @@ class VLCPlayer extends StatefulWidget {
 class VLCPlayerState extends State<VLCPlayer> {
   VlcPlayerController _videoPlayerController;
 
-  bool isVisible = false;
+  Directory directory;
 
-  Future<void> initializePlayer() async {}
+  bool isVisible = false;
 
   double sliderValue = 0.0;
   bool validPosition = false;
@@ -49,16 +56,24 @@ class VLCPlayerState extends State<VLCPlayer> {
     fetchStartVideo();
 
     try {
-      _videoPlayerController = VlcPlayerController.network(
-        'https://i.4cdn.org/${widget.board}/${widget.video}',
-        hwAcc: HwAcc.full,
-        autoPlay: true,
-        options: VlcPlayerOptions(
-          advanced: VlcAdvancedOptions([
-            VlcAdvancedOptions.networkCaching(2000),
-          ]),
-        ),
-      );
+      if (widget.isAsset) {
+        _videoPlayerController = VlcPlayerController.file(
+          File('${widget.directory.path}/savedAttachments/${widget.video}'),
+          hwAcc: HwAcc.auto,
+          autoPlay: true,
+        );
+      } else {
+        _videoPlayerController = VlcPlayerController.network(
+          'https://i.4cdn.org/${widget.board}/${widget.video}',
+          hwAcc: HwAcc.full,
+          autoPlay: true,
+          options: VlcPlayerOptions(
+            advanced: VlcAdvancedOptions([
+              VlcAdvancedOptions.networkCaching(2000),
+            ]),
+          ),
+        );
+      }
     } catch (e) {
       print(e);
     }
@@ -71,7 +86,7 @@ class VLCPlayerState extends State<VLCPlayer> {
 
     final String startVideo = prefs.getString('startVideo');
 
-    if (startVideo == '${widget.fileName}.webm')
+    if (startVideo == getNameWithoutExtension(widget.fileName))
       setState(() {
         isVisible = true;
       });
@@ -139,6 +154,16 @@ class VLCPlayerState extends State<VLCPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final SavedAttachmentsProvider savedAttachmentsProvider =
+        Provider.of<SavedAttachmentsProvider>(context);
+
+    if (_videoPlayerController.value.isInitialized) {
+      if (savedAttachmentsProvider.playing) {
+        _videoPlayerController.play();
+      } else {
+        _videoPlayerController.pause();
+      }
+    }
     return Stack(
       children: [
         Center(

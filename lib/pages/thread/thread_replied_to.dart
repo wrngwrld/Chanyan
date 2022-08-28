@@ -34,13 +34,11 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
 
   List<Widget> media = [];
   List<String> fileName = [];
-  List<String> name = [];
 
   Future<void> getMedia(Post post) async {
     if (post.tim != null) {
       final String video = post.tim.toString() + post.ext;
 
-      name.add(post.filename + post.ext);
       fileName.add(post.tim.toString() + post.ext);
       media.add(
         post.ext == '.webm'
@@ -111,7 +109,6 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
                       thread: widget.thread,
                       post: snapshot.data,
                       media: media,
-                      names: name,
                       fileNames: fileName,
                       allPosts: widget.allPosts,
                       onDismiss: (i) => {},
