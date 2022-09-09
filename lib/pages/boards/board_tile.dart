@@ -91,7 +91,17 @@ class _BoardTileState extends State<BoardTile> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        additionalInfo: Text(widget.board.board),
+        additionalInfo: RichText(
+          text: TextSpan(
+            text: widget.board.board.length > 3
+                ? widget.board.board.substring(0, 3)
+                : widget.board.board,
+            style: const TextStyle(
+              color: CupertinoColors.inactiveGray,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
         trailing: const CupertinoListTileChevron(),
         onTap: () => {
           Navigator.of(context).push(
