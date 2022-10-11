@@ -31,6 +31,7 @@ class _ThreadGridViewState extends State<ThreadGridView> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
+    ScrollController scrollController;
 
     return Scaffold(
       backgroundColor: theme.getTheme() == ThemeData.light()
@@ -115,60 +116,63 @@ class _ThreadGridViewState extends State<ThreadGridView> {
           ],
         ),
       ),
-      body: GridView(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: axisCount,
-        ),
-        children: [
-          for (int i = 0; i < widget.tims.length; i++)
-            GestureDetector(
-              onTap: () => {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => MediaPage(
-                      video: widget.fileNames[i],
-                      board: widget.board,
-                      list: widget.media,
-                      fileNames: widget.fileNames,
+      body: Scrollbar(
+        controller: scrollController,
+        child: GridView(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: axisCount,
+          ),
+          children: [
+            for (int i = 0; i < widget.tims.length; i++)
+              GestureDetector(
+                onTap: () => {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => MediaPage(
+                        video: widget.fileNames[i],
+                        board: widget.board,
+                        list: widget.media,
+                        fileNames: widget.fileNames,
+                      ),
                     ),
                   ),
-                ),
-              },
-              child: widget.fileNames[i].contains('jpg') ||
-                      widget.fileNames[i].contains('png')
-                  ? Image.network(
-                      'https://i.4cdn.org/${widget.board}/${widget.tims[i]}.jpg',
-                      fit: BoxFit.cover,
-                    )
-                  : Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                'https://i.4cdn.org/${widget.board}/${widget.tims[i]}s.jpg',
+                },
+                child: widget.fileNames[i].contains('jpg') ||
+                        widget.fileNames[i].contains('png')
+                    ? Image.network(
+                        'https://i.4cdn.org/${widget.board}/${widget.tims[i]}.jpg',
+                        fit: BoxFit.cover,
+                      )
+                    : Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                  'https://i.4cdn.org/${widget.board}/${widget.tims[i]}s.jpg',
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Center(
-                          child: Icon(
-                            CupertinoIcons.play,
-                            color: Colors.white,
-                            size: 50,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(.6),
-                              ),
-                            ],
+                          Center(
+                            child: Icon(
+                              CupertinoIcons.play,
+                              color: Colors.white,
+                              size: 50,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 10,
+                                  color: Colors.black.withOpacity(.6),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-            ),
-        ],
+                        ],
+                      ),
+              ),
+          ],
+        ),
       ),
     );
   }

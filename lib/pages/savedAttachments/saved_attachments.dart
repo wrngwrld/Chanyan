@@ -82,110 +82,110 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
         backgroundColor: theme.getTheme() == ThemeData.light()
             ? CupertinoColors.systemGroupedBackground
             : CupertinoColors.black,
-        child: Scrollbar(
-          child: CustomScrollView(
-            slivers: [
-              CupertinoSliverNavigationBar(
-                leading: MediaQuery(
-                  data: MediaQueryData(
-                    textScaleFactor: MediaQuery.textScaleFactorOf(context),
-                  ),
-                  child: Transform.translate(
-                    offset: const Offset(-16, 0),
-                    child: CupertinoNavigationBarBackButton(
-                      previousPageTitle: 'Home',
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
+        child: CustomScrollView(
+          slivers: [
+            CupertinoSliverNavigationBar(
+              leading: MediaQuery(
+                data: MediaQueryData(
+                  textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                ),
+                child: Transform.translate(
+                  offset: const Offset(-16, 0),
+                  child: CupertinoNavigationBarBackButton(
+                    previousPageTitle: 'Home',
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
-                previousPageTitle: 'Home',
-                border: Border.all(color: Colors.transparent),
-                largeTitle: MediaQuery(
-                  data: MediaQueryData(
-                    textScaleFactor: MediaQuery.textScaleFactorOf(context),
-                  ),
-                  child: Text(
-                    'Saved Attachments',
-                    style: TextStyle(
-                      color: theme.getTheme() == ThemeData.dark()
-                          ? CupertinoColors.white
-                          : CupertinoColors.black,
-                    ),
+              ),
+              previousPageTitle: 'Home',
+              border: Border.all(color: Colors.transparent),
+              largeTitle: MediaQuery(
+                data: MediaQueryData(
+                  textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                ),
+                child: Text(
+                  'Saved Attachments',
+                  style: TextStyle(
+                    color: theme.getTheme() == ThemeData.dark()
+                        ? CupertinoColors.white
+                        : CupertinoColors.black,
                   ),
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      child: CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          showCupertinoModalPopup(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                CupertinoActionSheet(
-                              actions: [
-                                CupertinoActionSheetAction(
-                                  child: const Text('Clear bookmarks'),
-                                  onPressed: () {
-                                    savedAttachments.clearSavedAttachments();
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                              cancelButton: CupertinoActionSheetAction(
-                                child: const Text('Cancel'),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 20,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        showCupertinoModalPopup(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              CupertinoActionSheet(
+                            actions: [
+                              CupertinoActionSheetAction(
+                                child: const Text('Clear bookmarks'),
                                 onPressed: () {
+                                  savedAttachments.clearSavedAttachments();
                                   Navigator.pop(context);
                                 },
                               ),
+                            ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                          );
-                        },
-                        child: const Icon(Icons.more_vert),
-                      ),
+                          ),
+                        );
+                      },
+                      child: const Icon(Icons.more_vert),
                     ),
-                  ],
-                ),
-                backgroundColor: theme.getTheme() == ThemeData.light()
-                    ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
-                    : CupertinoColors.black.withOpacity(0.7),
+                  ),
+                ],
               ),
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    if (savedAttachments.getSavedAttachments().isEmpty)
-                      Column(
-                        children: [
-                          const SizedBox(
-                            height: 30,
+              backgroundColor: theme.getTheme() == ThemeData.light()
+                  ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+                  : CupertinoColors.black.withOpacity(0.7),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  if (savedAttachments.getSavedAttachments().isEmpty)
+                    Column(
+                      children: [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Text(
+                          'Save Attachments first!',
+                          style: TextStyle(
+                            fontSize: 26,
+                            color: theme.getTheme() == ThemeData.dark()
+                                ? Colors.white
+                                : Colors.black,
                           ),
-                          Text(
-                            'Save Attachments first!',
-                            style: TextStyle(
-                              fontSize: 26,
-                              color: theme.getTheme() == ThemeData.dark()
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                        ],
-                      )
-                    else
-                      Column(
-                        children: [
-                          FutureBuilder<List<SavedAttachment>>(
-                              future: getSavedAttachments(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<List<SavedAttachment>>
-                                      snapshot) {
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return Container();
-                                    break;
-                                  default:
-                                    return GridView.count(
+                        ),
+                      ],
+                    )
+                  else
+                    Column(
+                      children: [
+                        FutureBuilder<List<SavedAttachment>>(
+                            future: getSavedAttachments(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<SavedAttachment>> snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                  return Container();
+                                  break;
+                                default:
+                                  return SizedBox(
+                                    child: GridView.count(
+                                      physics: const ScrollPhysics(),
                                       shrinkWrap: true,
                                       padding: EdgeInsets.zero,
                                       crossAxisCount: 3,
@@ -236,16 +236,16 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                                             ),
                                           )
                                       ],
-                                    );
-                                }
-                              }),
-                        ],
-                      ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                                    ),
+                                  );
+                              }
+                            }),
+                      ],
+                    ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +20,12 @@ class DataSettingsState extends State<DataSettings> {
     Directory directory;
 
     try {
-      directory = await getTemporaryDirectory();
+      directory = await getApplicationDocumentsDirectory();
 
       final List<FileSystemEntity> entities = await directory.list().toList();
       for (final entity in entities) {
         if (entity is File) {
+          print(entity.path);
           setState(() {
             _cacheSize += getFileSize(entity);
           });
@@ -46,7 +46,7 @@ class DataSettingsState extends State<DataSettings> {
     Directory directory;
 
     try {
-      directory = await getTemporaryDirectory();
+      directory = await getApplicationDocumentsDirectory();
 
       final List<FileSystemEntity> entities = await directory.list().toList();
       for (final entity in entities) {

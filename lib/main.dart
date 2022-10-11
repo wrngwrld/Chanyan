@@ -7,7 +7,7 @@ import 'package:flutter_chan/blocs/gallery_model.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/pages/bottom_nav_bar.dart';
+import 'package:flutter_chan/pages/boards/board_list.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -87,7 +87,7 @@ class _AppWithThemeState extends State<AppWithTheme>
     return CupertinoApp(
       color: CupertinoColors.activeGreen,
       debugShowCheckedModeBanner: false,
-      home: const BottomNavBar(),
+      home: const BoardList(),
       theme: CupertinoThemeData(
         brightness: theme.getTheme() == ThemeData.dark()
             ? Brightness.dark
