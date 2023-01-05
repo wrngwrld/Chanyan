@@ -67,7 +67,7 @@ class BoardPageState extends State<BoardPage> {
         break;
       case View.gridView:
       default:
-        return BoardListView(
+        return BoardGridView(
           scrollController: scrollController,
           board: widget.board,
           threads: threads,
