@@ -7,12 +7,12 @@ class BoardGridView extends StatelessWidget {
   const BoardGridView({
     Key key,
     @required this.board,
-    @required this.snapshot,
+    @required this.threads,
     @required this.scrollController,
   }) : super(key: key);
 
   final String board;
-  final AsyncSnapshot<List<Post>> snapshot;
+  final List<Post> threads;
   final ScrollController scrollController;
 
   @override
@@ -20,10 +20,12 @@ class BoardGridView extends StatelessWidget {
     return Scrollbar(
       controller: scrollController,
       child: GridView.count(
+        padding: const EdgeInsets.only(top: 20),
         controller: scrollController,
+        shrinkWrap: true,
         crossAxisCount: 2,
         children: [
-          for (Post post in snapshot.data) GridPost(board: board, post: post),
+          for (Post post in threads) GridPost(board: board, post: post),
         ],
       ),
     );

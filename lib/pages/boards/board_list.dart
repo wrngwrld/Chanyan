@@ -320,23 +320,24 @@ class BoardListState extends State<BoardList> {
                         default:
                           return Column(
                             children: [
-                              FractionallySizedBox(
-                                widthFactor: 0.9,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: ClipRect(
-                                    child: CupertinoSearchTextField(
-                                      controller: _searchBarController,
-                                      onChanged: (value) {
-                                        _updateUserList(value, snapshot.data);
-                                      },
-                                      onSubmitted: (value) {
-                                        _updateUserList(value, snapshot.data);
-                                      },
-                                      onSuffixTap: () {
-                                        _updateUserList('', snapshot.data);
-                                      },
-                                    ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 8.0,
+                                  left: 16.0,
+                                  right: 16.0,
+                                ),
+                                child: ClipRect(
+                                  child: CupertinoSearchTextField(
+                                    controller: _searchBarController,
+                                    onChanged: (value) {
+                                      _updateUserList(value, snapshot.data);
+                                    },
+                                    onSubmitted: (value) {
+                                      _updateUserList(value, snapshot.data);
+                                    },
+                                    onSuffixTap: () {
+                                      _updateUserList('', snapshot.data);
+                                    },
                                   ),
                                 ),
                               ),

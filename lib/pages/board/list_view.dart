@@ -10,12 +10,12 @@ class BoardListView extends StatelessWidget {
   const BoardListView({
     Key key,
     @required this.board,
-    @required this.snapshot,
+    @required this.threads,
     @required this.scrollController,
   }) : super(key: key);
 
   final String board;
-  final AsyncSnapshot<List<Post>> snapshot;
+  final List<Post> threads;
   final ScrollController scrollController;
 
   Future<void> setFavorite(Favorite favorite) async {
@@ -41,9 +41,11 @@ class BoardListView extends StatelessWidget {
     return Scrollbar(
       controller: scrollController,
       child: ListView(
+        padding: EdgeInsets.zero,
         controller: scrollController,
+        shrinkWrap: true,
         children: [
-          for (Post post in snapshot.data) ListPost(board: board, post: post)
+          for (Post post in threads) ListPost(board: board, post: post)
         ],
       ),
     );
