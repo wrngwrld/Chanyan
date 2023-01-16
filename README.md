@@ -32,7 +32,7 @@
 
 ## Testflight
 
-If you want to test it on testflight just email [me](mailto:Marvin.Jaeckisch1@web.de) or use [this link](https://testflight.apple.com/join/ky5bRwMY) 
+If you want to test it on testflight use [this link](https://testflight.apple.com/join/ky5bRwMY) 
 
 ## License
 
