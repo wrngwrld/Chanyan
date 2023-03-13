@@ -173,7 +173,15 @@ class VLCPlayerState extends State<VLCPlayer> {
           ),
         ),
         VisibilityDetector(
-          key: ObjectKey(widget.video),
+          key: Key(widget.video.toString() +
+              '_' +
+              widget.board.toString() +
+              '_' +
+              widget.fileName.toString() +
+              '_' +
+              widget.height.toString() +
+              '_' +
+              widget.width.toString()),
           onVisibilityChanged: (visibility) {
             if (visibility.visibleFraction < 0.5 &&
                 mounted &&
