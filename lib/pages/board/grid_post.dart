@@ -120,7 +120,7 @@ class _GridPostState extends State<GridPost> {
                         data: widget.post.sub,
                         style: {
                           'body': Style(
-                            fontSize: const FontSize(16.0),
+                            fontSize: FontSize(16.0),
                             color: Colors.white,
                             maxLines: 1,
                             fontWeight: FontWeight.w500,
@@ -132,7 +132,7 @@ class _GridPostState extends State<GridPost> {
                         data: widget.post.com ?? '',
                         style: {
                           'body': Style(
-                            fontSize: const FontSize(16.0),
+                            fontSize: FontSize(16.0),
                             color: Colors.white,
                             maxLines: 1,
                             fontWeight: FontWeight.w500,
