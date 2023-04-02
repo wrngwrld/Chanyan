@@ -1,20 +1,18 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/blocs/favoriteModel.dart';
-import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/Models/board.dart';
+import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/pages/board/board_page.dart';
-import 'package:flutter_chan/models/board.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class BoardTile extends StatefulWidget {
   const BoardTile({
+    Key key,
     @required this.board,
     @required this.favorites,
-  });
+  }) : super(key: key);
 
   final Board board;
   final bool favorites;
@@ -28,104 +26,93 @@ class _BoardTileState extends State<BoardTile> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeChanger>(context);
     final favorites = Provider.of<FavoriteProvider>(context);
 
     isFavorite = favorites.getFavorites().contains(widget.board.board);
 
-    if (isFavorite || !widget.favorites)
-      return Slidable(
-        actionPane: SlidableDrawerActionPane(),
-        secondaryActions: [
-          isFavorite
-              ? IconSlideAction(
-                  caption: 'Delete',
-                  color: Colors.red,
+    return Slidable(
+      endActionPane: isFavorite
+          ? ActionPane(
+              extentRatio: 0.3,
+              motion: const BehindMotion(),
+              children: [
+                SlidableAction(
+                  label: 'Remove',
+                  backgroundColor: Colors.red,
                   icon: Icons.delete,
-                  onTap: () => {
+                  onPressed: (context) => {
                     favorites.removeFavorites(widget.board.board),
                   },
                 )
-              : IconSlideAction(
-                  caption: 'Add',
-                  color: Colors.green,
+              ],
+            )
+          : ActionPane(
+              extentRatio: 0.3,
+              motion: const BehindMotion(),
+              children: [
+                SlidableAction(
+                  label: 'Add',
+                  backgroundColor: Colors.green,
                   icon: Icons.add,
-                  onTap: () => {
+                  onPressed: (context) => {
                     favorites.addFavorites(widget.board.board),
                   },
-                ),
-        ],
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () => {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => BoardPage(
-                      boardName: widget.board.title,
-                      board: widget.board.board,
-                    ),
-                  ),
                 )
-              },
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '/' +
-                                widget.board.board +
-                                '/  -  ' +
-                                widget.board.title,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: Platform.isIOS
-                                  ? FontWeight.w700
-                                  : FontWeight.w600,
-                              color: theme.getTheme() == ThemeData.dark()
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            Stringz.cleanTags(Stringz.unescape(
-                              widget.board.metaDescription,
-                            )),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: CupertinoColors.systemGrey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+              ],
+            ),
+      child: CupertinoListTile.notched(
+        title: Row(
+          children: [
+            Text(widget.board.title),
+            if (widget.board.wsBoard == 0)
+              Row(
+                children: const [
+                  SizedBox(
+                    width: 6,
                   ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
+                  Text(
+                    'NSFW',
+                    style: TextStyle(
+                      color: CupertinoColors.systemRed,
+                      fontSize: 10,
+                    ),
                   ),
                 ],
-              ),
-            ),
-            Divider(
-              color: theme.getTheme() == ThemeData.dark()
-                  ? CupertinoColors.systemGrey.withOpacity(0.5)
-                  : Color(0x1F000000),
-              indent: 5,
-              endIndent: 5,
-            ),
+              )
           ],
         ),
-      );
-    else
-      return Container();
+        subtitle: SizedBox(
+          width: MediaQuery.of(context).size.height * 0.3,
+          child: Text(
+            cleanTags(unescape(
+              widget.board.metaDescription,
+            )),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        additionalInfo: RichText(
+          text: TextSpan(
+            text: widget.board.board.length > 3
+                ? widget.board.board.substring(0, 3)
+                : widget.board.board,
+            style: const TextStyle(
+              color: CupertinoColors.inactiveGray,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        trailing: const CupertinoListTileChevron(),
+        onTap: () => {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => BoardPage(
+                boardName: widget.board.title,
+                board: widget.board.board,
+              ),
+            ),
+          )
+        },
+      ),
+    );
   }
 }

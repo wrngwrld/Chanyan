@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/blocs/favoriteModel.dart';
-import 'package:flutter_chan/constants.dart';
+import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteButton extends StatefulWidget {
-  const FavoriteButton({@required this.board});
+  const FavoriteButton({Key key, @required this.board}) : super(key: key);
 
   final String board;
 
@@ -24,29 +21,17 @@ class _FavoriteButtonState extends State<FavoriteButton> {
 
     isFavorite = favorites.getFavorites().contains(widget.board);
 
-    return Platform.isIOS
-        ? CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              isFavorite
-                  ? favorites.removeFavorites(widget.board)
-                  : favorites.addFavorites(widget.board);
-            },
-            child: Icon(
-              isFavorite ? Icons.star_rate : Icons.star_outline,
-              color: CupertinoColors.systemYellow,
-            ),
-          )
-        : IconButton(
-            onPressed: () {
-              isFavorite
-                  ? favorites.removeFavorites(widget.board)
-                  : favorites.addFavorites(widget.board);
-            },
-            icon: Icon(
-              isFavorite ? Icons.star_rate : Icons.star_outline,
-              color: AppColors.kWhite,
-            ),
-          );
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () {
+        isFavorite
+            ? favorites.removeFavorites(widget.board)
+            : favorites.addFavorites(widget.board);
+      },
+      child: Icon(
+        isFavorite ? Icons.star_rate : Icons.star_outline,
+        color: CupertinoColors.systemYellow,
+      ),
+    );
   }
 }

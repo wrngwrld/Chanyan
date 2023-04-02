@@ -2,31 +2,34 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
-import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/board/list_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardListView extends StatelessWidget {
-  BoardListView({
+  const BoardListView({
+    Key key,
     @required this.board,
-    @required this.snapshot,
+    @required this.threads,
     @required this.scrollController,
-  });
+  }) : super(key: key);
 
   final String board;
-  final AsyncSnapshot<List<Post>> snapshot;
+  final List<Post> threads;
   final ScrollController scrollController;
 
-  setFavorite(Favorite favorite) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> setFavorite(Favorite favorite) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
-    if (favoriteThreadsPrefs == null) favoriteThreadsPrefs = [];
+    favoriteThreadsPrefs ??= [];
 
-    if (favoriteThreadsPrefs.contains(json.encode(favorite))) return;
+    if (favoriteThreadsPrefs.contains(json.encode(favorite))) {
+      return;
+    }
 
-    String favoriteString = json.encode(favorite);
+    final String favoriteString = json.encode(favorite);
 
     favoriteThreadsPrefs.add(favoriteString);
 
@@ -38,9 +41,11 @@ class BoardListView extends StatelessWidget {
     return Scrollbar(
       controller: scrollController,
       child: ListView(
+        padding: EdgeInsets.zero,
         controller: scrollController,
+        shrinkWrap: true,
         children: [
-          for (Post post in snapshot.data) ListPost(board: board, post: post)
+          for (Post post in threads) ListPost(board: board, post: post)
         ],
       ),
     );

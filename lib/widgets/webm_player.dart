@@ -2,37 +2,45 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class VLCPlayer extends StatefulWidget {
-  VLCPlayer({
+  const VLCPlayer({
+    Key key,
     @required this.video,
-    @required this.board,
+    this.board,
     @required this.height,
     @required this.width,
     @required this.fileName,
-  });
+    this.isAsset = false,
+    this.directory,
+  }) : super(key: key);
 
   final String video;
   final String board;
   final int height;
   final int width;
   final String fileName;
+  final Directory directory;
+  final bool isAsset;
 
   @override
-  _VLCPlayerState createState() => _VLCPlayerState();
+  VLCPlayerState createState() => VLCPlayerState();
 }
 
-class _VLCPlayerState extends State<VLCPlayer> {
+class VLCPlayerState extends State<VLCPlayer> {
   VlcPlayerController _videoPlayerController;
 
-  bool isVisible = false;
+  Directory directory;
 
-  Future<void> initializePlayer() async {}
+  bool isVisible = false;
 
   double sliderValue = 0.0;
   bool validPosition = false;
@@ -48,16 +56,24 @@ class _VLCPlayerState extends State<VLCPlayer> {
     fetchStartVideo();
 
     try {
-      _videoPlayerController = VlcPlayerController.network(
-        'https://i.4cdn.org/${widget.board}/' + widget.video,
-        hwAcc: HwAcc.FULL,
-        autoPlay: true,
-        options: VlcPlayerOptions(
-          advanced: VlcAdvancedOptions([
-            VlcAdvancedOptions.networkCaching(2000),
-          ]),
-        ),
-      );
+      if (widget.isAsset) {
+        _videoPlayerController = VlcPlayerController.file(
+          File('${widget.directory.path}/savedAttachments/${widget.video}'),
+          hwAcc: HwAcc.auto,
+          autoPlay: true,
+        );
+      } else {
+        _videoPlayerController = VlcPlayerController.network(
+          'https://i.4cdn.org/${widget.board}/${widget.video}',
+          hwAcc: HwAcc.full,
+          autoPlay: true,
+          options: VlcPlayerOptions(
+            advanced: VlcAdvancedOptions([
+              VlcAdvancedOptions.networkCaching(2000),
+            ]),
+          ),
+        );
+      }
     } catch (e) {
       print(e);
     }
@@ -65,31 +81,33 @@ class _VLCPlayerState extends State<VLCPlayer> {
     _videoPlayerController.addListener(listener);
   }
 
-  fetchStartVideo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> fetchStartVideo() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String startVideo = prefs.getString('startVideo');
+    final String startVideo = prefs.getString('startVideo');
 
-    if (startVideo == widget.fileName + '.webm')
+    if (startVideo == getNameWithoutExtension(widget.fileName))
       setState(() {
         isVisible = true;
       });
   }
 
-  void listener() async {
-    if (!mounted) return;
+  Future<void> listener() async {
+    if (!mounted) {
+      return;
+    }
 
     if (!isVisible) {
       _videoPlayerController.pause();
     }
 
     if (_videoPlayerController.value.isInitialized && isVisible) {
-      var oPosition = _videoPlayerController.value.position;
-      var oDuration = _videoPlayerController.value.duration;
+      final oPosition = _videoPlayerController.value.position;
+      final oDuration = _videoPlayerController.value.duration;
       if (oPosition != null && oDuration != null) {
         if (oDuration.inHours == 0) {
-          var strPosition = oPosition.toString().split('.')[0];
-          var strDuration = oDuration.toString().split('.')[0];
+          final strPosition = oPosition.toString().split('.')[0];
+          final strDuration = oDuration.toString().split('.')[0];
           position =
               "${strPosition.split(':')[1]}:${strPosition.split(':')[2]}";
           duration =
@@ -117,7 +135,7 @@ class _VLCPlayerState extends State<VLCPlayer> {
     _videoPlayerController.setTime(sliderValue.toInt() * 1000);
   }
 
-  void _togglePlaying() async {
+  Future<void> _togglePlaying() async {
     setState(() {
       _videoPlayerController.value.isPlaying
           ? _videoPlayerController.pause()
@@ -136,6 +154,16 @@ class _VLCPlayerState extends State<VLCPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final SavedAttachmentsProvider savedAttachmentsProvider =
+        Provider.of<SavedAttachmentsProvider>(context);
+
+    if (_videoPlayerController.value.isInitialized) {
+      if (savedAttachmentsProvider.playing) {
+        _videoPlayerController.play();
+      } else {
+        _videoPlayerController.pause();
+      }
+    }
     return Stack(
       children: [
         Center(
@@ -148,7 +176,7 @@ class _VLCPlayerState extends State<VLCPlayer> {
           key: ObjectKey(widget.video),
           onVisibilityChanged: (visibility) {
             if (visibility.visibleFraction < 0.5 &&
-                this.mounted &&
+                mounted &&
                 _videoPlayerController.value.isInitialized) {
               _videoPlayerController.pause();
 
@@ -157,7 +185,7 @@ class _VLCPlayerState extends State<VLCPlayer> {
               });
             }
             if (visibility.visibleFraction > 0.5 &&
-                this.mounted &&
+                mounted &&
                 _videoPlayerController.value.isInitialized) {
               _videoPlayerController.play();
 
@@ -166,112 +194,104 @@ class _VLCPlayerState extends State<VLCPlayer> {
               });
             }
           },
-          child: Container(
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    VlcPlayer(
-                      controller: _videoPlayerController,
-                      aspectRatio: widget.width / widget.height,
-                      placeholder: Center(
-                        child: PlatformCircularProgressIndicator(
-                          material: (_, __) => MaterialProgressIndicatorData(
-                            color: AppColors.kGreen,
-                          ),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  VlcPlayer(
+                    controller: _videoPlayerController,
+                    aspectRatio: widget.width / widget.height,
+                    placeholder: Center(
+                      child: PlatformCircularProgressIndicator(
+                        material: (_, __) => MaterialProgressIndicatorData(
+                          color: AppColors.kGreen,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Opacity(
-                  opacity: controllsVisible ? 1 : 0,
-                  child: SafeArea(
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Container(),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 5),
-                          height: 45,
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(50, 50, 50, 0.85),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                color: Colors.white,
-                                icon: _videoPlayerController.value.isPlaying
-                                    ? Icon(Icons.pause)
-                                    : Icon(Icons.play_arrow),
-                                onPressed: _togglePlaying,
+                  ),
+                ],
+              ),
+              Opacity(
+                opacity: controllsVisible ? 1 : 0,
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Container(),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        height: 45,
+                        decoration: const BoxDecoration(
+                            color: Color.fromRGBO(50, 50, 50, 0.85),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              color: Colors.white,
+                              icon: _videoPlayerController.value.isPlaying
+                                  ? const Icon(Icons.pause)
+                                  : const Icon(Icons.play_arrow),
+                              onPressed: _togglePlaying,
+                            ),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    position,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Slider(
+                                      activeColor: CupertinoColors.systemGrey,
+                                      inactiveColor: CupertinoColors.systemFill,
+                                      thumbColor: CupertinoColors.white,
+                                      value: sliderValue,
+                                      min: 0.0,
+                                      max: (!validPosition &&
+                                              _videoPlayerController
+                                                      .value.duration ==
+                                                  null)
+                                          ? 1.0
+                                          : _videoPlayerController
+                                              .value.duration.inSeconds
+                                              .toDouble(),
+                                      onChanged: validPosition
+                                          ? _onSliderPositionChanged
+                                          : null,
+                                    ),
+                                  ),
+                                  Text(
+                                    duration,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  )
+                                ],
                               ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                      position,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Slider(
-                                        activeColor: Platform.isIOS
-                                            ? CupertinoColors.systemGrey
-                                            : AppColors.kGreen,
-                                        inactiveColor: Platform.isIOS
-                                            ? CupertinoColors.systemFill
-                                            : AppColors.kWhite,
-                                        thumbColor: Platform.isIOS
-                                            ? CupertinoColors.white
-                                            : AppColors.kWhite,
-                                        value: sliderValue,
-                                        min: 0.0,
-                                        max: (!validPosition &&
-                                                _videoPlayerController
-                                                        .value.duration ==
-                                                    null)
-                                            ? 1.0
-                                            : _videoPlayerController
-                                                .value.duration.inSeconds
-                                                .toDouble(),
-                                        onChanged: validPosition
-                                            ? _onSliderPositionChanged
-                                            : null,
-                                      ),
-                                    ),
-                                    Text(
-                                      duration,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],

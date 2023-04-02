@@ -1,33 +1,29 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
-import 'package:flutter_chan/constants.dart';
+import 'package:flutter_chan/blocs/gallery_model.dart';
+import 'package:flutter_chan/blocs/saved_attachments_model.dart';
+import 'package:flutter_chan/blocs/theme.dart';
 import 'package:preload_page_view/preload_page_view.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class MediaPage extends StatefulWidget {
-  MediaPage({
+  const MediaPage({
+    Key key,
     @required this.video,
-    @required this.ext,
-    @required this.board,
-    @required this.height,
-    @required this.width,
+    this.board,
     @required this.list,
-    @required this.names,
     @required this.fileNames,
-  });
+  }) : super(key: key);
 
   final String video;
-  final String ext;
   final String board;
-  final int height;
-  final int width;
 
   final List<Widget> list;
-  final List<String> names;
   final List<String> fileNames;
 
   @override
@@ -37,20 +33,22 @@ class MediaPage extends StatefulWidget {
 class _MediaPageState extends State<MediaPage> {
   PreloadPageController controller;
 
-  bool isDark = true;
-
   final String page = '0';
   int index;
-  String currentName = "";
+  String currentName = '';
+  bool isSaved = false;
 
-  onPageChanged(int i) {
+  void onPageChanged(int i, String media, GalleryProvider gallery) {
+    gallery.setCurrentPage(i);
+    gallery.setCurrentMedia(media);
+
     setState(() {
       index = i;
     });
   }
 
-  setStartVideo(String video) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> setStartVideo(String video) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setString('startVideo', video);
   }
@@ -61,7 +59,11 @@ class _MediaPageState extends State<MediaPage> {
 
     index = widget.fileNames.indexWhere((element) => element == widget.video);
 
-    setStartVideo(widget.names[index]);
+    if (index < 0) {
+      Navigator.of(context).pop();
+    }
+
+    setStartVideo(getNameWithoutExtension(widget.fileNames[index]));
 
     controller = PreloadPageController(
       initialPage: index,
@@ -71,176 +73,182 @@ class _MediaPageState extends State<MediaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+    final gallery = Provider.of<GalleryProvider>(context);
+    final savedAttachments = Provider.of<SavedAttachmentsProvider>(context);
+
+    isSaved = false;
+    for (final element in savedAttachments.getSavedAttachments()) {
+      if (element.fileName == widget.fileNames[index]) {
+        isSaved = true;
+      }
+    }
+
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      key: _scaffoldKey,
+      backgroundColor: theme.getTheme() == ThemeData.light()
+          ? CupertinoColors.systemGroupedBackground
+          : CupertinoColors.black,
       extendBodyBehindAppBar: true,
-      appBar: Platform.isIOS
-          ? CupertinoNavigationBar(
-              backgroundColor: isDark ? Colors.black : Colors.white,
-              middle: Column(
-                children: [
-                  Text(
-                    widget.names[index],
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    (index + 1).toString() +
-                        '/' +
-                        widget.list.length.toString(),
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ],
+      appBar: CupertinoNavigationBar(
+        backgroundColor: theme.getTheme() == ThemeData.light()
+            ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+            : CupertinoColors.black.withOpacity(0.7),
+        border: Border.all(color: Colors.transparent),
+        middle: Column(
+          children: [
+            Text(
+              widget.fileNames[index],
+              style: TextStyle(
+                color: theme.getTheme() == ThemeData.dark()
+                    ? Colors.white
+                    : Colors.black,
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => {
-                      setState(() {
-                        isDark = !isDark;
-                      })
-                    },
-                    child: Icon(
-                      Icons.wb_sunny,
-                      color: CupertinoColors.activeBlue,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                    child: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              CupertinoActionSheet(
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              '${index + 1}/${widget.list.length}',
+              style: TextStyle(
+                color: theme.getTheme() == ThemeData.dark()
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!isSaved)
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(CupertinoIcons.bookmark),
+                onPressed: () => {
+                  savedAttachments.addSavedAttachments(
+                    _scaffoldKey.currentContext,
+                    widget.board,
+                    widget.fileNames[index],
+                  )
+                },
+              )
+            else
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(CupertinoIcons.bookmark_fill),
+                onPressed: () => {
+                  showCupertinoDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (context) {
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return CupertinoAlertDialog(
+                            title: const Text('Delete Attachment?'),
                             actions: [
-                              CupertinoActionSheetAction(
-                                child: Text('Open in Browser'),
-                                onPressed: () {
-                                  launchURL(
-                                    'https://i.4cdn.org/${widget.board}/' +
-                                        widget.fileNames[index],
-                                  );
-                                  Navigator.pop(context);
+                              CupertinoDialogAction(
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ),
+                                onPressed: () => {
+                                  Navigator.pop(context),
                                 },
                               ),
-                              CupertinoActionSheetAction(
-                                child: Text('Share'),
-                                onPressed: () {
-                                  Share.share(
-                                    'https://i.4cdn.org/${widget.board}/' +
-                                        widget.fileNames[index],
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              CupertinoActionSheetAction(
-                                child: Text('Download'),
-                                onPressed: () {
-                                  saveVideo(
-                                    'https://i.4cdn.org/${widget.board}/' +
-                                        widget.fileNames[index],
-                                    widget.fileNames[index],
-                                    context,
-                                    true,
-                                  );
-                                  Navigator.pop(context);
+                              CupertinoDialogAction(
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ),
+                                onPressed: () => {
+                                  savedAttachments
+                                      .removeSavedAttachments(
+                                          widget.fileNames[index])
+                                      .then(
+                                        (value) => {
+                                          Navigator.pop(context),
+                                        },
+                                      ),
                                 },
                               ),
                             ],
-                            cancelButton: CupertinoActionSheetAction(
-                              child: Text('Cancel'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      child: Icon(Icons.ios_share),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : AppBar(
-              backgroundColor: isDark ? Colors.black : Colors.white,
-              foregroundColor: isDark ? Colors.white : AppColors.kBlack,
-              title: Column(
-                children: [
-                  Text(widget.names[index]),
-                  Text((index + 1).toString() +
-                      '/' +
-                      widget.list.length.toString()),
-                ],
-              ),
-              actions: [
-                IconButton(
-                    onPressed: () => {
-                          setState(() {
-                            isDark = !isDark;
-                          })
+                          );
                         },
-                    icon: Icon(Icons.wb_sunny)),
-                PopupMenuButton(
-                  icon: Icon(Icons.share),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: Text("Open in Browser"),
-                      value: 0,
-                    ),
-                    PopupMenuItem(
-                      child: Text("Share"),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: Text("Download"),
-                      value: 2,
-                    ),
-                  ],
-                  onSelected: (result) {
-                    switch (result) {
-                      case 0:
-                        launchURL(
-                          'https://i.4cdn.org/${widget.board}/' +
+                      );
+                    },
+                  ),
+                },
+              ),
+            SizedBox(
+              width: 20,
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  showCupertinoModalPopup(
+                    context: context,
+                    builder: (BuildContext context) => CupertinoActionSheet(
+                      actions: [
+                        if (!isSaved)
+                          CupertinoActionSheetAction(
+                            child: const Text('Open in Browser'),
+                            onPressed: () {
+                              launchURL(
+                                'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
+                              );
+                              Navigator.pop(context);
+                            },
+                          ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Share'),
+                          onPressed: () {
+                            shareMedia(
+                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                               widget.fileNames[index],
-                        );
-                        break;
-                      case 1:
-                        Share.share(
-                          'https://i.4cdn.org/${widget.board}/' +
+                              _scaffoldKey.currentContext,
+                              isSaved: isSaved,
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                        CupertinoActionSheetAction(
+                          child: const Text('Download'),
+                          onPressed: () {
+                            saveVideo(
+                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                               widget.fileNames[index],
-                        );
-                        break;
-                      case 2:
-                        saveVideo(
-                          'https://i.4cdn.org/${widget.board}/' +
-                              widget.fileNames[index],
-                          widget.fileNames[index],
-                          context,
-                          true,
-                        );
-                        break;
-                      default:
-                    }
-                  },
-                )
-              ],
+                              _scaffoldKey.currentContext,
+                              showSnackBar: true,
+                              isSaved: isSaved,
+                            );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                      cancelButton: CupertinoActionSheetAction(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.ios_share),
+              ),
             ),
+          ],
+        ),
+      ),
       body: PreloadPageView(
         scrollDirection: Axis.horizontal,
         controller: controller,
         children: widget.list,
-        physics: ClampingScrollPhysics(),
-        onPageChanged: (i) => onPageChanged(i),
+        physics: const ClampingScrollPhysics(),
+        onPageChanged: (i) => onPageChanged(i, widget.fileNames[i], gallery),
         preloadPagesCount: 2,
       ),
     );

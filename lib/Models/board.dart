@@ -23,28 +23,6 @@ class Board {
     this.customSpoilers,
   });
 
-  final String board;
-  final String title;
-  final int wsBoard;
-  final int perPage;
-  final int pages;
-  final int maxFileSize;
-  final int maxWebmFileSize;
-  final int maxCommentChars;
-  final int maxWebmDuration;
-  final int bumpLimit;
-  final int imageLimit;
-  final int threadsCooldown;
-  final int repliesCooldown;
-  final int imagesCooldown;
-  final String metaDescription;
-  final int isArchived;
-  final int forcedAnon;
-  final int countryFlags;
-  final int userIds;
-  final int spoilers;
-  final int customSpoilers;
-
   factory Board.fromJson(Map<String, dynamic> json) {
     return Board(
       board: json['board'],
@@ -70,6 +48,29 @@ class Board {
       customSpoilers: json['custom_spoilers'],
     );
   }
+
+  final String board;
+  final String title;
+  final int wsBoard;
+  final int perPage;
+  final int pages;
+  final int maxFileSize;
+  final int maxWebmFileSize;
+  final int maxCommentChars;
+  final int maxWebmDuration;
+  final int bumpLimit;
+  final int imageLimit;
+  final int threadsCooldown;
+  final int repliesCooldown;
+  final int imagesCooldown;
+  final String metaDescription;
+  final int isArchived;
+  final int forcedAnon;
+  final int countryFlags;
+  final int userIds;
+  final int spoilers;
+  final int customSpoilers;
+
   Map<String, dynamic> toJson() {
     return {
       'board': board,

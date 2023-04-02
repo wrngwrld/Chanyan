@@ -1,67 +1,67 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:provider/provider.dart';
 
 class FloatingActionButtons extends StatelessWidget {
   const FloatingActionButtons({
+    Key key,
     this.scrollController,
-  });
+    this.goUp,
+    this.goDown,
+  }) : super(key: key);
 
   final ScrollController scrollController;
+  final VoidCallback goUp;
+  final VoidCallback goDown;
+
+  void animateToTop() {
+    scrollController.animateTo(
+      scrollController.position.minScrollExtent,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  void animateToBottom() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeChanger>(context);
+    final ThemeChanger theme = Provider.of<ThemeChanger>(context);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         FloatingActionButton(
-          child: Icon(Icons.expand_less, size: 35),
+          child: const Icon(Icons.expand_less, size: 35),
           elevation: 0,
-          backgroundColor: theme.getTheme() == ThemeData.dark()
-              ? Platform.isIOS
-                  ? CupertinoColors.black.withOpacity(0.85)
-                  : AppColors.kGreen
-              : Platform.isIOS
-                  ? CupertinoColors.white.withOpacity(0.85)
-                  : AppColors.kGreen,
-          foregroundColor:
-              Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
-          onPressed: () {
-            scrollController.animateTo(
-              scrollController.position.minScrollExtent,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.fastOutSlowIn,
-            );
+          backgroundColor: theme.getTheme() == ThemeData.light()
+              ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+              : CupertinoColors.black.withOpacity(0.7),
+          foregroundColor: CupertinoColors.activeBlue,
+          onPressed: () => {
+            if (goUp == null) animateToTop() else goUp(),
           },
           heroTag: null,
         ),
-        SizedBox(
+        const SizedBox(
           height: 40,
         ),
         FloatingActionButton(
-          child: Icon(Icons.expand_more, size: 35),
+          child: const Icon(Icons.expand_more, size: 35),
           elevation: 0,
-          backgroundColor: theme.getTheme() == ThemeData.dark()
-              ? Platform.isIOS
-                  ? CupertinoColors.black.withOpacity(0.85)
-                  : AppColors.kGreen
-              : Platform.isIOS
-                  ? CupertinoColors.white.withOpacity(0.85)
-                  : AppColors.kGreen,
-          foregroundColor:
-              Platform.isIOS ? CupertinoColors.activeBlue : AppColors.kWhite,
+          backgroundColor: theme.getTheme() == ThemeData.light()
+              ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+              : CupertinoColors.black.withOpacity(0.7),
+          foregroundColor: CupertinoColors.activeBlue,
           onPressed: () => {
-            scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.fastOutSlowIn,
-            )
+            if (goDown == null) animateToBottom() else goDown(),
           },
           heroTag: null,
         )

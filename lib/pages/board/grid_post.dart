@@ -3,17 +3,20 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/favorite.dart';
-import 'package:flutter_chan/blocs/bookmarksModel.dart';
-import 'package:flutter_chan/models/post.dart';
+import 'package:flutter_chan/Models/post.dart';
+import 'package:flutter_chan/blocs/bookmarks_model.dart';
+import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 
 class GridPost extends StatefulWidget {
   const GridPost({
+    Key key,
     @required this.board,
     @required this.post,
-  });
+  }) : super(key: key);
 
   final String board;
   final Post post;
@@ -35,8 +38,8 @@ class _GridPostState extends State<GridPost> {
       no: widget.post.no,
       sub: widget.post.sub,
       com: widget.post.com,
-      imageUrl: widget.post.tim.toString() + 's.jpg',
-      board: widget.board.toString(),
+      imageUrl: '${widget.post.tim}s.jpg',
+      board: widget.board,
     );
 
     favoriteString = json.encode(favorite);
@@ -45,6 +48,7 @@ class _GridPostState extends State<GridPost> {
   @override
   Widget build(BuildContext context) {
     final bookmarks = Provider.of<BookmarksProvider>(context);
+    final theme = Provider.of<ThemeChanger>(context);
 
     isFavorite = bookmarks.getBookmarks().contains(favoriteString);
 
@@ -54,26 +58,27 @@ class _GridPostState extends State<GridPost> {
           context: context,
           builder: (BuildContext context) => CupertinoActionSheet(
             actions: [
-              isFavorite
-                  ? CupertinoActionSheetAction(
-                      child: Text('Remove bookmark'),
-                      onPressed: () {
-                        bookmarks.removeBookmarks(favorite);
+              if (isFavorite)
+                CupertinoActionSheetAction(
+                  child: const Text('Remove bookmark'),
+                  onPressed: () {
+                    bookmarks.removeBookmarks(favorite);
 
-                        Navigator.pop(context);
-                      },
-                    )
-                  : CupertinoActionSheetAction(
-                      child: Text('Set bookmark'),
-                      onPressed: () {
-                        bookmarks.addBookmarks(favorite);
+                    Navigator.pop(context);
+                  },
+                )
+              else
+                CupertinoActionSheetAction(
+                  child: const Text('Set bookmark'),
+                  onPressed: () {
+                    bookmarks.addBookmarks(favorite);
 
-                        Navigator.pop(context);
-                      },
-                    ),
+                    Navigator.pop(context);
+                  },
+                ),
             ],
             cancelButton: CupertinoActionSheetAction(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -85,9 +90,7 @@ class _GridPostState extends State<GridPost> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ThreadPage(
-              threadName: widget.post.sub != null
-                  ? widget.post.sub.toString()
-                  : widget.post.com.toString(),
+              threadName: widget.post.sub ?? widget.post.com,
               thread: widget.post.no,
               board: widget.board,
               post: widget.post,
@@ -98,9 +101,7 @@ class _GridPostState extends State<GridPost> {
       child: Stack(
         children: [
           Image.network(
-            'https://i.4cdn.org/${widget.board}/' +
-                widget.post.tim.toString() +
-                's.jpg',
+            'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
             fit: BoxFit.cover,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -108,50 +109,64 @@ class _GridPostState extends State<GridPost> {
           Column(
             children: [
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 color: Colors.black.withOpacity(0.5),
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    widget.post.sub != null
-                        ? Html(
-                            data: widget.post.sub,
-                            style: {
-                              "body": Style(
-                                fontSize: FontSize(16.0),
-                                color: Colors.white,
-                                maxLines: 1,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            },
-                          )
-                        : Html(
-                            data: widget.post.com ?? '',
-                            style: {
-                              "body": Style(
-                                fontSize: FontSize(16.0),
-                                color: Colors.white,
-                                maxLines: 1,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            },
+                    if (widget.post.sub != null)
+                      Html(
+                        data: widget.post.sub,
+                        style: {
+                          'body': Style(
+                            fontSize: FontSize(16.0),
+                            color: Colors.white,
+                            maxLines: 1,
+                            fontWeight: FontWeight.w500,
                           ),
-                    Container(
-                      padding: EdgeInsets.only(left: 10),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'R: ' +
-                            widget.post.replies.toString() +
-                            ' / I: ' +
-                            widget.post.images.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
+                        },
+                      )
+                    else
+                      Html(
+                        data: widget.post.com ?? '',
+                        style: {
+                          'body': Style(
+                            fontSize: FontSize(16.0),
+                            color: Colors.white,
+                            maxLines: 1,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        },
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RepliesRow(
+                            replies: widget.post.replies,
+                            imageReplies: widget.post.images,
+                            invertTextColor:
+                                theme.getTheme() == ThemeData.dark()
+                                    ? false
+                                    : true,
+                          ),
+                          GestureDetector(
+                            onTap: () => {
+                              if (isFavorite)
+                                bookmarks.removeBookmarks(favorite)
+                              else
+                                bookmarks.addBookmarks(favorite),
+                            },
+                            child: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border_outlined,
+                              color: CupertinoColors.systemRed,
+                            ),
+                          )
+                        ],
                       ),
                     )
                   ],
