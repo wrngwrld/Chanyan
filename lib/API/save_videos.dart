@@ -29,7 +29,7 @@ Future<bool> _requestPermission(Permission permission) async {
 Future<Directory> requestDirectory(Directory directory) async {
   if (Platform.isAndroid) {
     if (await _requestPermission(Permission.storage)) {
-      directory = await getExternalStorageDirectory();
+      directory = (await getExternalStorageDirectory())!;
       String newPath = '';
       final List<String> paths = directory.path.split('/');
       for (int x = 1; x < paths.length; x++) {
@@ -56,7 +56,7 @@ Future<Directory> requestDirectory(Directory directory) async {
   return directory;
 }
 
-Future<ReturnCode> convertWebMToMP4(File webmFile, File mp4File) async {
+Future<ReturnCode?> convertWebMToMP4(File webmFile, File mp4File) async {
   mp4File = File(mp4File.path.replaceAll('.webm', '.mp4'));
 
   final FFmpegSession session = await FFmpegKit.execute(
@@ -78,7 +78,7 @@ Future<void> saveVideo(
 
   savedAttachmentsProvider.pauseVideo();
 
-  Directory directory;
+  Directory directory = Directory('');
   final dio = Dio();
 
   if (isSaved) {
@@ -158,8 +158,9 @@ Future<void> saveVideo(
               'File converting...',
             );
 
-            final ReturnCode returnCode =
-                await convertWebMToMP4(saveFile, saveFileVideo);
+            final ReturnCode? returnCode =
+                (await convertWebMToMP4(saveFile, saveFileVideo))
+                    as ReturnCode?;
 
             if (ReturnCode.isSuccess(returnCode)) {
               await ImageGallerySaver.saveFile(
@@ -245,7 +246,7 @@ Future<void> shareMedia(
   BuildContext context, {
   bool isSaved = false,
 }) async {
-  Directory directory;
+  Directory directory = Directory('');
   final dio = Dio();
 
   final SavedAttachmentsProvider savedAttachmentsProvider =
@@ -300,8 +301,9 @@ Future<void> shareMedia(
               'File converting...',
             );
 
-            final ReturnCode returnCode =
-                await convertWebMToMP4(saveFile, saveFileVideo);
+            final ReturnCode? returnCode =
+                (await convertWebMToMP4(saveFile, saveFileVideo))
+                    as ReturnCode?;
 
             if (ReturnCode.isSuccess(returnCode)) {
               Navigator.pop(context);
@@ -348,14 +350,14 @@ Future<void> shareMedia(
   savedAttachmentsProvider.startVideo();
 }
 
-Future<SavedAttachment> saveAttachment(
+Future<SavedAttachment?> saveAttachment(
   String url,
   String thumbnailUrl,
   String fileName,
   BuildContext context,
   SavedAttachmentsProvider savedAttachmentsProvider,
 ) async {
-  Directory directory;
+  Directory directory = Directory('');
   final dio = Dio();
 
   final SavedAttachmentsProvider savedAttachmentsProvider =
@@ -403,8 +405,8 @@ Future<SavedAttachment> saveAttachment(
             'File converting...',
           );
 
-          final ReturnCode returnCode =
-              await convertWebMToMP4(saveFile, saveFileVideo);
+          final ReturnCode? returnCode =
+              (await convertWebMToMP4(saveFile, saveFileVideo)) as ReturnCode?;
 
           if (ReturnCode.isSuccess(returnCode)) {
             final String thumbnailPath = await downloadThumbnail(
@@ -521,7 +523,7 @@ Future<SavedAttachment> saveAttachment(
 }
 
 Future<dynamic> showCupertinoSnackbar(
-  Duration duration,
+  Duration? duration,
   bool dismissable,
   BuildContext context,
   String message,

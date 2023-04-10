@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 
 class ThreadGridView extends StatefulWidget {
   const ThreadGridView({
-    Key key,
-    @required this.media,
-    @required this.fileNames,
-    @required this.board,
-    @required this.tims,
-    @required this.prevTitle,
+    Key? key,
+    required this.media,
+    required this.fileNames,
+    required this.board,
+    required this.tims,
+    required this.prevTitle,
   }) : super(key: key);
 
   final List<Widget> media;
@@ -31,7 +31,7 @@ class _ThreadGridViewState extends State<ThreadGridView> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
-    ScrollController scrollController;
+    final ScrollController scrollController = ScrollController();
 
     return Scaffold(
       backgroundColor: theme.getTheme() == ThemeData.light()

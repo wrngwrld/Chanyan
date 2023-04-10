@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 class RepliesRow extends StatelessWidget {
   const RepliesRow({
-    Key key,
+    Key? key,
     this.replies = '-',
     this.imageReplies = '-',
     this.showImageReplies = true,

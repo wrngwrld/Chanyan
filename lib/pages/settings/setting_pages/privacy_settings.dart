@@ -6,7 +6,9 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:provider/provider.dart';
 
 class PrivacySettings extends StatefulWidget {
-  const PrivacySettings({Key key}) : super(key: key);
+  const PrivacySettings({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PrivacySettings> createState() => PrivacySettingsState();

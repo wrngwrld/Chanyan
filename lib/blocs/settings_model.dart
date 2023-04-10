@@ -30,9 +30,9 @@ class SettingsProvider with ChangeNotifier {
     }
 
     if (prefs.getBool('allowNSFW') != null) {
-      final bool allowNSFWPrefs = prefs.getBool('allowNSFW');
+      final bool? allowNSFWPrefs = prefs.getBool('allowNSFW');
 
-      allowNSFW = allowNSFWPrefs;
+      allowNSFW = allowNSFWPrefs!;
     }
 
     notifyListeners();

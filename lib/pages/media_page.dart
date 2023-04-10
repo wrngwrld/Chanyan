@@ -13,15 +13,15 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class MediaPage extends StatefulWidget {
   const MediaPage({
-    Key key,
-    @required this.video,
+    Key? key,
+    required this.video,
     this.board,
-    @required this.list,
-    @required this.fileNames,
+    required this.list,
+    required this.fileNames,
   }) : super(key: key);
 
   final String video;
-  final String board;
+  final String? board;
 
   final List<Widget> list;
   final List<String> fileNames;
@@ -31,10 +31,10 @@ class MediaPage extends StatefulWidget {
 }
 
 class _MediaPageState extends State<MediaPage> {
-  PreloadPageController controller;
+  late PreloadPageController controller;
 
   final String page = '0';
-  int index;
+  late int index;
   String currentName = '';
   bool isSaved = false;
 
@@ -126,8 +126,8 @@ class _MediaPageState extends State<MediaPage> {
                 child: const Icon(CupertinoIcons.bookmark),
                 onPressed: () => {
                   savedAttachments.addSavedAttachments(
-                    _scaffoldKey.currentContext,
-                    widget.board,
+                    _scaffoldKey.currentContext ?? context,
+                    widget.board ?? '',
                     widget.fileNames[index],
                   )
                 },
@@ -208,7 +208,7 @@ class _MediaPageState extends State<MediaPage> {
                             shareMedia(
                               'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                               widget.fileNames[index],
-                              _scaffoldKey.currentContext,
+                              _scaffoldKey.currentContext ?? context,
                               isSaved: isSaved,
                             );
                             Navigator.pop(context);
@@ -220,7 +220,7 @@ class _MediaPageState extends State<MediaPage> {
                             saveVideo(
                               'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
                               widget.fileNames[index],
-                              _scaffoldKey.currentContext,
+                              _scaffoldKey.currentContext ?? context,
                               showSnackBar: true,
                               isSaved: isSaved,
                             );

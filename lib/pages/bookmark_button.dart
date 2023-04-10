@@ -8,11 +8,11 @@ import 'package:provider/provider.dart';
 
 class BookmarkButton extends StatefulWidget {
   const BookmarkButton({
-    Key key,
+    Key? key,
     this.favorite,
   }) : super(key: key);
 
-  final Favorite favorite;
+  final Favorite? favorite;
 
   @override
   State<BookmarkButton> createState() => _BookmarkButtonState();
@@ -20,7 +20,7 @@ class BookmarkButton extends StatefulWidget {
 
 class _BookmarkButtonState extends State<BookmarkButton> {
   bool isFavorite = false;
-  String favoriteString;
+  late String favoriteString;
 
   @override
   void initState() {

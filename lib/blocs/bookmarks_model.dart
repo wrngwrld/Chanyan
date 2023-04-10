@@ -16,7 +16,7 @@ class BookmarksProvider with ChangeNotifier {
   Future<void> loadPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    List<String> bookmarksPrefs = prefs.getStringList('favoriteThreads');
+    List<String>? bookmarksPrefs = prefs.getStringList('favoriteThreads');
 
     bookmarksPrefs ??= [];
 
@@ -32,7 +32,7 @@ class BookmarksProvider with ChangeNotifier {
       return list;
   }
 
-  Future<void> addBookmarks(Favorite favorite) async {
+  Future<void> addBookmarks(Favorite? favorite) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     list.add(json.encode(favorite));
@@ -43,7 +43,7 @@ class BookmarksProvider with ChangeNotifier {
   }
 
   Future<void> removeBookmarks(
-    Favorite favorite, {
+    Favorite? favorite, {
     bool notifyListener = true,
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

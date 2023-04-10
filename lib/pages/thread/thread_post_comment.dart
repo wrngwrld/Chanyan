@@ -9,11 +9,11 @@ import 'package:provider/provider.dart';
 
 class ThreadPostComment extends StatelessWidget {
   const ThreadPostComment({
-    Key key,
-    @required this.com,
-    @required this.thread,
-    @required this.board,
-    @required this.allPosts,
+    Key? key,
+    required this.com,
+    required this.thread,
+    required this.board,
+    required this.allPosts,
   }) : super(key: key);
 
   final String com;
@@ -34,7 +34,7 @@ class ThreadPostComment extends StatelessWidget {
       if (line.startsWith('<a href')) {
         final document = parse(line);
 
-        final urlNo = document.body.text.replaceFirst('>>', '');
+        final urlNo = document.body!.text.replaceFirst('>>', '');
 
         formattedCom.add(
           GestureDetector(

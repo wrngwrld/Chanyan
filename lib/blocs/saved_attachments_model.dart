@@ -18,7 +18,7 @@ class SavedAttachmentsProvider with ChangeNotifier {
   Future<void> loadPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    List<String> savedAttachmentsPrefs =
+    List<String>? savedAttachmentsPrefs =
         prefs.getStringList('savedAttachments');
 
     savedAttachmentsPrefs ??= [];
@@ -47,7 +47,7 @@ class SavedAttachmentsProvider with ChangeNotifier {
         fileName.substring(0, fileName.lastIndexOf('.'));
 
     if (!list.contains(fileName)) {
-      final SavedAttachment savedAttachment = await saveAttachment(
+      final SavedAttachment? savedAttachment = await saveAttachment(
         'https://i.4cdn.org/$board/$fileName',
         'https://i.4cdn.org/$board/${nameWithoutExtension}s.jpg',
         fileName,
@@ -91,7 +91,7 @@ class SavedAttachmentsProvider with ChangeNotifier {
 
     prefs.setStringList('savedAttachments', list);
 
-    Directory directory;
+    Directory directory = Directory('');
 
     try {
       directory = await requestDirectory(directory);
@@ -120,7 +120,7 @@ class SavedAttachmentsProvider with ChangeNotifier {
 
     notifyListeners();
 
-    Directory directory;
+    Directory directory = Directory('');
 
     try {
       directory = await requestDirectory(directory);

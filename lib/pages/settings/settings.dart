@@ -9,7 +9,7 @@ import 'package:flutter_chan/pages/settings/setting_pages/threads_settings.dart'
 import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({Key key}) : super(key: key);
+  const Settings({Key? key}) : super(key: key);
 
   @override
   State<Settings> createState() => _SettingsState();

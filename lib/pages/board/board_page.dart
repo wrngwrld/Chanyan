@@ -14,9 +14,9 @@ import 'package:provider/provider.dart';
 
 class BoardPage extends StatefulWidget {
   const BoardPage({
-    Key key,
-    @required this.board,
-    @required this.boardName,
+    Key? key,
+    required this.board,
+    required this.boardName,
   }) : super(key: key);
 
   final String board;
@@ -30,17 +30,20 @@ class BoardPageState extends State<BoardPage> {
   final ScrollController scrollController = ScrollController();
   final TextEditingController _searchBarController = TextEditingController();
 
-  Future<List<Post>> _fetchAllThreadsFromBoard;
+  late Future<List<Post>> _fetchAllThreadsFromBoard;
 
-  List<Post> filterdBoards;
+  late List<Post> filterdBoards;
 
   bool isFavorite = false;
+  late Sort sort;
 
   @override
   void initState() {
     super.initState();
 
     final settings = Provider.of<SettingsProvider>(context, listen: false);
+
+    sort = settings.getBoardSort();
 
     _fetchAllThreadsFromBoard =
         fetchAllThreadsFromBoard(settings.getBoardSort(), widget.board)
@@ -53,6 +56,8 @@ class BoardPageState extends State<BoardPage> {
 
       _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board)
           .then((value) => filterdBoards = value);
+
+      sort = sortBy;
     });
   }
 
@@ -64,7 +69,7 @@ class BoardPageState extends State<BoardPage> {
           board: widget.board,
           threads: threads,
         );
-        break;
+
       case View.gridView:
       default:
         return BoardGridView(
@@ -75,15 +80,19 @@ class BoardPageState extends State<BoardPage> {
     }
   }
 
-  void _updateThreadsList(String value, List<Post> data) {
+  void _updateThreadsList(String value, List<Post>? data) {
+    if (data == null) {
+      return;
+    }
+
     if (value.isNotEmpty) {
       filterdBoards = data
           .where((element) => element.sub != null
-              ? element.sub.toLowerCase().contains(value.toLowerCase())
+              ? element.sub!.toLowerCase().contains(value.toLowerCase())
               : false || element.name != null
-                  ? element.name.toLowerCase().contains(value.toLowerCase())
+                  ? element.name!.toLowerCase().contains(value.toLowerCase())
                   : false || element.com != null
-                      ? element.com.toLowerCase().contains(value.toLowerCase())
+                      ? element.com!.toLowerCase().contains(value.toLowerCase())
                       : false)
           .toList();
     } else {
@@ -97,8 +106,6 @@ class BoardPageState extends State<BoardPage> {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
     final settings = Provider.of<SettingsProvider>(context);
-
-    final Sort boardSort = settings.getBoardSort();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -161,7 +168,7 @@ class BoardPageState extends State<BoardPage> {
                                 CupertinoActionSheetAction(
                                   child: Text(
                                     'Image Count',
-                                    style: boardSort == Sort.byImagesCount
+                                    style: sort == Sort.byImagesCount
                                         ? const TextStyle(
                                             fontWeight: FontWeight.w700)
                                         : const TextStyle(
@@ -175,7 +182,7 @@ class BoardPageState extends State<BoardPage> {
                                 CupertinoActionSheetAction(
                                   child: Text(
                                     'Reply Count',
-                                    style: boardSort == Sort.byReplyCount
+                                    style: sort == Sort.byReplyCount
                                         ? const TextStyle(
                                             fontWeight: FontWeight.w700)
                                         : const TextStyle(
@@ -189,7 +196,7 @@ class BoardPageState extends State<BoardPage> {
                                 CupertinoActionSheetAction(
                                   child: Text(
                                     'Bump Order',
-                                    style: boardSort == Sort.byBumpOrder
+                                    style: sort == Sort.byBumpOrder
                                         ? const TextStyle(
                                             fontWeight: FontWeight.w700)
                                         : const TextStyle(
@@ -203,7 +210,7 @@ class BoardPageState extends State<BoardPage> {
                                 CupertinoActionSheetAction(
                                   child: Text(
                                     'Newest',
-                                    style: boardSort == Sort.byNewest
+                                    style: sort == Sort.byNewest
                                         ? const TextStyle(
                                             fontWeight: FontWeight.w700)
                                         : const TextStyle(
@@ -217,7 +224,7 @@ class BoardPageState extends State<BoardPage> {
                                 CupertinoActionSheetAction(
                                   child: Text(
                                     'Oldest',
-                                    style: boardSort == Sort.byOldest
+                                    style: sort == Sort.byOldest
                                         ? const TextStyle(
                                             fontWeight: FontWeight.w700)
                                         : const TextStyle(
@@ -265,7 +272,7 @@ class BoardPageState extends State<BoardPage> {
                                   ),
                                 ),
                               );
-                              break;
+
                             default:
                               return Column(
                                 children: [

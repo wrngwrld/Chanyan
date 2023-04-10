@@ -5,10 +5,10 @@ import 'package:flutter_chan/pages/board/grid_post.dart';
 
 class BoardGridView extends StatelessWidget {
   const BoardGridView({
-    Key key,
-    @required this.board,
-    @required this.threads,
-    @required this.scrollController,
+    Key? key,
+    required this.board,
+    required this.threads,
+    required this.scrollController,
   }) : super(key: key);
 
   final String board;

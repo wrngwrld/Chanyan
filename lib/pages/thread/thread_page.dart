@@ -22,11 +22,11 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class ThreadPage extends StatefulWidget {
   const ThreadPage({
-    Key key,
-    @required this.board,
-    @required this.thread,
-    @required this.threadName,
-    @required this.post,
+    Key? key,
+    required this.board,
+    required this.thread,
+    required this.threadName,
+    required this.post,
     this.fromFavorites = false,
   }) : super(key: key);
 
@@ -46,7 +46,7 @@ class ThreadPageState extends State<ThreadPage> {
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
 
-  Future<List<Post>> _fetchAllPostsFromThread;
+  late Future<List<Post>> _fetchAllPostsFromThread;
 
   List<Widget> media = [];
   List<String> fileNames = [];
@@ -54,8 +54,8 @@ class ThreadPageState extends State<ThreadPage> {
 
   List<Post> allPosts = [];
 
-  Favorite favorite;
-  Post currentPage;
+  late Favorite favorite;
+  late Post currentPage;
 
   Future<void> getAllMedia() async {
     media = [];
@@ -67,18 +67,18 @@ class ThreadPageState extends State<ThreadPage> {
 
     for (final Post post in posts) {
       if (post.tim != null) {
-        final String video = post.tim.toString() + post.ext;
+        final String video = post.tim.toString() + post.ext.toString();
 
-        tims.add(post.tim);
-        fileNames.add(post.tim.toString() + post.ext);
+        tims.add(post.tim ?? 0);
+        fileNames.add(post.tim.toString() + post.ext.toString());
         media.add(
           post.ext == '.webm'
               ? VLCPlayer(
                   board: widget.board,
                   video: video,
-                  height: post.h,
-                  width: post.w,
-                  fileName: post.filename,
+                  height: post.h ?? 0,
+                  width: post.w ?? 0,
+                  fileName: post.filename ?? '',
                 )
               : InteractiveViewer(
                   minScale: 0.5,
@@ -195,7 +195,7 @@ class ThreadPageState extends State<ThreadPage> {
                             saveAllMedia(
                               'https://i.4cdn.org/${widget.board}/',
                               fileNames,
-                              _scaffoldKey.currentContext,
+                              _scaffoldKey.currentContext ?? context,
                             );
                           },
                         ),
@@ -245,25 +245,24 @@ class ThreadPageState extends State<ThreadPage> {
                       MaterialProgressIndicatorData(color: AppColors.kGreen),
                 ),
               );
-              break;
             default:
-              allPosts = snapshot.data;
+              allPosts = snapshot.data!;
               return SafeArea(
                 top: true,
                 bottom: false,
                 child: ScrollablePositionedList.builder(
                   shrinkWrap: false,
-                  itemCount: snapshot.data.length,
+                  itemCount: snapshot.data!.length,
                   physics: const ClampingScrollPhysics(),
                   itemScrollController: itemScrollController,
                   itemPositionsListener: itemPositionsListener,
                   itemBuilder: (context, index) => ThreadPagePost(
                     board: widget.board,
                     thread: widget.thread,
-                    post: snapshot.data[index],
+                    post: snapshot.data![index],
                     media: media,
                     fileNames: fileNames,
-                    allPosts: snapshot.data,
+                    allPosts: snapshot.data ?? [],
                     onDismiss: (i) => {
                       if (gallery.getCurrentMedia() != '')
                         {

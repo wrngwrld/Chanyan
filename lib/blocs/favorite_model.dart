@@ -13,7 +13,7 @@ class FavoriteProvider with ChangeNotifier {
   Future<void> loadPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    List<String> favoritePrefs = prefs.getStringList('favoriteBoards');
+    List<String>? favoritePrefs = prefs.getStringList('favoriteBoards');
 
     favoritePrefs ??= [];
 

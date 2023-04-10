@@ -10,7 +10,7 @@ import 'package:flutter_chan/pages/bookmarks/bookmarks_post.dart';
 import 'package:provider/provider.dart';
 
 class Bookmarks extends StatefulWidget {
-  const Bookmarks({Key key}) : super(key: key);
+  const Bookmarks({Key? key}) : super(key: key);
 
   @override
   State<Bookmarks> createState() => _BookmarksState();
@@ -172,11 +172,11 @@ class _BookmarksState extends State<Bookmarks> {
                                 switch (snapshot.connectionState) {
                                   case ConnectionState.waiting:
                                     return Container();
-                                    break;
                                   default:
                                     return Column(
                                       children: [
-                                        for (String string in snapshot.data)
+                                        for (String string
+                                            in snapshot.data ?? <String>[])
                                           BookmarksPost(
                                             favorite: Favorite.fromJson(
                                               json.decode(string)

@@ -5,27 +5,27 @@ import 'package:provider/provider.dart';
 
 class FloatingActionButtons extends StatelessWidget {
   const FloatingActionButtons({
-    Key key,
+    Key? key,
     this.scrollController,
     this.goUp,
     this.goDown,
   }) : super(key: key);
 
-  final ScrollController scrollController;
-  final VoidCallback goUp;
-  final VoidCallback goDown;
+  final ScrollController? scrollController;
+  final VoidCallback? goUp;
+  final VoidCallback? goDown;
 
   void animateToTop() {
-    scrollController.animateTo(
-      scrollController.position.minScrollExtent,
+    scrollController!.animateTo(
+      scrollController!.position.minScrollExtent,
       duration: const Duration(milliseconds: 400),
       curve: Curves.fastOutSlowIn,
     );
   }
 
   void animateToBottom() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
+    scrollController!.animateTo(
+      scrollController!.position.maxScrollExtent,
       duration: const Duration(milliseconds: 500),
       curve: Curves.fastOutSlowIn,
     );
@@ -46,7 +46,7 @@ class FloatingActionButtons extends StatelessWidget {
               : CupertinoColors.black.withOpacity(0.7),
           foregroundColor: CupertinoColors.activeBlue,
           onPressed: () => {
-            if (goUp == null) animateToTop() else goUp(),
+            if (goUp == null) animateToTop() else goUp!(),
           },
           heroTag: null,
         ),
@@ -61,7 +61,7 @@ class FloatingActionButtons extends StatelessWidget {
               : CupertinoColors.black.withOpacity(0.7),
           foregroundColor: CupertinoColors.activeBlue,
           onPressed: () => {
-            if (goDown == null) animateToBottom() else goDown(),
+            if (goDown == null) animateToBottom() else goDown!(),
           },
           heroTag: null,
         )

@@ -9,7 +9,9 @@ import 'package:flutter_chan/pages/settings/setting_pages/threads_settings_pages
 import 'package:provider/provider.dart';
 
 class ThreadsSettings extends StatefulWidget {
-  const ThreadsSettings({Key key}) : super(key: key);
+  const ThreadsSettings({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ThreadsSettings> createState() => ThreadsSettingsState();
@@ -114,10 +116,8 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
     switch (view) {
       case View.gridView:
         return 'Grid View';
-        break;
       case View.listView:
         return 'List View';
-        break;
       default:
         return '';
     }
@@ -127,19 +127,14 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
     switch (sort) {
       case Sort.byImagesCount:
         return 'Images Count';
-        break;
       case Sort.byBumpOrder:
         return 'Bump Order';
-        break;
       case Sort.byReplyCount:
         return 'Reply Count';
-        break;
       case Sort.byNewest:
         return 'Newest';
-        break;
       case Sort.byOldest:
         return 'Oldest';
-        break;
       default:
         return '';
     }

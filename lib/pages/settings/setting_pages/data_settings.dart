@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class DataSettings extends StatefulWidget {
-  const DataSettings({Key key}) : super(key: key);
+  const DataSettings({Key? key}) : super(key: key);
 
   @override
   State<DataSettings> createState() => DataSettingsState();

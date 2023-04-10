@@ -13,22 +13,22 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class VLCPlayer extends StatefulWidget {
   const VLCPlayer({
-    Key key,
-    @required this.video,
+    Key? key,
+    required this.video,
     this.board,
-    @required this.height,
-    @required this.width,
-    @required this.fileName,
+    required this.height,
+    required this.width,
+    required this.fileName,
     this.isAsset = false,
     this.directory,
   }) : super(key: key);
 
   final String video;
-  final String board;
+  final String? board;
   final int height;
   final int width;
   final String fileName;
-  final Directory directory;
+  final Directory? directory;
   final bool isAsset;
 
   @override
@@ -36,9 +36,9 @@ class VLCPlayer extends StatefulWidget {
 }
 
 class VLCPlayerState extends State<VLCPlayer> {
-  VlcPlayerController _videoPlayerController;
+  late VlcPlayerController _videoPlayerController;
 
-  Directory directory;
+  Directory directory = Directory('');
 
   bool isVisible = false;
 
@@ -58,7 +58,7 @@ class VLCPlayerState extends State<VLCPlayer> {
     try {
       if (widget.isAsset) {
         _videoPlayerController = VlcPlayerController.file(
-          File('${widget.directory.path}/savedAttachments/${widget.video}'),
+          File('${widget.directory!.path}/savedAttachments/${widget.video}'),
           hwAcc: HwAcc.auto,
           autoPlay: true,
         );
@@ -84,7 +84,7 @@ class VLCPlayerState extends State<VLCPlayer> {
   Future<void> fetchStartVideo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    final String startVideo = prefs.getString('startVideo');
+    final String? startVideo = prefs.getString('startVideo');
 
     if (startVideo == getNameWithoutExtension(widget.fileName))
       setState(() {
@@ -147,6 +147,8 @@ class VLCPlayerState extends State<VLCPlayer> {
 
   @override
   void dispose() {
+    _videoPlayerController.stop();
+    _videoPlayerController.removeListener(listener);
     _videoPlayerController.dispose();
 
     super.dispose();

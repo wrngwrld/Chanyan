@@ -13,9 +13,9 @@ import 'package:provider/provider.dart';
 
 class GridPost extends StatefulWidget {
   const GridPost({
-    Key key,
-    @required this.board,
-    @required this.post,
+    Key? key,
+    required this.board,
+    required this.post,
   }) : super(key: key);
 
   final String board;
@@ -26,9 +26,9 @@ class GridPost extends StatefulWidget {
 }
 
 class _GridPostState extends State<GridPost> {
-  Favorite favorite;
+  late Favorite favorite;
   bool isFavorite = false;
-  String favoriteString;
+  late String favoriteString;
 
   @override
   void initState() {
@@ -90,8 +90,8 @@ class _GridPostState extends State<GridPost> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ThreadPage(
-              threadName: widget.post.sub ?? widget.post.com,
-              thread: widget.post.no,
+              threadName: widget.post.sub ?? widget.post.com ?? '',
+              thread: widget.post.no ?? 0,
               board: widget.board,
               post: widget.post,
             ),
@@ -145,13 +145,10 @@ class _GridPostState extends State<GridPost> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           RepliesRow(
-                            replies: widget.post.replies,
-                            imageReplies: widget.post.images,
-                            invertTextColor:
-                                theme.getTheme() == ThemeData.dark()
-                                    ? false
-                                    : true,
-                          ),
+                              replies: widget.post.replies,
+                              imageReplies: widget.post.images,
+                              invertTextColor:
+                                  !!(theme.getTheme() != ThemeData.dark())),
                           GestureDetector(
                             onTap: () => {
                               if (isFavorite)
