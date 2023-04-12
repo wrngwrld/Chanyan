@@ -7,15 +7,15 @@ class SavedAttachment {
 
   factory SavedAttachment.fromJson(Map<String, dynamic> json) {
     return SavedAttachment(
-      savedAttachmentType: json['savedAttachmentType'],
-      fileName: json['fileName'],
-      thumbnail: json['thumbnail'],
+      savedAttachmentType: json['savedAttachmentType'] as String?,
+      fileName: json['fileName'] as String?,
+      thumbnail: json['thumbnail'] as String?,
     );
   }
 
-  String savedAttachmentType;
-  String fileName;
-  String thumbnail;
+  String? savedAttachmentType;
+  String? fileName;
+  String? thumbnail;
 
   Map<String, dynamic> toJson() {
     return {

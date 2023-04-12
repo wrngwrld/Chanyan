@@ -8,14 +8,15 @@ import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 
 class GridPost extends StatefulWidget {
   const GridPost({
-    Key key,
-    @required this.board,
-    @required this.post,
+    Key? key,
+    required this.board,
+    required this.post,
   }) : super(key: key);
 
   final String board;
@@ -26,9 +27,9 @@ class GridPost extends StatefulWidget {
 }
 
 class _GridPostState extends State<GridPost> {
-  Favorite favorite;
+  late Favorite favorite;
   bool isFavorite = false;
-  String favoriteString;
+  late String favoriteString;
 
   @override
   void initState() {
@@ -90,8 +91,8 @@ class _GridPostState extends State<GridPost> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ThreadPage(
-              threadName: widget.post.sub ?? widget.post.com,
-              thread: widget.post.no,
+              threadName: widget.post.sub ?? widget.post.com ?? '',
+              thread: widget.post.no ?? 0,
               board: widget.board,
               post: widget.post,
             ),
@@ -100,8 +101,8 @@ class _GridPostState extends State<GridPost> {
       },
       child: Stack(
         children: [
-          Image.network(
-            'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
+          ImageViewer(
+            url: 'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
             fit: BoxFit.cover,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -145,13 +146,10 @@ class _GridPostState extends State<GridPost> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           RepliesRow(
-                            replies: widget.post.replies,
-                            imageReplies: widget.post.images,
-                            invertTextColor:
-                                theme.getTheme() == ThemeData.dark()
-                                    ? false
-                                    : true,
-                          ),
+                              replies: widget.post.replies,
+                              imageReplies: widget.post.images,
+                              invertTextColor:
+                                  !!(theme.getTheme() != ThemeData.dark())),
                           GestureDetector(
                             onTap: () => {
                               if (isFavorite)

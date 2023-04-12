@@ -4,7 +4,7 @@ import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteButton extends StatefulWidget {
-  const FavoriteButton({Key key, @required this.board}) : super(key: key);
+  const FavoriteButton({Key? key, required this.board}) : super(key: key);
 
   final String board;
 

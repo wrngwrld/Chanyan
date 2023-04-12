@@ -8,6 +8,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -15,9 +16,9 @@ import 'package:provider/provider.dart';
 
 class ListPost extends StatefulWidget {
   const ListPost({
-    Key key,
-    @required this.board,
-    @required this.post,
+    Key? key,
+    required this.board,
+    required this.post,
   }) : super(key: key);
 
   final String board;
@@ -28,9 +29,9 @@ class ListPost extends StatefulWidget {
 }
 
 class _ListPostState extends State<ListPost> {
-  Favorite favorite;
+  late Favorite favorite;
   bool isFavorite = false;
-  String favoriteString;
+  late String favoriteString;
 
   @override
   void initState() {
@@ -89,8 +90,8 @@ class _ListPostState extends State<ListPost> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ThreadPage(
-                threadName: widget.post.sub ?? widget.post.com,
-                thread: widget.post.no,
+                threadName: widget.post.sub ?? widget.post.com ?? '',
+                thread: widget.post.no ?? 0,
                 post: widget.post,
                 board: widget.board,
               ),
@@ -120,8 +121,9 @@ class _ListPostState extends State<ListPost> {
                         padding: const EdgeInsets.all(10),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
+                          child: ImageViewer(
+                            url:
+                                'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -148,7 +150,7 @@ class _ListPostState extends State<ListPost> {
                           ),
                           if (widget.post.sub != null)
                             Text(
-                              unescape(cleanTags(widget.post.sub)),
+                              unescape(cleanTags(widget.post.sub ?? '')),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -166,7 +168,7 @@ class _ListPostState extends State<ListPost> {
                           Text(
                             DateFormat('kk:mm - dd.MM.y').format(
                               DateTime.fromMillisecondsSinceEpoch(
-                                widget.post.tim,
+                                widget.post.tim ?? 0,
                               ),
                             ),
                             style: TextStyle(

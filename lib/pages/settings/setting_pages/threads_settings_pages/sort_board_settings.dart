@@ -7,7 +7,9 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:provider/provider.dart';
 
 class SortBoardSettings extends StatefulWidget {
-  const SortBoardSettings({Key key}) : super(key: key);
+  const SortBoardSettings({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SortBoardSettings> createState() => SortBoardSettingsState();

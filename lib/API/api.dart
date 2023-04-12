@@ -18,7 +18,7 @@ Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
     for (final page in pages) {
       final List opsInPage = page['threads'] as List;
       for (final opInPage in opsInPage) {
-        ops.add(Post.fromJson(opInPage));
+        ops.add(Post.fromJson(opInPage as Map<String?, dynamic>));
       }
     }
 
@@ -27,27 +27,27 @@ Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
       switch (sorting) {
         case Sort.byBumpOrder:
           ops.sort((a, b) {
-            return a.lastModified.compareTo(b.lastModified);
+            return a.lastModified!.compareTo(b.lastModified ?? 0);
           });
           break;
         case Sort.byReplyCount:
           ops.sort((a, b) {
-            return b.replies.compareTo(a.replies);
+            return b.replies!.compareTo(a.replies ?? 0);
           });
           break;
         case Sort.byImagesCount:
           ops.sort((a, b) {
-            return b.images.compareTo(a.images);
+            return b.images!.compareTo(a.images ?? 0);
           });
           break;
         case Sort.byNewest:
           ops.sort((a, b) {
-            return b.time.compareTo(a.time);
+            return b.time!.compareTo(a.time ?? 0);
           });
           break;
         case Sort.byOldest:
           ops.sort((a, b) {
-            return a.time.compareTo(b.time);
+            return a.time!.compareTo(b.time ?? 0);
           });
           break;
       }
@@ -65,7 +65,7 @@ Future<List<Post>> fetchAllPostsFromThread(String board, int thread) async {
 
   if (response.statusCode == 200) {
     final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
-        .map((model) => Post.fromJson(model))
+        .map((model) => Post.fromJson(model as Map<String?, dynamic>))
         .toList();
 
     return posts;
@@ -86,7 +86,7 @@ Future<List<Post>> fetchAllRepliesToPost(
     if (postLoop.com != null) {
       final document = parse(postLoop.com);
 
-      if (document.body.text.contains(post.toString())) {
+      if (document.body!.text.contains(post.toString())) {
         list.add(postLoop);
       }
     }
@@ -101,7 +101,7 @@ Future<List<Board>> fetchAllBoards() async {
 
   if (response.statusCode == 200) {
     final List<Board> boards = (jsonDecode(response.body)['boards'] as List)
-        .map((model) => Board.fromJson(model))
+        .map((model) => Board.fromJson(model as Map<String, dynamic>))
         .toList();
     return boards;
   } else {
@@ -109,7 +109,7 @@ Future<List<Board>> fetchAllBoards() async {
   }
 }
 
-Future<Post> fetchPost(String board, int thread, int post) async {
+Future<Post?>? fetchPost(String board, int thread, int post) async {
   final List<Post> allPosts = await fetchAllPostsFromThread(board, thread);
 
   for (final Post postLoop in allPosts) {

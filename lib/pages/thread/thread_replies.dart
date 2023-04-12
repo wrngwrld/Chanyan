@@ -4,18 +4,19 @@ import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 class ThreadReplies extends StatefulWidget {
   const ThreadReplies({
-    Key key,
-    @required this.post,
-    @required this.thread,
-    @required this.board,
-    @required this.replies,
-    @required this.allPosts,
+    Key? key,
+    required this.post,
+    required this.thread,
+    required this.board,
+    required this.replies,
+    required this.allPosts,
   }) : super(key: key);
 
   final Post post;
@@ -31,7 +32,7 @@ class ThreadReplies extends StatefulWidget {
 class _ThreadRepliesState extends State<ThreadReplies> {
   final ScrollController scrollController = ScrollController();
 
-  Future<List<String>> _fetchMedia;
+  late Future<List<String>> _fetchMedia;
 
   List<Widget> media = [];
 
@@ -47,26 +48,18 @@ class _ThreadRepliesState extends State<ThreadReplies> {
 
     for (final Post post in list) {
       if (post.tim != null) {
-        final String video = post.tim.toString() + post.ext;
+        final String video = post.tim.toString() + post.ext.toString();
 
-        fileNames.add(post.tim.toString() + post.ext);
-        media.add(
-          post.ext == '.webm'
-              ? VLCPlayer(
-                  board: widget.board,
-                  video: video,
-                  height: post.h,
-                  width: post.w,
-                  fileName: post.filename,
-                )
-              : InteractiveViewer(
-                  minScale: 0.5,
-                  maxScale: 5,
-                  child: Image.network(
-                    'https://i.4cdn.org/${widget.board}/$video',
-                  ),
-                ),
-        );
+        fileNames.add(post.tim.toString() + post.ext.toString());
+        media.add(post.ext == '.webm'
+            ? VLCPlayer(
+                board: widget.board,
+                video: video,
+                height: post.h ?? 0,
+                width: post.w ?? 0,
+                fileName: post.filename ?? '',
+              )
+            : ImageViewer(url: 'https://i.4cdn.org/${widget.board}/$video'));
       }
     }
 
@@ -88,7 +81,6 @@ class _ThreadRepliesState extends State<ThreadReplies> {
                     MaterialProgressIndicatorData(color: AppColors.kGreen),
               ),
             );
-            break;
           default:
             return Scaffold(
               backgroundColor: theme.getTheme() == ThemeData.light()
@@ -115,7 +107,7 @@ class _ThreadRepliesState extends State<ThreadReplies> {
                         thread: widget.thread,
                         post: widget.replies[i],
                         media: media,
-                        fileNames: snapshot.data,
+                        fileNames: snapshot.data ?? [],
                         allPosts: widget.allPosts,
                         onDismiss: (i) => {},
                       ),

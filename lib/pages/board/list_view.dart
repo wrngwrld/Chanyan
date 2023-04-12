@@ -8,10 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardListView extends StatelessWidget {
   const BoardListView({
-    Key key,
-    @required this.board,
-    @required this.threads,
-    @required this.scrollController,
+    Key? key,
+    required this.board,
+    required this.threads,
+    required this.scrollController,
   }) : super(key: key);
 
   final String board;
@@ -21,7 +21,7 @@ class BoardListView extends StatelessWidget {
   Future<void> setFavorite(Favorite favorite) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    List<String> favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
+    List<String>? favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');
 
     favoriteThreadsPrefs ??= [];
 

@@ -9,9 +9,9 @@ import 'package:provider/provider.dart';
 
 class BoardTile extends StatefulWidget {
   const BoardTile({
-    Key key,
-    @required this.board,
-    @required this.favorites,
+    Key? key,
+    required this.board,
+    required this.favorites,
   }) : super(key: key);
 
   final Board board;
@@ -41,7 +41,7 @@ class _BoardTileState extends State<BoardTile> {
                   backgroundColor: Colors.red,
                   icon: Icons.delete,
                   onPressed: (context) => {
-                    favorites.removeFavorites(widget.board.board),
+                    favorites.removeFavorites(widget.board.board ?? ''),
                   },
                 )
               ],
@@ -55,7 +55,7 @@ class _BoardTileState extends State<BoardTile> {
                   backgroundColor: Colors.green,
                   icon: Icons.add,
                   onPressed: (context) => {
-                    favorites.addFavorites(widget.board.board),
+                    favorites.addFavorites(widget.board.board ?? ''),
                   },
                 )
               ],
@@ -63,7 +63,7 @@ class _BoardTileState extends State<BoardTile> {
       child: CupertinoListTile.notched(
         title: Row(
           children: [
-            Text(widget.board.title),
+            Text(widget.board.title ?? ''),
             if (widget.board.wsBoard == 0)
               Row(
                 children: const [
@@ -85,15 +85,15 @@ class _BoardTileState extends State<BoardTile> {
           width: MediaQuery.of(context).size.height * 0.3,
           child: Text(
             cleanTags(unescape(
-              widget.board.metaDescription,
+              widget.board.metaDescription ?? '',
             )),
             overflow: TextOverflow.ellipsis,
           ),
         ),
         additionalInfo: RichText(
           text: TextSpan(
-            text: widget.board.board.length > 3
-                ? widget.board.board.substring(0, 3)
+            text: widget.board.board!.length > 3
+                ? widget.board.board!.substring(0, 3)
                 : widget.board.board,
             style: const TextStyle(
               color: CupertinoColors.inactiveGray,
@@ -106,8 +106,8 @@ class _BoardTileState extends State<BoardTile> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => BoardPage(
-                boardName: widget.board.title,
-                board: widget.board.board,
+                boardName: widget.board.title ?? '',
+                board: widget.board.board ?? '',
               ),
             ),
           )

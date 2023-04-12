@@ -17,21 +17,21 @@ import 'package:provider/provider.dart';
 import '../settings/settings.dart';
 
 class BoardList extends StatefulWidget {
-  const BoardList({Key key}) : super(key: key);
+  const BoardList({Key? key}) : super(key: key);
 
   @override
   BoardListState createState() => BoardListState();
 }
 
 class BoardListState extends State<BoardList> {
-  Future<List<Board>> _fetchAllBoards;
+  late Future<List<Board>> _fetchAllBoards;
   TextEditingController controller = TextEditingController();
   final TextEditingController _searchBarController = TextEditingController();
 
   bool showWarning = false;
   String warningText = 'This link is not supported';
 
-  List<Board> filterdBoards;
+  late List<Board> filterdBoards;
 
   @override
   void initState() {
@@ -62,19 +62,19 @@ class BoardListState extends State<BoardList> {
         final regExDomains =
             RegExp(r'^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www.)?([^:\/\n?]+)');
         final matchDomain = regExDomains.firstMatch(controller.text);
-        final domain = matchDomain.group(1);
+        final domain = matchDomain?.group(1);
 
         if (domain == 'boards.4chan.org' || domain == 'boards.4channel.org') {
           final regEx = RegExp(r'^https?:\/\/[A-Za-z0-9:.]*([\/]{1}.*\/?)$');
           final match = regEx.firstMatch(controller.text);
-          final removedFirst = match.group(1).replaceFirst('/', '');
-          final splitted = removedFirst.split('/');
+          final removedFirst = match?.group(1)?.replaceFirst('/', '');
+          final splitted = removedFirst?.split('/');
 
           List<Post> response;
 
           try {
             response = await fetchAllPostsFromThread(
-                splitted.first, int.parse(splitted.last));
+                splitted!.first, int.parse(splitted.last));
           } catch (e) {
             showWarning = true;
             warningText = e.toString();
@@ -89,8 +89,8 @@ class BoardListState extends State<BoardList> {
             MaterialPageRoute(
               builder: (context) => ThreadPage(
                 post: response[0],
-                threadName: response[0].sub ?? response[0].com,
-                thread: response[0].no,
+                threadName: response[0].sub ?? response[0].com ?? 'No Title',
+                thread: response[0].no ?? 0,
                 board: splitted.first,
               ),
             ),
@@ -108,18 +108,22 @@ class BoardListState extends State<BoardList> {
       }
     }
 
-    void _updateUserList(String value, List<Board> data) {
+    void _updateUserList(String value, List<Board>? data) {
+      if (data == null) {
+        return;
+      }
+
       if (value.isNotEmpty) {
         filterdBoards = data
             .where((element) =>
-                element.board.toLowerCase().contains(value.toLowerCase()) ||
-                element.metaDescription
+                element.board!.toLowerCase().contains(value.toLowerCase()) ||
+                element.metaDescription!
                     .toLowerCase()
                     .contains(value.toLowerCase()) ||
-                element.metaDescription
+                element.metaDescription!
                     .toLowerCase()
                     .contains(value.toLowerCase()) ||
-                element.title.toLowerCase().contains(value.toLowerCase()))
+                element.title!.toLowerCase().contains(value.toLowerCase()))
             .toList();
       } else {
         _searchBarController.clear();
@@ -315,7 +319,6 @@ class BoardListState extends State<BoardList> {
                               ),
                             ],
                           );
-                          break;
                         default:
                           return Column(
                             children: [

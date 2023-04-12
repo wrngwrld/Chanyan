@@ -5,15 +5,15 @@ import 'package:provider/provider.dart';
 
 class RepliesRow extends StatelessWidget {
   const RepliesRow({
-    Key key,
+    Key? key,
     this.replies = '-',
     this.imageReplies = '-',
     this.showImageReplies = true,
     this.invertTextColor = false,
   }) : super(key: key);
 
-  final replies;
-  final imageReplies;
+  final dynamic replies;
+  final dynamic imageReplies;
   final bool showImageReplies;
   final bool invertTextColor;
 

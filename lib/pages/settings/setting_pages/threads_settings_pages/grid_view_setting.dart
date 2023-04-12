@@ -7,7 +7,9 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:provider/provider.dart';
 
 class GridViewSettings extends StatefulWidget {
-  const GridViewSettings({Key key}) : super(key: key);
+  const GridViewSettings({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<GridViewSettings> createState() => GridViewSettingsState();

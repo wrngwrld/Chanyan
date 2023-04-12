@@ -15,14 +15,14 @@ import 'package:provider/provider.dart';
 
 class ThreadPagePost extends StatefulWidget {
   const ThreadPagePost({
-    Key key,
-    @required this.board,
-    @required this.post,
-    @required this.thread,
-    @required this.fileNames,
-    @required this.media,
-    @required this.allPosts,
-    @required this.onDismiss,
+    Key? key,
+    required this.board,
+    required this.post,
+    required this.thread,
+    required this.fileNames,
+    required this.media,
+    required this.allPosts,
+    required this.onDismiss,
   }) : super(key: key);
 
   final String board;
@@ -31,7 +31,7 @@ class ThreadPagePost extends StatefulWidget {
   final List<String> fileNames;
   final List<Widget> media;
   final List<Post> allPosts;
-  final Function(String index) onDismiss;
+  final Function(String? index) onDismiss;
 
   static String formatBytes(int bytes, int decimals) {
     if (bytes <= 0) {
@@ -47,14 +47,14 @@ class ThreadPagePost extends StatefulWidget {
 }
 
 class _ThreadPagePostState extends State<ThreadPagePost> {
-  Future<List<Post>> _fetchAllRepliesToPost;
+  late Future<List<Post>> _fetchAllRepliesToPost;
 
   @override
   void initState() {
     super.initState();
 
     _fetchAllRepliesToPost = fetchAllRepliesToPost(
-      widget.post.no,
+      widget.post.no ?? 0,
       widget.board,
       widget.thread,
       widget.allPosts,
@@ -100,7 +100,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                                   MaterialPageRoute(
                                     builder: (context) => MediaPage(
                                       video: widget.post.tim.toString() +
-                                          widget.post.ext,
+                                          widget.post.ext.toString(),
                                       board: widget.board,
                                       list: widget.media,
                                       fileNames: widget.fileNames,
@@ -131,7 +131,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                             if (widget.post.filename != null)
                               Text(
                                 '${widget.post.ext} (${ThreadPagePost.formatBytes(
-                                  widget.post.fsize,
+                                  widget.post.fsize ?? 0,
                                   0,
                                 )})',
                                 style: const TextStyle(
@@ -145,7 +145,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                               Container(),
                             if (widget.post.sub != null)
                               Text(
-                                unescape(cleanTags(widget.post.sub)),
+                                unescape(cleanTags(widget.post.sub ?? '')),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -170,7 +170,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              widget.post.name,
+                              widget.post.name ?? 'Anonymous',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -184,7 +184,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                             Text(
                               DateFormat('kk:mm - dd.MM.y').format(
                                 DateTime.fromMillisecondsSinceEpoch(
-                                  widget.post.time * 1000,
+                                  widget.post.time! * 1000,
                                 ),
                               ),
                               style: TextStyle(
@@ -206,7 +206,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 15),
                       child: ThreadPostComment(
-                        com: widget.post.com,
+                        com: widget.post.com ?? '',
                         board: widget.board,
                         thread: widget.thread,
                         allPosts: widget.allPosts,
@@ -215,13 +215,13 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                   else
                     Container(),
                   if (snapshot.data != null)
-                    if (snapshot.data.isNotEmpty)
+                    if (snapshot.data!.isNotEmpty)
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => ThreadReplies(
-                                replies: snapshot.data,
+                                replies: snapshot.data ?? [],
                                 post: widget.post,
                                 thread: widget.thread,
                                 board: widget.board,
@@ -231,7 +231,7 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                           );
                         },
                         child: RepliesRow(
-                          replies: snapshot.data.length,
+                          replies: snapshot.data!.length,
                           showImageReplies: false,
                         ),
                       )

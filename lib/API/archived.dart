@@ -6,13 +6,13 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<ThreadStatus> fetchArchived(String board, String thread) async {
+Future<ThreadStatus> fetchArchived(String? board, String? thread) async {
   final Response response =
       await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
 
   if (response.statusCode == 200) {
     final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
-        .map((model) => Post.fromJson(model))
+        .map((model) => Post.fromJson(model as Map<String?, dynamic>))
         .toList();
 
     if (response.body == null) {
@@ -31,7 +31,7 @@ Future<ThreadStatus> fetchArchived(String board, String thread) async {
   }
 }
 
-Future<List<int>> fetchReplies(String board, String thread) async {
+Future<List<int>?>? fetchReplies(String? board, String? thread) async {
   final Response response =
       await get(Uri.parse('https://a.4cdn.org/$board/thread/$thread.json'));
 
@@ -39,11 +39,11 @@ Future<List<int>> fetchReplies(String board, String thread) async {
     final List<int> list = [];
 
     final List<Post> posts = (jsonDecode(response.body)['posts'] as List)
-        .map((model) => Post.fromJson(model))
+        .map((model) => Post.fromJson(model as Map<String?, dynamic>))
         .toList();
 
-    list.add(posts[0].replies);
-    list.add(posts[0].images);
+    list.add(posts[0].replies ?? 0);
+    list.add(posts[0].images ?? 0);
 
     return list;
   } else {
@@ -54,12 +54,12 @@ Future<List<int>> fetchReplies(String board, String thread) async {
 Future<void> removeFavorite(Favorite favorite) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  final List<String> favoriteThreadsPrefs =
+  final List<String>? favoriteThreadsPrefs =
       prefs.getStringList('favoriteThreads');
 
-  favoriteThreadsPrefs.remove(json.encode(favorite));
+  favoriteThreadsPrefs?.remove(json.encode(favorite));
 
-  prefs.setStringList('favoriteThreads', favoriteThreadsPrefs);
+  prefs.setStringList('favoriteThreads', favoriteThreadsPrefs ?? []);
 }
 
 Future<void> clearBookmarks() async {

@@ -6,8 +6,10 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../services/show_snackbar.dart';
+
 class DataSettings extends StatefulWidget {
-  const DataSettings({Key key}) : super(key: key);
+  const DataSettings({Key? key}) : super(key: key);
 
   @override
   State<DataSettings> createState() => DataSettingsState();
@@ -17,12 +19,26 @@ class DataSettingsState extends State<DataSettings> {
   double _cacheSize = 0.0;
 
   Future<void> getCacheSize() async {
-    Directory directory;
+    Directory applicationDocumentsDirectory;
+    Directory temporaryDirectory;
 
     try {
-      directory = await getApplicationDocumentsDirectory();
+      applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
+      temporaryDirectory = Directory(
+          '${(await getTemporaryDirectory()).path}/libCachedImageData');
 
-      final List<FileSystemEntity> entities = await directory.list().toList();
+      final List<FileSystemEntity> entitiesTemp =
+          await temporaryDirectory.list().toList();
+      for (final entity in entitiesTemp) {
+        if (entity is File) {
+          setState(() {
+            _cacheSize += getFileSize(entity);
+          });
+        }
+      }
+
+      final List<FileSystemEntity> entities =
+          await applicationDocumentsDirectory.list().toList();
       for (final entity in entities) {
         if (entity is File) {
           print(entity.path);
@@ -43,21 +59,39 @@ class DataSettingsState extends State<DataSettings> {
   }
 
   Future<void> deleteCache() async {
-    Directory directory;
+    Directory applicationDocumentsDirectory;
+    Directory temporaryDirectory;
 
     try {
-      directory = await getApplicationDocumentsDirectory();
+      applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
+      temporaryDirectory = Directory(
+          '${(await getTemporaryDirectory()).path}/libCachedImageData');
 
-      final List<FileSystemEntity> entities = await directory.list().toList();
-      for (final entity in entities) {
+      final List<FileSystemEntity> entitiesTemp =
+          await temporaryDirectory.list().toList();
+      for (final entity in entitiesTemp) {
         if (entity is File) {
-          print(entity.path);
           await entity.delete();
         }
       }
 
+      final List<FileSystemEntity> entities =
+          await applicationDocumentsDirectory.list().toList();
+      for (final entity in entities) {
+        if (entity is File) {
+          await entity.delete();
+        }
+      }
+
+      showCupertinoSnackbar(
+        const Duration(milliseconds: 1800),
+        true,
+        context,
+        'Cache deleted!',
+      );
+
       setState(() {
-        _cacheSize = 0;
+        _cacheSize = 0.0;
       });
     } catch (e) {
       print(e);

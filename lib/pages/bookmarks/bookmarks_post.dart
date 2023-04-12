@@ -9,14 +9,15 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class BookmarksPost extends StatefulWidget {
   const BookmarksPost({
-    Key key,
-    @required this.favorite,
+    Key? key,
+    required this.favorite,
   }) : super(key: key);
 
   final Favorite favorite;
@@ -28,8 +29,8 @@ class BookmarksPost extends StatefulWidget {
 class _BookmarksPostState extends State<BookmarksPost> {
   bool isDeleted = false;
 
-  Future<ThreadStatus> _fetchArchived;
-  Future<List<int>> _fetchReplies;
+  late Future<ThreadStatus> _fetchArchived;
+  late Future<List<int>?>? _fetchReplies;
 
   @override
   void initState() {
@@ -46,10 +47,10 @@ class _BookmarksPostState extends State<BookmarksPost> {
     final theme = Provider.of<ThemeChanger>(context);
     final bookmarks = Provider.of<BookmarksProvider>(context);
 
-    return FutureBuilder<List<dynamic>>(
-        future: Future.wait({_fetchArchived, _fetchReplies}),
-        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-          switch (snapshot.connectionState) {
+    return FutureBuilder(
+        future: _fetchArchived,
+        builder: (BuildContext context, snapshotArchived) {
+          switch (snapshotArchived.connectionState) {
             case ConnectionState.waiting:
               return Container(
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
@@ -76,8 +77,9 @@ class _BookmarksPostState extends State<BookmarksPost> {
                               padding: const EdgeInsets.all(10),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
+                                child: ImageViewer(
+                                  url:
+                                      'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -105,7 +107,8 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                 ),
                                 if (widget.favorite.sub != null)
                                   Text(
-                                    unescape(cleanTags(widget.favorite.sub)),
+                                    unescape(
+                                        cleanTags(widget.favorite.sub ?? '')),
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -140,9 +143,8 @@ class _BookmarksPostState extends State<BookmarksPost> {
                   ],
                 ),
               );
-              break;
             default:
-              if (snapshot.data[0] == ThreadStatus.deleted) {
+              if (snapshotArchived.data == ThreadStatus.deleted) {
                 isDeleted = true;
               }
               return Slidable(
@@ -173,15 +175,16 @@ class _BookmarksPostState extends State<BookmarksPost> {
                               sub: widget.favorite.sub,
                               com: widget.favorite.com,
                               tim: int.parse(
-                                widget.favorite.imageUrl.substring(
-                                    0, widget.favorite.imageUrl.length - 5),
+                                widget.favorite.imageUrl!.substring(
+                                    0, widget.favorite.imageUrl!.length - 5),
                               ),
                               board: widget.favorite.board,
                             ),
-                            threadName:
-                                widget.favorite.sub ?? widget.favorite.com,
-                            thread: widget.favorite.no,
-                            board: widget.favorite.board,
+                            threadName: widget.favorite.sub ??
+                                widget.favorite.com ??
+                                'No.${widget.favorite.no}',
+                            thread: widget.favorite.no ?? 0,
+                            board: widget.favorite.board ?? '',
                             fromFavorites: true,
                           ),
                         ),
@@ -211,82 +214,155 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: ImageViewer(
+                                        url:
+                                            'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
+                                        fit: BoxFit.cover,
+                                      )),
                                 ),
                               )
                             else
                               Container(),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (snapshot.data[0] ==
-                                        ThreadStatus.archived)
-                                      const Text(
-                                        'archived',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.red,
+                            FutureBuilder<List<int?>?>(
+                                future: _fetchReplies,
+                                builder: (context,
+                                    AsyncSnapshot<List<int?>?>
+                                        snapshotReplies) {
+                                  switch (snapshotReplies.connectionState) {
+                                    case ConnectionState.waiting:
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            if (snapshotArchived.data ==
+                                                ThreadStatus.archived)
+                                              const Text(
+                                                'archived',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.red,
+                                                ),
+                                              )
+                                            else if (snapshotArchived.data ==
+                                                ThreadStatus.deleted)
+                                              const Text(
+                                                'deleted',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.red,
+                                                ),
+                                              )
+                                            else if (snapshotArchived.data ==
+                                                ThreadStatus.online)
+                                              Container(),
+                                            Text(
+                                              'No.${widget.favorite.no}',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: theme.getTheme() ==
+                                                        ThemeData.dark()
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            if (widget.favorite.sub != null)
+                                              Text(
+                                                unescape(cleanTags(
+                                                    widget.favorite.sub ?? '')),
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: theme.getTheme() ==
+                                                          ThemeData.dark()
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                              )
+                                            else
+                                              Container(),
+                                            const RepliesRow()
+                                          ],
                                         ),
-                                      )
-                                    else if (snapshot.data[0] ==
-                                        ThreadStatus.deleted)
-                                      const Text(
-                                        'deleted',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.red,
+                                      );
+                                    default:
+                                      return Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              if (snapshotArchived.data ==
+                                                  ThreadStatus.archived)
+                                                const Text(
+                                                  'archived',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.red,
+                                                  ),
+                                                )
+                                              else if (snapshotArchived.data ==
+                                                  ThreadStatus.deleted)
+                                                const Text(
+                                                  'deleted',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.red,
+                                                  ),
+                                                )
+                                              else if (snapshotArchived.data ==
+                                                  ThreadStatus.online)
+                                                Container(),
+                                              Text(
+                                                'No.${widget.favorite.no}',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: theme.getTheme() ==
+                                                          ThemeData.dark()
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              if (widget.favorite.sub != null)
+                                                Text(
+                                                  unescape(cleanTags(
+                                                      widget.favorite.sub ??
+                                                          '')),
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: theme.getTheme() ==
+                                                            ThemeData.dark()
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                )
+                                              else
+                                                Container(),
+                                              if (isDeleted ||
+                                                  snapshotReplies.data![0] ==
+                                                      null)
+                                                const RepliesRow()
+                                              else
+                                                RepliesRow(
+                                                  replies:
+                                                      snapshotReplies.data![0],
+                                                  imageReplies:
+                                                      snapshotReplies.data![1],
+                                                ),
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                    else if (snapshot.data[0] ==
-                                        ThreadStatus.online)
-                                      Container(),
-                                    Text(
-                                      'No.${widget.favorite.no}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color:
-                                            theme.getTheme() == ThemeData.dark()
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    if (widget.favorite.sub != null)
-                                      Text(
-                                        unescape(
-                                            cleanTags(widget.favorite.sub)),
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: theme.getTheme() ==
-                                                  ThemeData.dark()
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                      )
-                                    else
-                                      Container(),
-                                    if (isDeleted ||
-                                        snapshot.data[1][0] == null)
-                                      const RepliesRow()
-                                    else
-                                      RepliesRow(
-                                        replies: snapshot.data[1][0],
-                                        imageReplies: snapshot.data[1][1],
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                      );
+                                  }
+                                })
                           ],
                         ),
                         if (widget.favorite.com != null)

@@ -15,7 +15,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AppWithTheme extends StatefulWidget {
-  const AppWithTheme({Key key}) : super(key: key);
+  const AppWithTheme({Key? key}) : super(key: key);
 
   @override
   State<AppWithTheme> createState() => _AppWithThemeState();

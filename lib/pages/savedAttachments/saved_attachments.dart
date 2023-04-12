@@ -11,7 +11,7 @@ import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:provider/provider.dart';
 
 class SavedAttachments extends StatefulWidget {
-  const SavedAttachments({Key key}) : super(key: key);
+  const SavedAttachments({Key? key}) : super(key: key);
 
   @override
   State<SavedAttachments> createState() => _SavedAttachmentsState();
@@ -23,7 +23,7 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
   List<Widget> media = [];
   List<String> fileNames = [];
 
-  Directory directory;
+  Directory directory = Directory('');
 
   Future<List<SavedAttachment>> getSavedAttachments() async {
     directory = await requestDirectory(directory);
@@ -43,22 +43,22 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
     fileNames = [];
 
     for (final SavedAttachment savedAttachment in savedAttachments) {
-      final String video = savedAttachment.fileName.split('/').last;
+      final String video = savedAttachment.fileName!.split('/').last;
 
       final String ext =
-          savedAttachment.fileName.split('/').last.split('.').last;
+          savedAttachment.fileName!.split('/').last.split('.').last;
 
       fileNames.add(video);
       media.add(
         ext == 'webm'
             ? VLCPlayer(
                 video:
-                    '${getNameWithoutExtension(savedAttachment.fileName)}.mp4',
+                    '${getNameWithoutExtension(savedAttachment.fileName ?? "")}.mp4',
                 isAsset: true,
                 width: 100,
                 height: 100,
                 fileName:
-                    '${getNameWithoutExtension(savedAttachment.fileName)}.mp4',
+                    '${getNameWithoutExtension(savedAttachment.fileName ?? "")}.mp4',
                 directory: directory,
               )
             : InteractiveViewer(
@@ -181,7 +181,6 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                               switch (snapshot.connectionState) {
                                 case ConnectionState.waiting:
                                   return Container();
-                                  break;
                                 default:
                                   return SizedBox(
                                     child: GridView.count(
@@ -191,14 +190,16 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                                       crossAxisCount: 3,
                                       children: [
                                         for (SavedAttachment attachment
-                                            in snapshot.data)
+                                            in snapshot.data ?? [])
                                           GestureDetector(
                                             onTap: () {
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       MediaPage(
-                                                    video: attachment.fileName,
+                                                    video:
+                                                        attachment.fileName ??
+                                                            '',
                                                     list: media,
                                                     fileNames: fileNames,
                                                   ),
