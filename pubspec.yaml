@@ -52,6 +52,7 @@ dependencies:
   cupertino_lists: ^1.0.1
   scrollable_positioned_list: ^0.3.2
   ffmpeg_kit_flutter_full: ^5.1.0
+  flutter_cache_manager: ^3.3.0
 
 dev_dependencies:
   flutter_test:

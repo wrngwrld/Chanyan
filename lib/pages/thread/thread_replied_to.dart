@@ -5,6 +5,7 @@ import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
@@ -40,23 +41,15 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
       final String video = post.tim.toString() + post.ext.toString();
 
       fileName.add(post.tim.toString() + post.ext.toString());
-      media.add(
-        post.ext == '.webm'
-            ? VLCPlayer(
-                board: widget.board,
-                video: video,
-                height: post.h ?? 0,
-                width: post.w ?? 0,
-                fileName: post.filename ?? '',
-              )
-            : InteractiveViewer(
-                minScale: 0.5,
-                maxScale: 5,
-                child: Image.network(
-                  'https://i.4cdn.org/${widget.board}/$video',
-                ),
-              ),
-      );
+      media.add(post.ext == '.webm'
+          ? VLCPlayer(
+              board: widget.board,
+              video: video,
+              height: post.h ?? 0,
+              width: post.w ?? 0,
+              fileName: post.filename ?? '',
+            )
+          : ImageViewer(url: 'https://i.4cdn.org/${widget.board}/$video'));
     }
   }
 

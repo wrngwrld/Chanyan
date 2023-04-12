@@ -8,6 +8,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -120,8 +121,9 @@ class _ListPostState extends State<ListPost> {
                         padding: const EdgeInsets.all(10),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
+                          child: ImageViewer(
+                            url:
+                                'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
                             fit: BoxFit.cover,
                           ),
                         ),

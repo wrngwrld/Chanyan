@@ -6,6 +6,7 @@ import 'package:ffmpeg_kit_flutter_full/ffmpeg_session.dart';
 import 'package:ffmpeg_kit_flutter_full/return_code.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_chan/Models/saved_attachment.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -13,6 +14,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../services/show_snackbar.dart';
 
 Future<bool> _requestPermission(Permission permission) async {
   if (await permission.isGranted) {
@@ -79,7 +82,6 @@ Future<void> saveVideo(
   savedAttachmentsProvider.pauseVideo();
 
   Directory directory = Directory('');
-  final dio = Dio();
 
   if (isSaved) {
     directory = await requestDirectory(directory);
@@ -140,13 +142,8 @@ Future<void> saveVideo(
       directory = await requestDirectory(directory);
 
       if (await directory.exists()) {
-        final File saveFile = File('${directory.path}/$fileName');
-        final File saveFileVideo = File('${directory.path}/$fileName');
-
-        await dio.download(
-          url,
-          saveFile.path,
-        );
+        final File fileDownloadPath = File('${directory.path}/$fileName');
+        final File videoCache = await DefaultCacheManager().getSingleFile(url);
 
         if (Platform.isIOS) {
           if (ext == '.webm') {
@@ -159,12 +156,11 @@ Future<void> saveVideo(
             );
 
             final ReturnCode? returnCode =
-                (await convertWebMToMP4(saveFile, saveFileVideo))
-                    as ReturnCode?;
+                await convertWebMToMP4(videoCache, fileDownloadPath);
 
             if (ReturnCode.isSuccess(returnCode)) {
               await ImageGallerySaver.saveFile(
-                saveFileVideo.path.replaceAll('.webm', '.mp4'),
+                fileDownloadPath.path.replaceAll('.webm', '.mp4'),
                 isReturnPathOfIOS: true,
               ).then((value) => {
                     if (showSnackBar) Navigator.pop(context),
@@ -188,7 +184,7 @@ Future<void> saveVideo(
               );
             }
           } else {
-            await ImageGallerySaver.saveFile(saveFile.path,
+            await ImageGallerySaver.saveFile(videoCache.path,
                     isReturnPathOfIOS: true)
                 .then((value) => {
                       if (showSnackBar) Navigator.pop(context),
@@ -213,33 +209,6 @@ Future<void> saveVideo(
   savedAttachmentsProvider.startVideo();
 }
 
-Future<void> saveAllMedia(
-    String url, List<String> fileNames, BuildContext context) async {
-  showCupertinoSnackbar(
-    null,
-    false,
-    context,
-    'Downloading...',
-  );
-
-  for (final String fileName in fileNames) {
-    await saveVideo(
-      url + fileName,
-      fileName,
-      context,
-    );
-  }
-
-  Navigator.of(context).pop(true);
-
-  showCupertinoSnackbar(
-    const Duration(milliseconds: 1800),
-    true,
-    context,
-    'All files downloaded!',
-  );
-}
-
 Future<void> shareMedia(
   String url,
   String fileName,
@@ -247,7 +216,6 @@ Future<void> shareMedia(
   bool isSaved = false,
 }) async {
   Directory directory = Directory('');
-  final dio = Dio();
 
   final SavedAttachmentsProvider savedAttachmentsProvider =
       Provider.of<SavedAttachmentsProvider>(context, listen: false);
@@ -257,9 +225,11 @@ Future<void> shareMedia(
   if (isSaved) {
     directory = await requestDirectory(directory);
 
-    Share.shareFiles([
-      '${directory.path}/savedAttachments/$fileName'
-          .replaceAll('.webm', '.mp4'),
+    Share.shareXFiles([
+      XFile(
+        '${directory.path}/savedAttachments/$fileName'
+            .replaceAll('.webm', '.mp4'),
+      )
     ]);
   } else {
     Navigator.pop(context);
@@ -281,13 +251,8 @@ Future<void> shareMedia(
       directory = await requestDirectory(directory);
 
       if (await directory.exists()) {
-        final File saveFile = File('${directory.path}/$fileName');
-        final File saveFileVideo = File('${directory.path}/$fileName');
-
-        await dio.download(
-          url,
-          saveFile.path,
-        );
+        final File fileDownloadPath = File('${directory.path}/$fileName');
+        final File videoCache = await DefaultCacheManager().getSingleFile(url);
 
         final String ext = '.${fileName.split('.').last}';
 
@@ -302,8 +267,7 @@ Future<void> shareMedia(
             );
 
             final ReturnCode? returnCode =
-                (await convertWebMToMP4(saveFile, saveFileVideo))
-                    as ReturnCode?;
+                await convertWebMToMP4(videoCache, fileDownloadPath);
 
             if (ReturnCode.isSuccess(returnCode)) {
               Navigator.pop(context);
@@ -313,8 +277,10 @@ Future<void> shareMedia(
                 context,
                 'File downloaded!',
               ).then((value) => {
-                    Share.shareFiles([
-                      saveFileVideo.path.replaceAll('.webm', '.mp4'),
+                    Share.shareXFiles([
+                      XFile(
+                        fileDownloadPath.path.replaceAll('.webm', '.mp4'),
+                      )
                     ]),
                   });
             } else {
@@ -334,12 +300,16 @@ Future<void> shareMedia(
               context,
               'File downloaded!',
             ).then((value) => {
-                  Share.shareFiles([saveFile.path])
+                  Share.shareXFiles([
+                    XFile(videoCache.path),
+                  ])
                 });
           }
         } else {
           Navigator.pop(context);
-          Share.shareFiles([saveFile.path]);
+          Share.shareXFiles([
+            XFile(videoCache.path),
+          ]);
         }
       }
     } catch (e) {
@@ -376,8 +346,9 @@ Future<SavedAttachment?> saveAttachment(
     directory = await requestDirectory(directory);
 
     if (await directory.exists()) {
-      final File saveFile = File('${directory.path}/$fileName');
-      File saveFileVideo;
+      final File fileDownloadPath =
+          File('${directory.path}/savedAttachments/$fileName');
+      final File videoCache = await DefaultCacheManager().getSingleFile(url);
 
       final Directory savedAttachmentsDirectory =
           Directory('${directory.path}/savedAttachments');
@@ -385,13 +356,6 @@ Future<SavedAttachment?> saveAttachment(
       if (!await savedAttachmentsDirectory.exists()) {
         await savedAttachmentsDirectory.create(recursive: true);
       }
-
-      saveFileVideo = File('${directory.path}/savedAttachments/$fileName');
-
-      await dio.download(
-        url,
-        saveFile.path,
-      );
 
       final String ext = '.${fileName.split('.').last}';
 
@@ -406,7 +370,7 @@ Future<SavedAttachment?> saveAttachment(
           );
 
           final ReturnCode? returnCode =
-              (await convertWebMToMP4(saveFile, saveFileVideo)) as ReturnCode?;
+              await convertWebMToMP4(videoCache, fileDownloadPath);
 
           if (ReturnCode.isSuccess(returnCode)) {
             final String thumbnailPath = await downloadThumbnail(
@@ -445,7 +409,7 @@ Future<SavedAttachment?> saveAttachment(
             return null;
           }
         } else {
-          saveFile.copy(saveFileVideo.path);
+          videoCache.copy(fileDownloadPath.path);
 
           if (ext == '.mp4') {
             final String thumbnailPath = await downloadThumbnail(
@@ -489,7 +453,7 @@ Future<SavedAttachment?> saveAttachment(
           }
         }
       } else {
-        saveFile.copy(saveFileVideo.path);
+        videoCache.copy(fileDownloadPath.path);
 
         Navigator.pop(context);
 
@@ -520,34 +484,6 @@ Future<SavedAttachment?> saveAttachment(
 
     return null;
   }
-}
-
-Future<dynamic> showCupertinoSnackbar(
-  Duration? duration,
-  bool dismissable,
-  BuildContext context,
-  String message,
-) {
-  return showCupertinoDialog(
-    context: context,
-    builder: (context) {
-      if (duration != null) {
-        Future.delayed(duration, () {
-          Navigator.of(context).pop(true);
-        });
-      }
-      return GestureDetector(
-        onTap: () {
-          if (dismissable) {
-            Navigator.of(context).pop(true);
-          }
-        },
-        child: CupertinoAlertDialog(
-          title: Text(message),
-        ),
-      );
-    },
-  );
 }
 
 Future<String> downloadThumbnail(

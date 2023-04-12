@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/media_page.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:provider/provider.dart';
 
 class ThreadGridView extends StatefulWidget {
@@ -51,17 +51,6 @@ class _ThreadGridViewState extends State<ThreadGridView> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(Icons.download),
-              onPressed: () => {
-                saveAllMedia(
-                  'https://i.4cdn.org/${widget.board}/',
-                  widget.fileNames,
-                  context,
-                ),
-              },
-            ),
             SizedBox(
               width: 20,
               child: CupertinoButton(
@@ -139,8 +128,9 @@ class _ThreadGridViewState extends State<ThreadGridView> {
                 },
                 child: widget.fileNames[i].contains('jpg') ||
                         widget.fileNames[i].contains('png')
-                    ? Image.network(
-                        'https://i.4cdn.org/${widget.board}/${widget.tims[i]}.jpg',
+                    ? ImageViewer(
+                        url:
+                            'https://i.4cdn.org/${widget.board}/${widget.tims[i]}.jpg',
                         fit: BoxFit.cover,
                       )
                     : Stack(

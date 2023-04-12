@@ -9,6 +9,7 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/services/string.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -76,8 +77,9 @@ class _BookmarksPostState extends State<BookmarksPost> {
                               padding: const EdgeInsets.all(10),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
+                                child: ImageViewer(
+                                  url:
+                                      'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -212,12 +214,12 @@ class _BookmarksPostState extends State<BookmarksPost> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: ImageViewer(
+                                        url:
+                                            'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
+                                        fit: BoxFit.cover,
+                                      )),
                                 ),
                               )
                             else

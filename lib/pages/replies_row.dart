@@ -12,8 +12,8 @@ class RepliesRow extends StatelessWidget {
     this.invertTextColor = false,
   }) : super(key: key);
 
-  final replies;
-  final imageReplies;
+  final dynamic replies;
+  final dynamic imageReplies;
   final bool showImageReplies;
   final bool invertTextColor;
 

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
-import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/Models/favorite.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/gallery_model.dart';
@@ -12,13 +11,12 @@ import 'package:flutter_chan/pages/thread/thread_grid_view.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
-
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class ThreadPage extends StatefulWidget {
   const ThreadPage({
@@ -80,11 +78,8 @@ class ThreadPageState extends State<ThreadPage> {
                   width: post.w ?? 0,
                   fileName: post.filename ?? '',
                 )
-              : InteractiveViewer(
-                  minScale: 0.5,
-                  maxScale: 5,
-                  child: Image.network(
-                      'https://i.4cdn.org/${widget.board}/$video'),
+              : ImageViewer(
+                  url: 'https://i.4cdn.org/${widget.board}/$video',
                 ),
         );
       }
@@ -114,7 +109,6 @@ class ThreadPageState extends State<ThreadPage> {
     final gallery = Provider.of<GalleryProvider>(context);
 
     return Scaffold(
-      key: _scaffoldKey,
       backgroundColor: theme.getTheme() == ThemeData.light()
           ? CupertinoColors.systemGroupedBackground
           : Colors.black,
@@ -186,17 +180,6 @@ class ThreadPageState extends State<ThreadPage> {
                             launchURL(
                                 'https://boards.4chan.org/${widget.board}/thread/${widget.thread}');
                             Navigator.pop(context);
-                          },
-                        ),
-                        CupertinoActionSheetAction(
-                          child: const Text('Download all Media'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            saveAllMedia(
-                              'https://i.4cdn.org/${widget.board}/',
-                              fileNames,
-                              _scaffoldKey.currentContext ?? context,
-                            );
                           },
                         ),
                       ],

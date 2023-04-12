@@ -9,7 +9,7 @@ import 'package:preload_page_view/preload_page_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class MediaPage extends StatefulWidget {
   const MediaPage({
@@ -69,6 +69,11 @@ class _MediaPageState extends State<MediaPage> {
       initialPage: index,
       keepPage: false,
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

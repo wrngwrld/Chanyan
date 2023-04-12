@@ -8,6 +8,7 @@ import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/replies_row.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 
@@ -100,8 +101,8 @@ class _GridPostState extends State<GridPost> {
       },
       child: Stack(
         children: [
-          Image.network(
-            'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
+          ImageViewer(
+            url: 'https://i.4cdn.org/${widget.board}/${widget.post.tim}s.jpg',
             fit: BoxFit.cover,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
