@@ -1,4 +1,3 @@
-import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
@@ -7,6 +6,8 @@ import 'package:flutter_chan/pages/settings/setting_pages/data_settings.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/privacy_settings.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/threads_settings.dart';
 import 'package:provider/provider.dart';
+
+import 'cupertino_settings_icon.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -54,73 +55,74 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           SliverToBoxAdapter(
-            child: CESettingsContainer(
-              groups: [
-                CESettingsGroup(
-                  items: [
-                    CESettingsMultiline(
-                      leading: Stack(
-                        alignment: AlignmentDirectional.center,
-                        children: [
-                          SizedBox(
-                            height: 60,
-                            width: 60,
-                            child: Image.asset('assets/icons/icon.png'),
-                          ),
-                        ],
-                      ),
-                      mainText: 'Chanyan',
-                      subText: 'View on GitHub',
-                      mainTextFontSize: 22,
-                      subTextFontSize: 16,
-                      onTap: () => {
-                        launchURL('https://github.com/wrngwrld/Chanyan'),
-                      },
-                    ),
-                    CESettingsItem(
-                      leading: const CESettingsIcon(
-                        icon: CupertinoIcons.list_bullet,
-                        color: CupertinoColors.systemPurple,
-                      ),
-                      text: 'Threads',
-                      onTap: () => {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ThreadsSettings(),
-                          ),
+            child: CupertinoListSection.insetGrouped(
+              children: [
+                CupertinoListTile(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  leadingSize: 60,
+                  leading: Image.asset('assets/icons/icon.png'),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text('Chanyan'),
+                      Text(
+                        'View on GitHub',
+                        style: TextStyle(
+                          color: CupertinoColors.systemGrey,
                         ),
-                      },
-                    ),
-                    CESettingsItem(
-                      leading: const CESettingsIcon(
-                        icon: CupertinoIcons.hand_raised_fill,
-                        color: CupertinoColors.activeGreen,
                       ),
-                      text: 'Privacy',
-                      onTap: () => {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const PrivacySettings(),
-                          ),
-                        ),
-                      },
-                    ),
-                    CESettingsItem(
-                      leading: const CESettingsIcon(
-                        icon: CupertinoIcons.doc,
-                        color: CupertinoColors.systemYellow,
+                    ],
+                  ),
+                  trailing: const CupertinoListTileChevron(),
+                  onTap: () => {
+                    launchURL('https://github.com/wrngwrld/Chanyan'),
+                  },
+                ),
+                CupertinoListTile(
+                  leading: const CupertinoSettingsIcon(
+                    icon: CupertinoIcons.list_bullet,
+                    color: CupertinoColors.systemPurple,
+                  ),
+                  title: const Text('Threads'),
+                  onTap: () => {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ThreadsSettings(),
                       ),
-                      text: 'Data',
-                      lastItem: true,
-                      onTap: () => {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const DataSettings(),
-                          ),
-                        ),
-                      },
                     ),
-                  ],
+                  },
+                  trailing: const CupertinoListTileChevron(),
+                ),
+                CupertinoListTile(
+                  leading: const CupertinoSettingsIcon(
+                    icon: CupertinoIcons.hand_raised_fill,
+                    color: CupertinoColors.activeGreen,
+                  ),
+                  title: const Text('Privacy'),
+                  onTap: () => {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacySettings(),
+                      ),
+                    ),
+                  },
+                  trailing: const CupertinoListTileChevron(),
+                ),
+                CupertinoListTile(
+                  leading: const CupertinoSettingsIcon(
+                    icon: CupertinoIcons.doc,
+                    color: CupertinoColors.systemYellow,
+                  ),
+                  title: const Text('Data'),
+                  onTap: () => {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const DataSettings(),
+                      ),
+                    ),
+                  },
+                  trailing: const CupertinoListTileChevron(),
                 ),
               ],
             ),

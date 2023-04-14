@@ -1,4 +1,3 @@
-import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
@@ -60,32 +59,29 @@ class GridViewSettingsState extends State<GridViewSettings> {
         ),
       ),
       child: SafeArea(
-        child: CESettingsContainer(
-          groups: [
-            CESettingsGroup(
-              items: [
-                CESettingsItem(
-                  text: 'Grid View',
-                  showChevron: false,
-                  trailing: settings.getBoardView().name == 'gridView'
-                      ? const Icon(
-                          CupertinoIcons.check_mark,
-                        )
-                      : Container(),
-                  onTap: () => {settings.setBoardView(View.gridView)},
-                ),
-                CESettingsItem(
-                  text: 'List View',
-                  lastItem: true,
-                  showChevron: false,
-                  trailing: settings.getBoardView().name == 'gridView'
-                      ? Container()
-                      : const Icon(
-                          CupertinoIcons.check_mark,
-                        ),
-                  onTap: () => {settings.setBoardView(View.listView)},
-                ),
-              ],
+        child: CupertinoListSection.insetGrouped(
+          children: [
+            CupertinoListTile(
+              title: const Text(
+                'Grid View',
+              ),
+              trailing: settings.getBoardView().name == 'gridView'
+                  ? const Icon(
+                      CupertinoIcons.check_mark,
+                    )
+                  : Container(),
+              onTap: () => {settings.setBoardView(View.gridView)},
+            ),
+            CupertinoListTile(
+              title: const Text(
+                'List View',
+              ),
+              trailing: settings.getBoardView().name == 'gridView'
+                  ? Container()
+                  : const Icon(
+                      CupertinoIcons.check_mark,
+                    ),
+              onTap: () => {settings.setBoardView(View.listView)},
             ),
           ],
         ),

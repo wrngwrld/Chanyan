@@ -45,11 +45,6 @@ dependencies:
   flutter_slidable: ^2.0.0
   intl: ^0.18.0
   lint: ^2.0.1
-  ce_settings:
-    git:
-      url: https://github.com/wrngwrld/ce_settings
-      ref: main # branch name
-  cupertino_lists: ^1.0.1
   scrollable_positioned_list: ^0.3.2
   ffmpeg_kit_flutter_full: ^5.1.0
   flutter_cache_manager: ^3.3.0

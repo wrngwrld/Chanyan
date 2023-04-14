@@ -1,8 +1,8 @@
-import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/pages/settings/cupertino_settings_icon.dart';
 import 'package:provider/provider.dart';
 
 class PrivacySettings extends StatefulWidget {
@@ -60,24 +60,24 @@ class PrivacySettingsState extends State<PrivacySettings> {
         ),
       ),
       child: SafeArea(
-        child: CESettingsContainer(
-          groups: [
-            CESettingsGroup(
-              items: [
-                CESettingsItem(
-                  leading: const CESettingsIcon(
+        child: Column(
+          children: [
+            CupertinoListSection.insetGrouped(
+              children: [
+                CupertinoListTile(
+                  leading: const CupertinoSettingsIcon(
                     icon: CupertinoIcons.exclamationmark_triangle,
                     color: CupertinoColors.systemRed,
                   ),
-                  text: 'Allow NSFW-Boards',
+                  title: const Text(
+                    'Allow NSFW-Boards',
+                  ),
                   trailing: CupertinoSwitch(
                     onChanged: (value) => {
                       settings.setNSFW(value),
                     },
                     value: settings.getNSFW(),
                   ),
-                  showChevron: false,
-                  lastItem: true,
                 ),
               ],
             ),

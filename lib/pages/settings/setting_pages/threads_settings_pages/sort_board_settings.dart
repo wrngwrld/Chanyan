@@ -1,4 +1,3 @@
-import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
@@ -60,62 +59,62 @@ class SortBoardSettingsState extends State<SortBoardSettings> {
         ),
       ),
       child: SafeArea(
-        child: CESettingsContainer(
-          groups: [
-            CESettingsGroup(
-              items: [
-                CESettingsItem(
-                  text: 'Images Count',
-                  showChevron: false,
-                  trailing: settings.getBoardSort().name == 'byImagesCount'
-                      ? const Icon(
-                          CupertinoIcons.check_mark,
-                        )
-                      : Container(),
-                  onTap: () => {settings.setBoardSort(Sort.byImagesCount)},
-                ),
-                CESettingsItem(
-                  text: 'Bump Order',
-                  showChevron: false,
-                  trailing: settings.getBoardSort().name == 'byBumpOrder'
-                      ? const Icon(
-                          CupertinoIcons.check_mark,
-                        )
-                      : Container(),
-                  onTap: () => {settings.setBoardSort(Sort.byBumpOrder)},
-                ),
-                CESettingsItem(
-                  text: 'Reply Count',
-                  showChevron: false,
-                  trailing: settings.getBoardSort().name == 'byReplyCount'
-                      ? const Icon(
-                          CupertinoIcons.check_mark,
-                        )
-                      : Container(),
-                  onTap: () => {settings.setBoardSort(Sort.byReplyCount)},
-                ),
-                CESettingsItem(
-                  text: 'Newest',
-                  showChevron: false,
-                  trailing: settings.getBoardSort().name == 'byNewest'
-                      ? const Icon(
-                          CupertinoIcons.check_mark,
-                        )
-                      : Container(),
-                  onTap: () => {settings.setBoardSort(Sort.byNewest)},
-                ),
-                CESettingsItem(
-                  text: 'Oldest',
-                  lastItem: true,
-                  showChevron: false,
-                  trailing: settings.getBoardSort().name == 'byOldest'
-                      ? const Icon(
-                          CupertinoIcons.check_mark,
-                        )
-                      : Container(),
-                  onTap: () => {settings.setBoardSort(Sort.byOldest)},
-                ),
-              ],
+        child: CupertinoListSection.insetGrouped(
+          children: [
+            CupertinoListTile(
+              title: const Text(
+                'Images Count',
+              ),
+              trailing: settings.getBoardSort().name == 'byImagesCount'
+                  ? const Icon(
+                      CupertinoIcons.check_mark,
+                    )
+                  : Container(),
+              onTap: () => {settings.setBoardSort(Sort.byImagesCount)},
+            ),
+            CupertinoListTile(
+              title: const Text(
+                'Reply Count',
+              ),
+              trailing: settings.getBoardSort().name == 'byReplyCount'
+                  ? const Icon(
+                      CupertinoIcons.check_mark,
+                    )
+                  : Container(),
+              onTap: () => {settings.setBoardSort(Sort.byReplyCount)},
+            ),
+            CupertinoListTile(
+              title: const Text(
+                'Bump Order',
+              ),
+              trailing: settings.getBoardSort().name == 'byBumpOrder'
+                  ? const Icon(
+                      CupertinoIcons.check_mark,
+                    )
+                  : Container(),
+              onTap: () => {settings.setBoardSort(Sort.byBumpOrder)},
+            ),
+            CupertinoListTile(
+              title: const Text(
+                'Newest',
+              ),
+              trailing: settings.getBoardSort().name == 'byNewest'
+                  ? const Icon(
+                      CupertinoIcons.check_mark,
+                    )
+                  : Container(),
+              onTap: () => {settings.setBoardSort(Sort.byNewest)},
+            ),
+            CupertinoListTile(
+              title: const Text(
+                'Oldest',
+              ),
+              trailing: settings.getBoardSort().name == 'byOldest'
+                  ? const Icon(
+                      CupertinoIcons.check_mark,
+                    )
+                  : Container(),
+              onTap: () => {settings.setBoardSort(Sort.byOldest)},
             ),
           ],
         ),

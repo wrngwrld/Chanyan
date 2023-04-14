@@ -1,4 +1,3 @@
-import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
@@ -7,6 +6,8 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/threads_settings_pages/grid_view_setting.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/threads_settings_pages/sort_board_settings.dart';
 import 'package:provider/provider.dart';
+
+import '../cupertino_settings_icon.dart';
 
 class ThreadsSettings extends StatefulWidget {
   const ThreadsSettings({
@@ -63,48 +64,47 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
         ),
       ),
       child: SafeArea(
-        child: CESettingsContainer(
-          groups: [
-            CESettingsGroup(
-              items: [
-                CESettingsItem(
-                  leading: const CESettingsIcon(
-                    icon: CupertinoIcons.viewfinder,
-                    color: CupertinoColors.systemTeal,
+        child: CupertinoListSection.insetGrouped(
+          children: [
+            CupertinoListTile(
+              leading: const CupertinoSettingsIcon(
+                icon: CupertinoIcons.viewfinder,
+                color: CupertinoColors.systemTeal,
+              ),
+              title: const Text(
+                'Thread View',
+              ),
+              trailing: Text(
+                getBoardViewName(settings.getBoardView()),
+                style: const TextStyle(color: CupertinoColors.inactiveGray),
+              ),
+              onTap: () => {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const GridViewSettings(),
                   ),
-                  text: 'Thread View',
-                  trailing: Text(
-                    getBoardViewName(settings.getBoardView()),
-                    style: const TextStyle(color: CupertinoColors.inactiveGray),
-                  ),
-                  onTap: () => {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => const GridViewSettings(),
-                      ),
-                    ),
-                  },
                 ),
-                CESettingsItem(
-                  leading: const CESettingsIcon(
-                    icon: CupertinoIcons.sort_down,
-                    color: CupertinoColors.systemOrange,
+              },
+            ),
+            CupertinoListTile(
+              leading: const CupertinoSettingsIcon(
+                icon: CupertinoIcons.sort_down,
+                color: CupertinoColors.systemOrange,
+              ),
+              title: const Text(
+                'Default board sort',
+              ),
+              trailing: Text(
+                getSortByName(settings.getBoardSort()),
+                style: const TextStyle(color: CupertinoColors.inactiveGray),
+              ),
+              onTap: () => {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const SortBoardSettings(),
                   ),
-                  text: 'Default board sort',
-                  lastItem: true,
-                  trailing: Text(
-                    getSortByName(settings.getBoardSort()),
-                    style: const TextStyle(color: CupertinoColors.inactiveGray),
-                  ),
-                  onTap: () => {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => const SortBoardSettings(),
-                      ),
-                    ),
-                  },
                 ),
-              ],
+              },
             ),
           ],
         ),
