@@ -5,6 +5,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/data_settings.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/privacy_settings.dart';
 import 'package:flutter_chan/pages/settings/setting_pages/threads_settings.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import 'cupertino_settings_icon.dart';
@@ -17,6 +18,20 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  late Future<PackageInfo> _getVersionNumber;
+  @override
+  void initState() {
+    super.initState();
+
+    _getVersionNumber = getVersionNumber();
+  }
+
+  Future<PackageInfo> getVersionNumber() async {
+    final PackageInfo info = await PackageInfo.fromPlatform();
+
+    return info;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
@@ -64,14 +79,20 @@ class _SettingsState extends State<Settings> {
                   leading: Image.asset('assets/icons/icon.png'),
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('Chanyan'),
-                      Text(
-                        'View on GitHub',
-                        style: TextStyle(
-                          color: CupertinoColors.systemGrey,
-                        ),
-                      ),
+                    children: [
+                      const Text('Chanyan'),
+                      FutureBuilder<PackageInfo>(
+                          future: _getVersionNumber,
+                          builder:
+                              (context, AsyncSnapshot<PackageInfo> snapshot) {
+                            return Text(
+                              snapshot.hasData ? snapshot.data!.version : '',
+                              style: const TextStyle(
+                                color: CupertinoColors.systemGrey,
+                                fontSize: 15,
+                              ),
+                            );
+                          }),
                     ],
                   ),
                   trailing: const CupertinoListTileChevron(),
