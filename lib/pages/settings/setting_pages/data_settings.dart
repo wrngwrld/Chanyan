@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:ce_settings/ce_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/blocs/theme.dart';
@@ -149,26 +148,36 @@ class DataSettingsState extends State<DataSettings> {
         ),
       ),
       child: SafeArea(
-        child: CESettingsContainer(
-          groups: [
-            CESettingsGroup(
-              items: [
-                CESettingsItem(
-                  text: 'Cache Size',
-                  trailing: Text('${_cacheSize.toStringAsFixed(2)} MB'),
-                  showChevron: false,
+          child: Column(
+        children: [
+          CupertinoListSection.insetGrouped(
+            children: [
+              CupertinoListTile(
+                title: const Text('Cache Size'),
+                trailing: Text(
+                  '${_cacheSize.toStringAsFixed(2)} MB',
+                  style: const TextStyle(
+                    color: CupertinoColors.systemGrey,
+                  ),
                 ),
-                CESettingsItem(
-                  text: 'Delete Cache',
-                  lastItem: true,
-                  showChevron: true,
-                  onTap: () => deleteCache(),
+              ),
+            ],
+          ),
+          CupertinoListSection.insetGrouped(
+            children: [
+              CupertinoListTile(
+                title: const Center(
+                  child: Text(
+                    'Delete Cache',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ),
-              ],
-            ),
-          ],
-        ),
-      ),
+                onTap: () => deleteCache(),
+              ),
+            ],
+          ),
+        ],
+      )),
     );
   }
 }

@@ -80,6 +80,7 @@ class ThreadPageState extends State<ThreadPage> {
                 )
               : ImageViewer(
                   url: 'https://i.4cdn.org/${widget.board}/$video',
+                  interactiveViewer: true,
                 ),
         );
       }

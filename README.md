@@ -11,7 +11,7 @@
 - Boards and threads that can be favorised 
 - Boards in grid- or listview
 - Sortable boards
-- Fast video and image galery (Support for WebM on iOS)
+- Fast video and image gallery (Support for WebM on iOS)
 - Downloadable images and Videos (WebMs will be converted to MP4)
 - Download all images from one board
 - Supporting Dark Mode

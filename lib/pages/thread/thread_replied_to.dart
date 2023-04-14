@@ -49,7 +49,10 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
               width: post.w ?? 0,
               fileName: post.filename ?? '',
             )
-          : ImageViewer(url: 'https://i.4cdn.org/${widget.board}/$video'));
+          : ImageViewer(
+              url: 'https://i.4cdn.org/${widget.board}/$video',
+              interactiveViewer: true,
+            ));
     }
   }
 
