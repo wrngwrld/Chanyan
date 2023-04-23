@@ -80,25 +80,13 @@ class BoardPageState extends State<BoardPage> {
     }
   }
 
-  void _updateThreadsList(String value, List<Post>? data) {
-    if (data == null) {
-      return;
-    }
+  void _updateThreadsList(String value) {
+    _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(
+      sort,
+      widget.board,
+      searchValue: value,
+    ).then((value) => filterdBoards = value);
 
-    if (value.isNotEmpty) {
-      filterdBoards = data
-          .where((element) => element.sub != null
-              ? element.sub!.toLowerCase().contains(value.toLowerCase())
-              : false || element.name != null
-                  ? element.name!.toLowerCase().contains(value.toLowerCase())
-                  : false || element.com != null
-                      ? element.com!.toLowerCase().contains(value.toLowerCase())
-                      : false)
-          .toList();
-    } else {
-      _searchBarController.clear();
-      filterdBoards = data;
-    }
     setState(() {});
   }
 
@@ -256,6 +244,34 @@ class BoardPageState extends State<BoardPage> {
               SliverList(
                 delegate: SliverChildListDelegate(
                   [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 8.0,
+                        left: 8.0,
+                        right: 8.0,
+                      ),
+                      child: ClipRect(
+                        child: CupertinoSearchTextField(
+                          controller: _searchBarController,
+                          onChanged: (value) {
+                            _updateThreadsList(
+                              value,
+                            );
+                          },
+                          onSubmitted: (value) {
+                            _updateThreadsList(
+                              value,
+                            );
+                          },
+                          onSuffixTap: () {
+                            _updateThreadsList(
+                              '',
+                            );
+                            _searchBarController.clear();
+                          },
+                        ),
+                      ),
+                    ),
                     FutureBuilder(
                         future: _fetchAllThreadsFromBoard,
                         builder: (BuildContext context,
@@ -274,41 +290,7 @@ class BoardPageState extends State<BoardPage> {
                               );
 
                             default:
-                              return Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 8.0,
-                                      left: 8.0,
-                                      right: 8.0,
-                                    ),
-                                    child: ClipRect(
-                                      child: CupertinoSearchTextField(
-                                        controller: _searchBarController,
-                                        onChanged: (value) {
-                                          _updateThreadsList(
-                                            value,
-                                            snapshot.data,
-                                          );
-                                        },
-                                        onSubmitted: (value) {
-                                          _updateThreadsList(
-                                            value,
-                                            snapshot.data,
-                                          );
-                                        },
-                                        onSuffixTap: () {
-                                          _updateThreadsList(
-                                            '',
-                                            snapshot.data,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  getBoardView(settings, filterdBoards),
-                                ],
-                              );
+                              return getBoardView(settings, filterdBoards);
                           }
                         })
                   ],

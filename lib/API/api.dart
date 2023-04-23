@@ -7,11 +7,15 @@ import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
+Future<List<Post>> fetchAllThreadsFromBoard(
+  Sort sorting,
+  String board, {
+  String? searchValue,
+}) async {
   final Response response =
       await get(Uri.parse('https://a.4cdn.org/$board/catalog.json'));
 
-  final List<Post> ops = List.empty(growable: true);
+  List<Post> ops = List.empty(growable: true);
   final List pages = jsonDecode(response.body) as List;
 
   if (response.statusCode == 200) {
@@ -51,6 +55,22 @@ Future<List<Post>> fetchAllThreadsFromBoard(Sort sorting, String board) async {
           });
           break;
       }
+    }
+
+    if (searchValue != null) {
+      ops = ops
+          .where((element) => element.sub != null
+              ? element.sub!.toLowerCase().contains(searchValue.toLowerCase())
+              : false || element.name != null
+                  ? element.name!
+                      .toLowerCase()
+                      .contains(searchValue.toLowerCase())
+                  : false || element.com != null
+                      ? element.com!
+                          .toLowerCase()
+                          .contains(searchValue.toLowerCase())
+                      : false)
+          .toList();
     }
 
     return ops;
