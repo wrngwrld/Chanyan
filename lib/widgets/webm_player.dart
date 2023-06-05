@@ -52,6 +52,8 @@ class VLCPlayerState extends State<VLCPlayer> {
 
   bool loaded = false;
 
+  Stream<FileResponse> fileStream = const Stream.empty();
+
   @override
   void initState() {
     super.initState();
@@ -68,26 +70,27 @@ class VLCPlayerState extends State<VLCPlayer> {
       if (widget.isAsset) {
         file =
             File('${widget.directory!.path}/savedAttachments/${widget.video}');
-      } else {
-        file = await DefaultCacheManager().getSingleFile(
-            'https://i.4cdn.org/${widget.board}/${widget.video}');
-      }
 
-      _videoPlayerController = VlcPlayerController.file(
-        file,
-        hwAcc: HwAcc.auto,
-        autoPlay: true,
-      );
+        _videoPlayerController = VlcPlayerController.file(
+          file,
+          hwAcc: HwAcc.auto,
+          autoPlay: true,
+        );
+
+        _videoPlayerController.addListener(listener);
+
+        if (mounted) {
+          setState(() {
+            loaded = true;
+          });
+        }
+      } else {
+        fileStream = DefaultCacheManager().getFileStream(
+            'https://i.4cdn.org/${widget.board}/${widget.video}',
+            withProgress: true);
+      }
     } catch (e) {
       print(e);
-    }
-
-    _videoPlayerController.addListener(listener);
-
-    if (mounted) {
-      setState(() {
-        loaded = true;
-      });
     }
   }
 
@@ -172,154 +175,181 @@ class VLCPlayerState extends State<VLCPlayer> {
     final SavedAttachmentsProvider savedAttachmentsProvider =
         Provider.of<SavedAttachmentsProvider>(context);
 
-    if (loaded) {
-      if (_videoPlayerController.value.isInitialized) {
-        if (savedAttachmentsProvider.playing) {
-          _videoPlayerController.play();
-        } else {
-          _videoPlayerController.pause();
-        }
-      }
-      return Stack(
-        children: [
-          Center(
-            child: PlatformCircularProgressIndicator(
+    return StreamBuilder(
+        stream: fileStream,
+        builder: (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
+          final loading =
+              !snapshot.hasData || snapshot.data is DownloadProgress;
+
+          if (widget.isAsset || (loaded && !loading)) {
+            return videoWidget(savedAttachmentsProvider);
+          } else if (loading && snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(
+                  value: (snapshot.data! as DownloadProgress).progress),
+            );
+          } else if (!loaded && !loading) {
+            _videoPlayerController = VlcPlayerController.file(
+              (snapshot.data! as FileInfo).file,
+              hwAcc: HwAcc.auto,
+              autoPlay: true,
+            );
+
+            _videoPlayerController.addListener(listener);
+
+            if (mounted) {
+              loaded = true;
+            }
+
+            return videoWidget(savedAttachmentsProvider);
+          } else {
+            return PlatformCircularProgressIndicator(
               material: (_, __) =>
                   MaterialProgressIndicatorData(color: AppColors.kGreen),
-            ),
+            );
+          }
+        });
+  }
+
+  Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider) {
+    if (_videoPlayerController.value.isInitialized) {
+      if (savedAttachmentsProvider.playing) {
+        _videoPlayerController.play();
+      } else {
+        _videoPlayerController.pause();
+      }
+    }
+    return Stack(
+      children: [
+        Center(
+          child: PlatformCircularProgressIndicator(
+            material: (_, __) =>
+                MaterialProgressIndicatorData(color: AppColors.kGreen),
           ),
-          VisibilityDetector(
-            key: ObjectKey(widget.video),
-            onVisibilityChanged: (visibility) {
-              if (visibility.visibleFraction < 0.5 &&
-                  mounted &&
-                  _videoPlayerController.value.isInitialized) {
-                _videoPlayerController.pause();
+        ),
+        VisibilityDetector(
+          key: ObjectKey(widget.video),
+          onVisibilityChanged: (visibility) {
+            if (visibility.visibleFraction < 0.5 &&
+                mounted &&
+                _videoPlayerController.value.isInitialized) {
+              _videoPlayerController.pause();
 
-                setState(() {
-                  isVisible = false;
-                });
-              }
-              if (visibility.visibleFraction > 0.5 &&
-                  mounted &&
-                  _videoPlayerController.value.isInitialized) {
-                _videoPlayerController.play();
+              setState(() {
+                isVisible = false;
+              });
+            }
+            if (visibility.visibleFraction > 0.5 &&
+                mounted &&
+                _videoPlayerController.value.isInitialized) {
+              _videoPlayerController.play();
 
-                setState(() {
-                  isVisible = true;
-                });
-              }
-            },
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    VlcPlayer(
-                      controller: _videoPlayerController,
-                      aspectRatio: widget.width / widget.height,
-                      placeholder: Center(
-                        child: PlatformCircularProgressIndicator(
-                          material: (_, __) => MaterialProgressIndicatorData(
-                            color: AppColors.kGreen,
-                          ),
+              setState(() {
+                isVisible = true;
+              });
+            }
+          },
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  VlcPlayer(
+                    controller: _videoPlayerController,
+                    aspectRatio: widget.width / widget.height,
+                    placeholder: Center(
+                      child: PlatformCircularProgressIndicator(
+                        material: (_, __) => MaterialProgressIndicatorData(
+                          color: AppColors.kGreen,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Opacity(
-                  opacity: controllsVisible ? 1 : 0,
-                  child: SafeArea(
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Container(),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          height: 45,
-                          decoration: const BoxDecoration(
-                              color: Color.fromRGBO(50, 50, 50, 0.85),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                color: Colors.white,
-                                icon: _videoPlayerController.value.isPlaying
-                                    ? const Icon(Icons.pause)
-                                    : const Icon(Icons.play_arrow),
-                                onPressed: _togglePlaying,
+                  ),
+                ],
+              ),
+              Opacity(
+                opacity: controllsVisible ? 1 : 0,
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Container(),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        height: 45,
+                        decoration: const BoxDecoration(
+                            color: Color.fromRGBO(50, 50, 50, 0.85),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              color: Colors.white,
+                              icon: _videoPlayerController.value.isPlaying
+                                  ? const Icon(Icons.pause)
+                                  : const Icon(Icons.play_arrow),
+                              onPressed: _togglePlaying,
+                            ),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    position,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Slider(
+                                      activeColor: CupertinoColors.systemGrey,
+                                      inactiveColor: CupertinoColors.systemFill,
+                                      thumbColor: CupertinoColors.white,
+                                      value: sliderValue,
+                                      min: 0.0,
+                                      max: (!validPosition &&
+                                              _videoPlayerController
+                                                      .value.duration ==
+                                                  null)
+                                          ? 1.0
+                                          : _videoPlayerController
+                                              .value.duration.inSeconds
+                                              .toDouble(),
+                                      onChanged: validPosition
+                                          ? _onSliderPositionChanged
+                                          : null,
+                                    ),
+                                  ),
+                                  Text(
+                                    duration,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  )
+                                ],
                               ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                      position,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Slider(
-                                        activeColor: CupertinoColors.systemGrey,
-                                        inactiveColor:
-                                            CupertinoColors.systemFill,
-                                        thumbColor: CupertinoColors.white,
-                                        value: sliderValue,
-                                        min: 0.0,
-                                        max: (!validPosition &&
-                                                _videoPlayerController
-                                                        .value.duration ==
-                                                    null)
-                                            ? 1.0
-                                            : _videoPlayerController
-                                                .value.duration.inSeconds
-                                                .toDouble(),
-                                        onChanged: validPosition
-                                            ? _onSliderPositionChanged
-                                            : null,
-                                      ),
-                                    ),
-                                    Text(
-                                      duration,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 15,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      );
-    } else {
-      return Center(
-        child: PlatformCircularProgressIndicator(
-          material: (_, __) =>
-              MaterialProgressIndicatorData(color: AppColors.kGreen),
         ),
-      );
-    }
+      ],
+    );
   }
 }
