@@ -70,7 +70,7 @@ class GridViewSettingsState extends State<GridViewSettings> {
                       CupertinoIcons.check_mark,
                     )
                   : Container(),
-              onTap: () => {settings.setBoardView(View.gridView)},
+              onTap: () => {settings.setBoardView(ViewType.gridView)},
             ),
             CupertinoListTile(
               title: const Text(
@@ -81,7 +81,7 @@ class GridViewSettingsState extends State<GridViewSettings> {
                   : const Icon(
                       CupertinoIcons.check_mark,
                     ),
-              onTap: () => {settings.setBoardView(View.listView)},
+              onTap: () => {settings.setBoardView(ViewType.listView)},
             ),
           ],
         ),

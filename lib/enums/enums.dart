@@ -6,7 +6,7 @@ enum Sort {
   byOldest,
 }
 
-enum View {
+enum ViewType {
   gridView,
   listView,
 }
