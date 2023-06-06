@@ -8,14 +8,14 @@ class SettingsProvider with ChangeNotifier {
   }
 
   bool allowNSFW = false;
-  View boardView = View.gridView;
+  ViewType boardView = ViewType.gridView;
   Sort boardSort = Sort.byImagesCount;
 
   Future<void> loadPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (prefs.getString('boardView') != null) {
-      final View boardViewPrefs = View.values.firstWhere(
+      final ViewType boardViewPrefs = ViewType.values.firstWhere(
         (element) => element.name == prefs.getString('boardView'),
       );
 
@@ -51,11 +51,11 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  View getBoardView() {
+  ViewType getBoardView() {
     return boardView;
   }
 
-  Future<void> setBoardView(View view) async {
+  Future<void> setBoardView(ViewType view) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     boardView = view;

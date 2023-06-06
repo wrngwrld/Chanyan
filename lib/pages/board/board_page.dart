@@ -63,14 +63,14 @@ class BoardPageState extends State<BoardPage> {
 
   Widget getBoardView(SettingsProvider settings, List<Post> threads) {
     switch (settings.getBoardView()) {
-      case View.listView:
+      case ViewType.listView:
         return BoardListView(
           scrollController: scrollController,
           board: widget.board,
           threads: threads,
         );
 
-      case View.gridView:
+      case ViewType.gridView:
       default:
         return BoardGridView(
           scrollController: scrollController,

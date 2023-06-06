@@ -112,11 +112,11 @@ class ThreadsSettingsState extends State<ThreadsSettings> {
     );
   }
 
-  String getBoardViewName(View view) {
+  String getBoardViewName(ViewType view) {
     switch (view) {
-      case View.gridView:
+      case ViewType.gridView:
         return 'Grid View';
-      case View.listView:
+      case ViewType.listView:
         return 'List View';
       default:
         return '';
