@@ -65,8 +65,8 @@ class _BoardTileState extends State<BoardTile> {
           children: [
             Text(widget.board.title ?? ''),
             if (widget.board.wsBoard == 0)
-              Row(
-                children: const [
+              const Row(
+                children: [
                   SizedBox(
                     width: 6,
                   ),
