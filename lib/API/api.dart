@@ -16,10 +16,12 @@ Future<List<Post>> fetchAllThreadsFromBoard(
       await get(Uri.parse('https://a.4cdn.org/$board/catalog.json'));
 
   List<Post> ops = List.empty(growable: true);
+  // ignore: strict_raw_type
   final List pages = jsonDecode(response.body) as List;
 
   if (response.statusCode == 200) {
     for (final page in pages) {
+      // ignore: strict_raw_type
       final List opsInPage = page['threads'] as List;
       for (final opInPage in opsInPage) {
         ops.add(Post.fromJson(opInPage as Map<String?, dynamic>));

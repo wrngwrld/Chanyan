@@ -69,7 +69,7 @@ class _AppWithThemeState extends State<AppWithTheme>
   @override
   void didChangePlatformBrightness() {
     final Brightness brightness =
-        WidgetsBinding.instance.window.platformBrightness;
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
 
     final theme = Provider.of<ThemeChanger>(context, listen: false);
 

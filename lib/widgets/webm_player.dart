@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -278,66 +279,82 @@ class VLCPlayerState extends State<VLCPlayer> {
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         height: 45,
-                        decoration: const BoxDecoration(
-                            color: Color.fromRGBO(50, 50, 50, 0.85),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        child: Stack(
                           children: [
-                            IconButton(
-                              color: Colors.white,
-                              icon: _videoPlayerController.value.isPlaying
-                                  ? const Icon(Icons.pause)
-                                  : const Icon(Icons.play_arrow),
-                              onPressed: _togglePlaying,
-                            ),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Text(
-                                    position,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Slider(
-                                      activeColor: CupertinoColors.systemGrey,
-                                      inactiveColor: CupertinoColors.systemFill,
-                                      thumbColor: CupertinoColors.white,
-                                      value: sliderValue,
-                                      min: 0.0,
-                                      max: (!validPosition &&
-                                              _videoPlayerController
-                                                      .value.duration ==
-                                                  null)
-                                          ? 1.0
-                                          : _videoPlayerController
-                                              .value.duration.inSeconds
-                                              .toDouble(),
-                                      onChanged: validPosition
-                                          ? _onSliderPositionChanged
-                                          : null,
-                                    ),
-                                  ),
-                                  Text(
-                                    duration,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  )
-                                ],
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              // The BackdropFilter is currently bugged in flutter, it will not cut the border radius
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                    sigmaX: 10.0, sigmaY: 10.0),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                      color: Color.fromRGBO(50, 50, 50, 0.50),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(15))),
+                                ),
                               ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  color: Colors.white,
+                                  icon: _videoPlayerController.value.isPlaying
+                                      ? const Icon(Icons.pause)
+                                      : const Icon(Icons.play_arrow),
+                                  onPressed: _togglePlaying,
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Text(
+                                        position,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Slider(
+                                          activeColor:
+                                              CupertinoColors.systemGrey,
+                                          inactiveColor:
+                                              CupertinoColors.systemFill,
+                                          thumbColor: CupertinoColors.white,
+                                          value: sliderValue,
+                                          min: 0.0,
+                                          max: (!validPosition &&
+                                                  _videoPlayerController
+                                                          .value.duration ==
+                                                      null)
+                                              ? 1.0
+                                              : _videoPlayerController
+                                                  .value.duration.inSeconds
+                                                  .toDouble(),
+                                          onChanged: validPosition
+                                              ? _onSliderPositionChanged
+                                              : null,
+                                        ),
+                                      ),
+                                      Text(
+                                        duration,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

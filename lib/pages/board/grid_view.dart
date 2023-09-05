@@ -20,7 +20,7 @@ class BoardGridView extends StatelessWidget {
     return Scrollbar(
       controller: scrollController,
       child: GridView.count(
-        padding: const EdgeInsets.only(top: 20),
+        padding: const EdgeInsets.only(top: 10),
         controller: scrollController,
         shrinkWrap: true,
         crossAxisCount: 2,
