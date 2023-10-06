@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../blocs/settings_model.dart';
+
 class VLCPlayer extends StatefulWidget {
   const VLCPlayer({
     Key? key,
@@ -63,6 +65,8 @@ class VLCPlayerState extends State<VLCPlayer> {
   }
 
   Future<void> initVideo() async {
+    final settings = Provider.of<SettingsProvider>(context, listen: false);
+
     fetchStartVideo();
 
     try {
@@ -86,9 +90,22 @@ class VLCPlayerState extends State<VLCPlayer> {
           });
         }
       } else {
-        fileStream = DefaultCacheManager().getFileStream(
+        if (settings.getUseCachingOnVideos()) {
+          fileStream = DefaultCacheManager().getFileStream(
+              'https://i.4cdn.org/${widget.board}/${widget.video}',
+              withProgress: true);
+        } else {
+          _videoPlayerController = VlcPlayerController.network(
             'https://i.4cdn.org/${widget.board}/${widget.video}',
-            withProgress: true);
+            hwAcc: HwAcc.full,
+            autoPlay: true,
+            options: VlcPlayerOptions(
+              advanced: VlcAdvancedOptions([
+                VlcAdvancedOptions.networkCaching(2000),
+              ]),
+            ),
+          );
+        }
       }
     } catch (e) {
       print(e);
@@ -175,41 +192,48 @@ class VLCPlayerState extends State<VLCPlayer> {
   Widget build(BuildContext context) {
     final SavedAttachmentsProvider savedAttachmentsProvider =
         Provider.of<SavedAttachmentsProvider>(context);
+    final settings = Provider.of<SettingsProvider>(context);
 
-    return StreamBuilder(
-        stream: fileStream,
-        builder: (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
-          final loading =
-              !snapshot.hasData || snapshot.data is DownloadProgress;
+    if (settings.getUseCachingOnVideos()) {
+      return StreamBuilder(
+          stream: fileStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
+            final loading =
+                !snapshot.hasData || snapshot.data is DownloadProgress;
 
-          if (widget.isAsset || (loaded && !loading)) {
-            return videoWidget(savedAttachmentsProvider);
-          } else if (loading && snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(
-                  value: (snapshot.data! as DownloadProgress).progress),
-            );
-          } else if (!loaded && !loading) {
-            _videoPlayerController = VlcPlayerController.file(
-              (snapshot.data! as FileInfo).file,
-              hwAcc: HwAcc.auto,
-              autoPlay: true,
-            );
+            if (widget.isAsset || (loaded && !loading)) {
+              return videoWidget(savedAttachmentsProvider);
+            } else if (loading && snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(
+                    value: (snapshot.data! as DownloadProgress).progress),
+              );
+            } else if (!loaded && !loading) {
+              _videoPlayerController = VlcPlayerController.file(
+                (snapshot.data! as FileInfo).file,
+                hwAcc: HwAcc.auto,
+                autoPlay: true,
+              );
 
-            _videoPlayerController.addListener(listener);
+              _videoPlayerController.addListener(listener);
 
-            if (mounted) {
-              loaded = true;
+              if (mounted) {
+                loaded = true;
+              }
+
+              return videoWidget(savedAttachmentsProvider);
+            } else {
+              return PlatformCircularProgressIndicator(
+                material: (_, __) =>
+                    MaterialProgressIndicatorData(color: AppColors.kGreen),
+              );
             }
-
-            return videoWidget(savedAttachmentsProvider);
-          } else {
-            return PlatformCircularProgressIndicator(
-              material: (_, __) =>
-                  MaterialProgressIndicatorData(color: AppColors.kGreen),
-            );
-          }
-        });
+          });
+    } else {
+      _videoPlayerController.addListener(listener);
+      return videoWidget(savedAttachmentsProvider);
+    }
   }
 
   Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider) {
