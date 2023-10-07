@@ -6,7 +6,6 @@ import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/favorite_model.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/boards/board_tile.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
 import 'package:flutter_chan/pages/savedAttachments/saved_attachments.dart';
@@ -312,11 +311,7 @@ class BoardListState extends State<BoardList> {
                               const SizedBox(
                                 height: 100,
                               ),
-                              PlatformCircularProgressIndicator(
-                                material: (_, __) =>
-                                    MaterialProgressIndicatorData(
-                                        color: AppColors.kGreen),
-                              ),
+                              PlatformCircularProgressIndicator(),
                             ],
                           );
                         default:

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
@@ -45,8 +44,6 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
           ? VLCPlayer(
               board: widget.board,
               video: video,
-              height: post.h ?? 0,
-              width: post.w ?? 0,
               fileName: post.filename ?? '',
             )
           : ImageViewer(
@@ -86,10 +83,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return Center(
-                child: PlatformCircularProgressIndicator(
-                  material: (_, __) =>
-                      MaterialProgressIndicatorData(color: AppColors.kGreen),
-                ),
+                child: PlatformCircularProgressIndicator(),
               );
             default:
               getMedia(snapshot.data as Post? ?? Post());

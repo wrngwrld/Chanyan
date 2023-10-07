@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +19,6 @@ class VLCPlayer extends StatefulWidget {
     Key? key,
     required this.video,
     this.board,
-    required this.height,
-    required this.width,
     required this.fileName,
     this.isAsset = false,
     this.directory,
@@ -29,8 +26,6 @@ class VLCPlayer extends StatefulWidget {
 
   final String video;
   final String? board;
-  final int height;
-  final int width;
   final String fileName;
   final Directory? directory;
   final bool isAsset;
@@ -51,7 +46,7 @@ class VLCPlayerState extends State<VLCPlayer> {
   String position = '';
   String duration = '';
 
-  bool controllsVisible = true;
+  bool controlsVisible = true;
 
   bool loaded = false;
 
@@ -194,46 +189,46 @@ class VLCPlayerState extends State<VLCPlayer> {
         Provider.of<SavedAttachmentsProvider>(context);
     final settings = Provider.of<SettingsProvider>(context);
 
-    return StreamBuilder(
-        stream: fileStream,
-        builder: (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
-          final loading =
-              !snapshot.hasData || snapshot.data is DownloadProgress;
+    if (widget.isAsset || loaded) {
+      loaded = true;
+      _videoPlayerController.addListener(listener);
+      return videoWidget(savedAttachmentsProvider);
+    } else if (!settings.getUseCachingOnVideos()) {
+      loaded = true;
+      _videoPlayerController.addListener(listener);
+      return videoWidget(savedAttachmentsProvider);
+    } else {
+      return StreamBuilder(
+          stream: fileStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
+            final loading =
+                !snapshot.hasData || snapshot.data is DownloadProgress;
 
-          if (widget.isAsset || (loaded && !loading)) {
-            loaded = true;
-            _videoPlayerController.addListener(listener);
-            return videoWidget(savedAttachmentsProvider);
-          } else if (!settings.getUseCachingOnVideos()) {
-            loaded = true;
-            _videoPlayerController.addListener(listener);
-            return videoWidget(savedAttachmentsProvider);
-          } else if (loading && snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(
-                  value: (snapshot.data! as DownloadProgress).progress),
-            );
-          } else if (!loaded && !loading) {
-            _videoPlayerController = VlcPlayerController.file(
-              (snapshot.data! as FileInfo).file,
-              hwAcc: HwAcc.auto,
-              autoPlay: true,
-            );
+            if (loading && snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(
+                    value: (snapshot.data! as DownloadProgress).progress),
+              );
+            } else if (!loaded && !loading) {
+              _videoPlayerController = VlcPlayerController.file(
+                (snapshot.data! as FileInfo).file,
+                hwAcc: HwAcc.auto,
+                autoPlay: true,
+              );
 
-            _videoPlayerController.addListener(listener);
+              _videoPlayerController.addListener(listener);
 
-            if (mounted) {
-              loaded = true;
+              if (mounted) {
+                loaded = true;
+              }
+
+              return videoWidget(savedAttachmentsProvider);
+            } else {
+              return PlatformCircularProgressIndicator();
             }
-
-            return videoWidget(savedAttachmentsProvider);
-          } else {
-            return PlatformCircularProgressIndicator(
-              material: (_, __) =>
-                  MaterialProgressIndicatorData(color: AppColors.kGreen),
-            );
-          }
-        });
+          });
+    }
   }
 
   Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider) {
@@ -247,10 +242,7 @@ class VLCPlayerState extends State<VLCPlayer> {
     return Stack(
       children: [
         Center(
-          child: PlatformCircularProgressIndicator(
-            material: (_, __) =>
-                MaterialProgressIndicatorData(color: AppColors.kGreen),
-          ),
+          child: PlatformCircularProgressIndicator(),
         ),
         VisibilityDetector(
           key: ObjectKey(widget.video),
@@ -281,19 +273,15 @@ class VLCPlayerState extends State<VLCPlayer> {
                 children: [
                   VlcPlayer(
                     controller: _videoPlayerController,
-                    aspectRatio: widget.width / widget.height,
+                    aspectRatio: _videoPlayerController.value.aspectRatio,
                     placeholder: Center(
-                      child: PlatformCircularProgressIndicator(
-                        material: (_, __) => MaterialProgressIndicatorData(
-                          color: AppColors.kGreen,
-                        ),
-                      ),
+                      child: PlatformCircularProgressIndicator(),
                     ),
                   ),
                 ],
               ),
               Opacity(
-                opacity: controllsVisible ? 1 : 0,
+                opacity: controlsVisible ? 1 : 0,
                 child: SafeArea(
                   child: Column(
                     children: [
