@@ -248,13 +248,18 @@ class _MediaPageState extends State<MediaPage> {
           ],
         ),
       ),
-      body: PreloadPageView(
-        scrollDirection: Axis.horizontal,
+      body: PreloadPageView.custom(
+        preloadPagesCount: 1,
         controller: controller,
-        children: widget.list,
-        physics: const ClampingScrollPhysics(),
         onPageChanged: (i) => onPageChanged(i, widget.fileNames[i], gallery),
-        preloadPagesCount: 2,
+        childrenDelegate: SliverChildBuilderDelegate(
+          (context, i) {
+            return widget.list[i];
+          },
+          childCount: widget.list.length,
+        ),
+        scrollDirection: Axis.vertical,
+        physics: const ClampingScrollPhysics(),
       ),
     );
   }
