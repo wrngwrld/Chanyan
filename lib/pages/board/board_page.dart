@@ -4,7 +4,6 @@ import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/constants.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/board/grid_view.dart';
 import 'package:flutter_chan/pages/board/list_view.dart';
@@ -281,11 +280,7 @@ class BoardPageState extends State<BoardPage> {
                               return SizedBox(
                                 height: 400,
                                 child: Center(
-                                  child: PlatformCircularProgressIndicator(
-                                    material: (_, __) =>
-                                        MaterialProgressIndicatorData(
-                                            color: AppColors.kGreen),
-                                  ),
+                                  child: PlatformCircularProgressIndicator(),
                                 ),
                               );
 

@@ -55,8 +55,6 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                 video:
                     '${getNameWithoutExtension(savedAttachment.fileName ?? "")}.mp4',
                 isAsset: true,
-                width: 100,
-                height: 100,
                 fileName:
                     '${getNameWithoutExtension(savedAttachment.fileName ?? "")}.mp4',
                 directory: directory,
