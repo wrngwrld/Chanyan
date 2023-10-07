@@ -36,6 +36,12 @@ class SettingsProvider with ChangeNotifier {
       allowNSFW = allowNSFWPrefs!;
     }
 
+    if (prefs.getBool('useCachingOnVideos') != null) {
+      final bool? useCachingOnVideosPrefs = prefs.getBool('useCachingOnVideos');
+
+      useCachingOnVideos = useCachingOnVideosPrefs!;
+    }
+
     notifyListeners();
   }
 

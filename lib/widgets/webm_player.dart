@@ -194,46 +194,46 @@ class VLCPlayerState extends State<VLCPlayer> {
         Provider.of<SavedAttachmentsProvider>(context);
     final settings = Provider.of<SettingsProvider>(context);
 
-    if (settings.getUseCachingOnVideos()) {
-      return StreamBuilder(
-          stream: fileStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
-            final loading =
-                !snapshot.hasData || snapshot.data is DownloadProgress;
+    return StreamBuilder(
+        stream: fileStream,
+        builder: (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
+          final loading =
+              !snapshot.hasData || snapshot.data is DownloadProgress;
 
-            if (widget.isAsset || (loaded && !loading)) {
-              return videoWidget(savedAttachmentsProvider);
-            } else if (loading && snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(
-                    value: (snapshot.data! as DownloadProgress).progress),
-              );
-            } else if (!loaded && !loading) {
-              _videoPlayerController = VlcPlayerController.file(
-                (snapshot.data! as FileInfo).file,
-                hwAcc: HwAcc.auto,
-                autoPlay: true,
-              );
+          if (widget.isAsset || (loaded && !loading)) {
+            loaded = true;
+            _videoPlayerController.addListener(listener);
+            return videoWidget(savedAttachmentsProvider);
+          } else if (!settings.getUseCachingOnVideos()) {
+            loaded = true;
+            _videoPlayerController.addListener(listener);
+            return videoWidget(savedAttachmentsProvider);
+          } else if (loading && snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(
+                  value: (snapshot.data! as DownloadProgress).progress),
+            );
+          } else if (!loaded && !loading) {
+            _videoPlayerController = VlcPlayerController.file(
+              (snapshot.data! as FileInfo).file,
+              hwAcc: HwAcc.auto,
+              autoPlay: true,
+            );
 
-              _videoPlayerController.addListener(listener);
+            _videoPlayerController.addListener(listener);
 
-              if (mounted) {
-                loaded = true;
-              }
-
-              return videoWidget(savedAttachmentsProvider);
-            } else {
-              return PlatformCircularProgressIndicator(
-                material: (_, __) =>
-                    MaterialProgressIndicatorData(color: AppColors.kGreen),
-              );
+            if (mounted) {
+              loaded = true;
             }
-          });
-    } else {
-      _videoPlayerController.addListener(listener);
-      return videoWidget(savedAttachmentsProvider);
-    }
+
+            return videoWidget(savedAttachmentsProvider);
+          } else {
+            return PlatformCircularProgressIndicator(
+              material: (_, __) =>
+                  MaterialProgressIndicatorData(color: AppColors.kGreen),
+            );
+          }
+        });
   }
 
   Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider) {
