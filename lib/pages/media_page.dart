@@ -258,7 +258,7 @@ class _MediaPageState extends State<MediaPage> {
           },
           childCount: widget.list.length,
         ),
-        scrollDirection: Axis.vertical,
+        scrollDirection: Axis.horizontal,
         physics: const ClampingScrollPhysics(),
       ),
     );
