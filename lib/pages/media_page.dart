@@ -100,27 +100,32 @@ class _MediaPageState extends State<MediaPage> {
             ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
             : CupertinoColors.black.withOpacity(0.7),
         border: Border.all(color: Colors.transparent),
-        middle: Column(
-          children: [
-            Text(
-              widget.fileNames[index],
-              style: TextStyle(
-                color: theme.getTheme() == ThemeData.dark()
-                    ? Colors.white
-                    : Colors.black,
+        middle: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Column(
+            children: [
+              Text(
+                widget.fileNames[index],
+                style: TextStyle(
+                  color: theme.getTheme() == ThemeData.dark()
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              '${index + 1}/${widget.list.length}',
-              style: TextStyle(
-                color: theme.getTheme() == ThemeData.dark()
-                    ? Colors.white
-                    : Colors.black,
+              Text(
+                '${index + 1}/${widget.list.length}',
+                style: TextStyle(
+                  color: theme.getTheme() == ThemeData.dark()
+                      ? Colors.white
+                      : Colors.black,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,

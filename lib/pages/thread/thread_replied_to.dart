@@ -74,8 +74,24 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
         backgroundColor: theme.getTheme() == ThemeData.light()
             ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
             : CupertinoColors.black.withOpacity(0.7),
-        previousPageTitle: 'back',
-        middle: const Text('Replies'),
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              previousPageTitle: 'back',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
+        middle: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: const Text('Replies'),
+        ),
       ),
       body: FutureBuilder(
         future: _fetchPost,

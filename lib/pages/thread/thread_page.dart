@@ -116,12 +116,28 @@ class ThreadPageState extends State<ThreadPage> {
             ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
             : CupertinoColors.black.withOpacity(0.7),
         border: Border.all(color: Colors.transparent),
-        previousPageTitle:
-            widget.fromFavorites ? 'bookmarks' : '/${widget.board}/',
-        middle: Text(
-          unescape(cleanTags(widget.threadName)),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              previousPageTitle:
+                  widget.fromFavorites ? 'bookmarks' : '/${widget.board}/',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
+        middle: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Text(
+            unescape(cleanTags(widget.threadName)),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
