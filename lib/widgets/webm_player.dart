@@ -48,9 +48,9 @@ class VLCPlayerState extends State<VLCPlayer> {
 
   bool controlsVisible = true;
 
-  bool loaded = false;
-
   Stream<FileResponse> fileStream = const Stream.empty();
+
+  late final Future<File> cachedVideo;
 
   @override
   void initState() {
@@ -64,47 +64,48 @@ class VLCPlayerState extends State<VLCPlayer> {
 
     fetchStartVideo();
 
-    try {
-      final File file;
+    final File file;
 
-      if (widget.isAsset) {
-        file =
-            File('${widget.directory!.path}/savedAttachments/${widget.video}');
+    if (widget.isAsset) {
+      file = File('${widget.directory!.path}/savedAttachments/${widget.video}');
 
-        _videoPlayerController = VlcPlayerController.file(
-          file,
-          hwAcc: HwAcc.auto,
-          autoPlay: true,
-        );
+      _videoPlayerController = VlcPlayerController.file(
+        file,
+        hwAcc: HwAcc.auto,
+        autoPlay: true,
+      );
 
-        _videoPlayerController.addListener(listener);
-
-        if (mounted) {
-          setState(() {
-            loaded = true;
-          });
-        }
-      } else {
-        if (settings.getUseCachingOnVideos()) {
-          fileStream = DefaultCacheManager().getFileStream(
-              'https://i.4cdn.org/${widget.board}/${widget.video}',
-              withProgress: true);
-        } else {
-          _videoPlayerController = VlcPlayerController.network(
-            'https://i.4cdn.org/${widget.board}/${widget.video}',
-            hwAcc: HwAcc.full,
-            autoPlay: true,
-            options: VlcPlayerOptions(
-              advanced: VlcAdvancedOptions([
-                VlcAdvancedOptions.networkCaching(2000),
-              ]),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      print(e);
+      _videoPlayerController.addListener(listener);
+    } else if (settings.getUseCachingOnVideos()) {
+      cachedVideo = getCachedVideo();
+    } else {
+      _videoPlayerController = VlcPlayerController.network(
+        'https://i.4cdn.org/${widget.board}/${widget.video}',
+        hwAcc: HwAcc.full,
+        autoPlay: true,
+        options: VlcPlayerOptions(
+          advanced: VlcAdvancedOptions([
+            VlcAdvancedOptions.networkCaching(2000),
+          ]),
+        ),
+      );
     }
+  }
+
+  Future<File> getCachedVideo() async {
+    final File file = await DefaultCacheManager().getSingleFile(
+      'https://i.4cdn.org/${widget.board}/${widget.video}',
+    );
+
+    _videoPlayerController = VlcPlayerController.file(
+      file,
+      hwAcc: HwAcc.auto,
+      autoPlay: true,
+    );
+
+    _videoPlayerController.addListener(listener);
+
+    return file;
   }
 
   Future<void> fetchStartVideo() async {
@@ -157,8 +158,8 @@ class VLCPlayerState extends State<VLCPlayer> {
   void _onSliderPositionChanged(double progress) {
     setState(() {
       sliderValue = progress.floor().toDouble();
+      _videoPlayerController.setTime(sliderValue.toInt() * 1000);
     });
-    _videoPlayerController.setTime(sliderValue.toInt() * 1000);
   }
 
   Future<void> _togglePlaying() async {
@@ -173,68 +174,45 @@ class VLCPlayerState extends State<VLCPlayer> {
 
   @override
   void dispose() {
-    if (loaded) {
-      if (_videoPlayerController.value.isInitialized) {
-        _videoPlayerController.stopRendererScanning();
-        _videoPlayerController.dispose();
-      }
+    if (_videoPlayerController.value.isInitialized) {
+      _videoPlayerController.stopRendererScanning().catchError(catchError);
+      _videoPlayerController.dispose().catchError(catchError);
     }
 
     super.dispose();
+  }
+
+  void catchError(error) {
+    print(error);
   }
 
   @override
   Widget build(BuildContext context) {
     final SavedAttachmentsProvider savedAttachmentsProvider =
         Provider.of<SavedAttachmentsProvider>(context);
-    final settings = Provider.of<SettingsProvider>(context);
+    final SettingsProvider settings = Provider.of<SettingsProvider>(context);
 
-    if (widget.isAsset || loaded) {
-      loaded = true;
-      _videoPlayerController.addListener(listener);
-      return videoWidget(savedAttachmentsProvider);
-    } else if (!settings.getUseCachingOnVideos()) {
-      loaded = true;
+    if (widget.isAsset || !settings.getUseCachingOnVideos()) {
       _videoPlayerController.addListener(listener);
       return videoWidget(savedAttachmentsProvider);
     } else {
-      return StreamBuilder(
-          stream: fileStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<FileResponse> snapshot) {
-            final loading =
-                !snapshot.hasData || snapshot.data is DownloadProgress;
-
-            if (loading && snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(
-                    value: (snapshot.data! as DownloadProgress).progress),
-              );
-            } else if (!loaded && !loading) {
-              _videoPlayerController = VlcPlayerController.file(
-                (snapshot.data! as FileInfo).file,
-                hwAcc: HwAcc.auto,
-                autoPlay: true,
-              );
-
-              _videoPlayerController.addListener(listener);
-
-              if (mounted) {
-                loaded = true;
-              }
-
-              return videoWidget(savedAttachmentsProvider);
-            } else {
-              return PlatformCircularProgressIndicator();
-            }
-          });
+      return FutureBuilder<File>(
+        future: cachedVideo,
+        builder: (context, AsyncSnapshot<File> snapshot) {
+          if (snapshot.hasData) {
+            return videoWidget(savedAttachmentsProvider);
+          } else {
+            return PlatformCircularProgressIndicator();
+          }
+        },
+      );
     }
   }
 
   Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider) {
-    if (_videoPlayerController.value.isInitialized) {
+    if (_videoPlayerController.value.isInitialized && mounted) {
       if (savedAttachmentsProvider.playing) {
-        _videoPlayerController.play();
+        _videoPlayerController.play().catchError(catchError);
       } else {
         _videoPlayerController.pause();
       }

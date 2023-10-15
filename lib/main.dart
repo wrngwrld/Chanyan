@@ -11,7 +11,14 @@ import 'package:flutter_chan/pages/boards/board_list.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = (FlutterErrorDetails details) {
+    print('Error From INSIDE FRAME_WORK');
+    print('----------------------');
+    print('Error :  ${details.exception}');
+    print('StackTrace :  ${details.stack}');
+  };
+  runApp(const MyApp()); // starting point of app
 }
 
 class MyApp extends StatelessWidget {
