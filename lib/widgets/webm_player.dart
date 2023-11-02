@@ -120,70 +120,81 @@ class VLCPlayerState extends State<VLCPlayer> {
   }
 
   Future<void> listener() async {
-    if (!mounted) {
-      return;
-    }
-
-    if (!isVisible) {
-      _videoPlayerController.pause();
-    }
-
-    if (_videoPlayerController.value.isInitialized && isVisible) {
-      final oPosition = _videoPlayerController.value.position;
-      final oDuration = _videoPlayerController.value.duration;
-      if (oPosition != null && oDuration != null) {
-        if (oDuration.inHours == 0) {
-          final strPosition = oPosition.toString().split('.')[0];
-          final strDuration = oDuration.toString().split('.')[0];
-          position =
-              "${strPosition.split(':')[1]}:${strPosition.split(':')[2]}";
-          duration =
-              "${strDuration.split(':')[1]}:${strDuration.split(':')[2]}";
-        } else {
-          position = oPosition.toString().split('.')[0];
-          duration = oDuration.toString().split('.')[0];
-        }
-        validPosition = oDuration.compareTo(oPosition) >= 0;
-        sliderValue = validPosition ? oPosition.inSeconds.toDouble() : 0;
+    try {
+      if (!mounted) {
+        return;
       }
-      setState(() {});
-    }
 
-    if (_videoPlayerController.value.isEnded) {
-      _videoPlayerController.stop();
-      _videoPlayerController.play();
+      if (!isVisible) {
+        _videoPlayerController.pause();
+      }
+
+      if (_videoPlayerController.value.isInitialized && isVisible) {
+        final oPosition = _videoPlayerController.value.position;
+        final oDuration = _videoPlayerController.value.duration;
+        if (oPosition != null && oDuration != null) {
+          if (oDuration.inHours == 0) {
+            final strPosition = oPosition.toString().split('.')[0];
+            final strDuration = oDuration.toString().split('.')[0];
+            position =
+                "${strPosition.split(':')[1]}:${strPosition.split(':')[2]}";
+            duration =
+                "${strDuration.split(':')[1]}:${strDuration.split(':')[2]}";
+          } else {
+            position = oPosition.toString().split('.')[0];
+            duration = oDuration.toString().split('.')[0];
+          }
+          validPosition = oDuration.compareTo(oPosition) >= 0;
+          sliderValue = validPosition ? oPosition.inSeconds.toDouble() : 0;
+        }
+        setState(() {});
+      }
+
+      if (_videoPlayerController.value.isEnded) {
+        _videoPlayerController.stop();
+        _videoPlayerController.play();
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   void _onSliderPositionChanged(double progress) {
-    setState(() {
-      sliderValue = progress.floor().toDouble();
-      _videoPlayerController.setTime(sliderValue.toInt() * 1000);
-    });
+    try {
+      setState(() {
+        sliderValue = progress.floor().toDouble();
+        _videoPlayerController.setTime(sliderValue.toInt() * 1000);
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _togglePlaying() async {
-    setState(() {
-      _videoPlayerController.value.isPlaying
-          ? _videoPlayerController.pause()
-          : _videoPlayerController.play();
+    try {
+      setState(() {
+        _videoPlayerController.value.isPlaying
+            ? _videoPlayerController.pause()
+            : _videoPlayerController.play();
 
-      isVisible ? isVisible = false : isVisible = true;
-    });
+        isVisible ? isVisible = false : isVisible = true;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   void dispose() {
-    if (_videoPlayerController.value.isInitialized) {
-      _videoPlayerController.stopRendererScanning().catchError(catchError);
-      _videoPlayerController.dispose().catchError(catchError);
+    try {
+      _videoPlayerController.removeListener(listener);
+      _videoPlayerController.stopRendererScanning();
+      _videoPlayerController.dispose();
+    } catch (e) {
+      print(e);
     }
 
     super.dispose();
-  }
-
-  void catchError(error) {
-    print(error);
   }
 
   @override
@@ -210,12 +221,16 @@ class VLCPlayerState extends State<VLCPlayer> {
   }
 
   Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider) {
-    if (_videoPlayerController.value.isInitialized && mounted) {
-      if (savedAttachmentsProvider.playing) {
-        _videoPlayerController.play().catchError(catchError);
-      } else {
-        _videoPlayerController.pause();
+    try {
+      if (_videoPlayerController.value.isInitialized && mounted) {
+        if (savedAttachmentsProvider.playing) {
+          _videoPlayerController.play();
+        } else {
+          _videoPlayerController.pause();
+        }
       }
+    } catch (e) {
+      print(e);
     }
     return Stack(
       children: [
