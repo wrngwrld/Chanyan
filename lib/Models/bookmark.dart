@@ -1,5 +1,5 @@
-class Favorite {
-  Favorite({
+class Bookmark {
+  Bookmark({
     this.no,
     this.sub,
     this.com,
@@ -7,8 +7,8 @@ class Favorite {
     this.board,
   });
 
-  factory Favorite.fromJson(Map<String, dynamic> json) {
-    return Favorite(
+  factory Bookmark.fromJson(Map<String, dynamic> json) {
+    return Bookmark(
       no: json['no'] as int?,
       sub: json['sub'] as String?,
       com: json['com'] as String?,

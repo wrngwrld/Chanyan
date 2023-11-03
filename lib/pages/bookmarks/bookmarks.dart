@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/enums/enums.dart';
@@ -169,23 +169,18 @@ class _BookmarksState extends State<Bookmarks> {
                               future: getBookmarks(),
                               builder: (BuildContext context,
                                   AsyncSnapshot<Iterable<String>> snapshot) {
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return Container();
-                                  default:
-                                    return Column(
-                                      children: [
-                                        for (final String string
-                                            in snapshot.data ?? <String>[])
-                                          BookmarksPost(
-                                            favorite: Favorite.fromJson(
-                                              json.decode(string)
-                                                  as Map<String, dynamic>,
-                                            ),
-                                          )
-                                      ],
-                                    );
-                                }
+                                return Column(
+                                  children: [
+                                    for (final String string
+                                        in snapshot.data ?? <String>[])
+                                      BookmarksPost(
+                                        favorite: Bookmark.fromJson(
+                                          json.decode(string)
+                                              as Map<String, dynamic>,
+                                        ),
+                                      )
+                                  ],
+                                );
                               }),
                         ],
                       ),

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
@@ -27,7 +27,7 @@ class GridPost extends StatefulWidget {
 }
 
 class _GridPostState extends State<GridPost> {
-  late Favorite favorite;
+  late Bookmark favorite;
   bool isFavorite = false;
   late String favoriteString;
 
@@ -35,7 +35,7 @@ class _GridPostState extends State<GridPost> {
   void initState() {
     super.initState();
 
-    favorite = Favorite(
+    favorite = Bookmark(
       no: widget.post.no,
       sub: widget.post.sub,
       com: widget.post.com,

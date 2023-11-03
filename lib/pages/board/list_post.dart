@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
@@ -29,7 +29,7 @@ class ListPost extends StatefulWidget {
 }
 
 class _ListPostState extends State<ListPost> {
-  late Favorite favorite;
+  late Bookmark favorite;
   bool isFavorite = false;
   late String favoriteString;
 
@@ -37,7 +37,7 @@ class _ListPostState extends State<ListPost> {
   void initState() {
     super.initState();
 
-    favorite = Favorite(
+    favorite = Bookmark(
       no: widget.post.no,
       sub: widget.post.sub,
       com: widget.post.com,

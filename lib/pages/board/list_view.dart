@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/pages/board/list_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +18,7 @@ class BoardListView extends StatelessWidget {
   final List<Post> threads;
   final ScrollController scrollController;
 
-  Future<void> setFavorite(Favorite favorite) async {
+  Future<void> setFavorite(Bookmark favorite) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String>? favoriteThreadsPrefs = prefs.getStringList('favoriteThreads');

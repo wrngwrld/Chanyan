@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/archived.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
+import 'package:flutter_chan/Models/bookmark_status.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
@@ -20,7 +21,7 @@ class BookmarksPost extends StatefulWidget {
     required this.favorite,
   }) : super(key: key);
 
-  final Favorite favorite;
+  final Bookmark favorite;
 
   @override
   State<BookmarksPost> createState() => _BookmarksPostState();
@@ -29,17 +30,14 @@ class BookmarksPost extends StatefulWidget {
 class _BookmarksPostState extends State<BookmarksPost> {
   bool isDeleted = false;
 
-  late Future<ThreadStatus> _fetchArchived;
-  late Future<List<int>?>? _fetchReplies;
+  late Future<BookmarkStatus> _fetchBookmarkStatus;
 
   @override
   void initState() {
     super.initState();
 
-    _fetchArchived =
-        fetchArchived(widget.favorite.board, widget.favorite.no.toString());
-    _fetchReplies =
-        fetchReplies(widget.favorite.board, widget.favorite.no.toString());
+    _fetchBookmarkStatus = fetchBookmarkStatus(
+        widget.favorite.board, widget.favorite.no.toString());
   }
 
   @override
@@ -47,104 +45,18 @@ class _BookmarksPostState extends State<BookmarksPost> {
     final theme = Provider.of<ThemeChanger>(context);
     final bookmarks = Provider.of<BookmarksProvider>(context);
 
-    return FutureBuilder(
-        future: _fetchArchived,
-        builder: (BuildContext context, snapshotArchived) {
-          switch (snapshotArchived.connectionState) {
+    return FutureBuilder<BookmarkStatus>(
+        future: _fetchBookmarkStatus,
+        builder: (BuildContext context, snapshot) {
+          switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return Container(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: theme.getTheme() == ThemeData.dark()
-                          ? CupertinoColors.systemGrey
-                          : const Color(0x1F000000),
-                      width: 0.15,
-                    ),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (widget.favorite.imageUrl != null)
-                          SizedBox(
-                            width: 125,
-                            height: 125,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: ImageViewer(
-                                  url:
-                                      'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          )
-                        else
-                          Container(),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(),
-                                Text(
-                                  'No.${widget.favorite.no}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: theme.getTheme() == ThemeData.dark()
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                if (widget.favorite.sub != null)
-                                  Text(
-                                    unescape(
-                                        cleanTags(widget.favorite.sub ?? '')),
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color:
-                                          theme.getTheme() == ThemeData.dark()
-                                              ? Colors.white
-                                              : Colors.black,
-                                    ),
-                                  )
-                                else
-                                  Container(),
-                                const RepliesRow(),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (widget.favorite.com != null)
-                      Html(
-                        data: widget.favorite.com,
-                        style: {
-                          'body': Style(
-                            color: theme.getTheme() == ThemeData.dark()
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        },
-                      )
-                    else
-                      Container(),
-                  ],
-                ),
+              return createBookmarkPost(
+                ThreadStatus.online,
+                null,
+                theme,
               );
             default:
-              if (snapshotArchived.data == ThreadStatus.deleted) {
+              if (snapshot.data!.status == ThreadStatus.deleted) {
                 isDeleted = true;
               }
               return Slidable(
@@ -190,200 +102,125 @@ class _BookmarksPostState extends State<BookmarksPost> {
                         ),
                       )
                   },
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: theme.getTheme() == ThemeData.dark()
-                              ? CupertinoColors.systemGrey
-                              : const Color(0x1F000000),
-                          width: 0.15,
-                        ),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (widget.favorite.imageUrl != null)
-                              SizedBox(
-                                width: 125,
-                                height: 125,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: ImageViewer(
-                                        url:
-                                            'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
-                                        fit: BoxFit.cover,
-                                      )),
-                                ),
-                              )
-                            else
-                              Container(),
-                            FutureBuilder<List<int?>?>(
-                                future: _fetchReplies,
-                                builder: (context,
-                                    AsyncSnapshot<List<int?>?>
-                                        snapshotReplies) {
-                                  switch (snapshotReplies.connectionState) {
-                                    case ConnectionState.waiting:
-                                      return Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (snapshotArchived.data ==
-                                                ThreadStatus.archived)
-                                              const Text(
-                                                'archived',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.red,
-                                                ),
-                                              )
-                                            else if (snapshotArchived.data ==
-                                                ThreadStatus.deleted)
-                                              const Text(
-                                                'deleted',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.red,
-                                                ),
-                                              )
-                                            else if (snapshotArchived.data ==
-                                                ThreadStatus.online)
-                                              Container(),
-                                            Text(
-                                              'No.${widget.favorite.no}',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: theme.getTheme() ==
-                                                        ThemeData.dark()
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            if (widget.favorite.sub != null)
-                                              Text(
-                                                unescape(cleanTags(
-                                                    widget.favorite.sub ?? '')),
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: theme.getTheme() ==
-                                                          ThemeData.dark()
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              )
-                                            else
-                                              Container(),
-                                            const RepliesRow()
-                                          ],
-                                        ),
-                                      );
-                                    default:
-                                      return Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              if (snapshotArchived.data ==
-                                                  ThreadStatus.archived)
-                                                const Text(
-                                                  'archived',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.red,
-                                                  ),
-                                                )
-                                              else if (snapshotArchived.data ==
-                                                  ThreadStatus.deleted)
-                                                const Text(
-                                                  'deleted',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.red,
-                                                  ),
-                                                )
-                                              else if (snapshotArchived.data ==
-                                                  ThreadStatus.online)
-                                                Container(),
-                                              Text(
-                                                'No.${widget.favorite.no}',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: theme.getTheme() ==
-                                                          ThemeData.dark()
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              if (widget.favorite.sub != null)
-                                                Text(
-                                                  unescape(cleanTags(
-                                                      widget.favorite.sub ??
-                                                          '')),
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: theme.getTheme() ==
-                                                            ThemeData.dark()
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                  ),
-                                                )
-                                              else
-                                                Container(),
-                                              if (isDeleted ||
-                                                  snapshotReplies.data![0] ==
-                                                      null)
-                                                const RepliesRow()
-                                              else
-                                                RepliesRow(
-                                                  replies:
-                                                      snapshotReplies.data![0],
-                                                  imageReplies:
-                                                      snapshotReplies.data![1],
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                  }
-                                })
-                          ],
-                        ),
-                        if (widget.favorite.com != null)
-                          Html(
-                            data: widget.favorite.com,
-                            style: {
-                              'body': Style(
-                                color: theme.getTheme() == ThemeData.dark()
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            },
-                          )
-                        else
-                          Container(),
-                      ],
-                    ),
-                  ),
+                  child: createBookmarkPost(
+                      snapshot.data!.status, snapshot.data!.replies, theme),
                 ),
               );
           }
         });
+  }
+
+  Container createBookmarkPost(
+    ThreadStatus? status,
+    ThreadReplyCount? replyCount,
+    ThemeChanger theme,
+  ) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: theme.getTheme() == ThemeData.dark()
+                ? CupertinoColors.systemGrey
+                : const Color(0x1F000000),
+            width: 0.15,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (widget.favorite.imageUrl != null)
+                SizedBox(
+                  width: 125,
+                  height: 125,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: ImageViewer(
+                          url:
+                              'https://i.4cdn.org/${widget.favorite.board}/${widget.favorite.imageUrl}',
+                          fit: BoxFit.cover,
+                        )),
+                  ),
+                )
+              else
+                Container(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (status == ThreadStatus.archived)
+                        const Text(
+                          'archived',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.red,
+                          ),
+                        )
+                      else if (status == ThreadStatus.deleted)
+                        const Text(
+                          'deleted',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.red,
+                          ),
+                        ),
+                      Text(
+                        'No.${widget.favorite.no}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.getTheme() == ThemeData.dark()
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (widget.favorite.sub != null)
+                        Text(
+                          unescape(cleanTags(widget.favorite.sub ?? '')),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: theme.getTheme() == ThemeData.dark()
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      if (isDeleted ||
+                          replyCount == null ||
+                          replyCount.replies == null)
+                        const RepliesRow()
+                      else
+                        RepliesRow(
+                          replies: replyCount.replies,
+                          imageReplies: replyCount.images,
+                        ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+          if (widget.favorite.com != null)
+            Html(
+              data: widget.favorite.com,
+              style: {
+                'body': Style(
+                  color: theme.getTheme() == ThemeData.dark()
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              },
+            )
+        ],
+      ),
+    );
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
 import 'package:flutter_chan/enums/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +32,7 @@ class BookmarksProvider with ChangeNotifier {
       return list;
   }
 
-  Future<void> addBookmarks(Favorite? favorite) async {
+  Future<void> addBookmarks(Bookmark? favorite) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     list.add(json.encode(favorite));
@@ -43,18 +43,15 @@ class BookmarksProvider with ChangeNotifier {
   }
 
   Future<void> removeBookmarks(
-    Favorite? favorite, {
-    bool notifyListener = true,
-  }) async {
+    Bookmark? favorite,
+  ) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     list.remove(json.encode(favorite));
 
     prefs.setStringList('favoriteThreads', list);
 
-    if (notifyListener) {
-      notifyListeners();
-    }
+    notifyListeners();
   }
 
   Future<void> clearBookmarks() async {

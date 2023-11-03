@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/gallery_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
@@ -52,7 +52,7 @@ class ThreadPageState extends State<ThreadPage> {
 
   List<Post> allPosts = [];
 
-  late Favorite favorite;
+  late Bookmark favorite;
   late Post currentPage;
 
   Future<void> getAllMedia() async {
@@ -91,7 +91,7 @@ class ThreadPageState extends State<ThreadPage> {
 
     loadThread();
 
-    favorite = Favorite(
+    favorite = Bookmark(
       no: widget.post.no,
       sub: widget.post.sub,
       com: widget.post.com,

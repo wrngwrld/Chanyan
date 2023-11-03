@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/Models/favorite.dart';
+import 'package:flutter_chan/Models/bookmark.dart';
 import 'package:flutter_chan/blocs/bookmarks_model.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +12,7 @@ class BookmarkButton extends StatefulWidget {
     this.favorite,
   }) : super(key: key);
 
-  final Favorite? favorite;
+  final Bookmark? favorite;
 
   @override
   State<BookmarkButton> createState() => _BookmarkButtonState();
