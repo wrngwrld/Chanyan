@@ -119,8 +119,6 @@ class _ThreadRepliesState extends State<ThreadReplies> {
                         board: widget.board,
                         thread: widget.thread,
                         post: widget.replies[i],
-                        media: media,
-                        fileNames: snapshot.data ?? [],
                         allPosts: widget.allPosts,
                         onDismiss: (i) => {},
                       ),

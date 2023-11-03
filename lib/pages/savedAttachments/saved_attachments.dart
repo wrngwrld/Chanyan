@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/Models/saved_attachment.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/media_page.dart';
-import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:provider/provider.dart';
 
 class SavedAttachments extends StatefulWidget {
@@ -33,41 +33,28 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
     final List<SavedAttachment> savedAttachmentList =
         savedAttachments.getSavedAttachments();
 
-    getAllMedia(savedAttachmentList);
-
     return Future.value(savedAttachmentList);
   }
 
-  Future<void> getAllMedia(List<SavedAttachment> savedAttachments) async {
-    media = [];
-    fileNames = [];
+  List<Post> getList(List<SavedAttachment>? savedAttachments) {
+    final List<Post> postList = [];
 
-    for (final SavedAttachment savedAttachment in savedAttachments) {
+    for (final SavedAttachment savedAttachment in savedAttachments ?? []) {
       final String video = savedAttachment.fileName!.split('/').last;
 
       final String ext =
-          savedAttachment.fileName!.split('/').last.split('.').last;
+          '.${savedAttachment.fileName!.split('/').last.split('.').last}';
 
-      fileNames.add(video);
-      media.add(
-        ext == 'webm'
-            ? VLCPlayer(
-                video:
-                    '${getNameWithoutExtension(savedAttachment.fileName ?? "")}.mp4',
-                isAsset: true,
-                fileName:
-                    '${getNameWithoutExtension(savedAttachment.fileName ?? "")}.mp4',
-                directory: directory,
-              )
-            : InteractiveViewer(
-                minScale: 0.5,
-                maxScale: 5,
-                child: Image.asset(
-                  '${directory.path}/savedAttachments/${savedAttachment.fileName}',
-                ),
-              ),
+      final Post post = Post(
+        tim: int.parse(video.split('.').first),
+        ext: ext,
+        filename: video,
       );
+
+      postList.add(post);
     }
+
+    return postList;
   }
 
   @override
@@ -198,8 +185,10 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                                                     video:
                                                         attachment.fileName ??
                                                             '',
-                                                    list: media,
-                                                    fileNames: fileNames,
+                                                    allPosts:
+                                                        getList(snapshot.data),
+                                                    isAsset: true,
+                                                    directory: directory,
                                                   ),
                                                 ),
                                               );

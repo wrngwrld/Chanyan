@@ -6,13 +6,10 @@ import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/gallery_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/bookmark_button.dart';
-import 'package:flutter_chan/pages/thread/thread_grid_view.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
-import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_chan/widgets/reload.dart';
-import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -46,44 +43,10 @@ class ThreadPageState extends State<ThreadPage> {
 
   late Future<List<Post>> _fetchAllPostsFromThread;
 
-  List<Widget> media = [];
-  List<String> fileNames = [];
-  List<int> tims = [];
-
   List<Post> allPosts = [];
 
   late Bookmark favorite;
   late Post currentPage;
-
-  Future<void> getAllMedia() async {
-    media = [];
-    fileNames = [];
-    tims = [];
-
-    final List<Post> posts =
-        await fetchAllPostsFromThread(widget.board, widget.thread);
-
-    for (final Post post in posts) {
-      if (post.tim != null) {
-        final String video = post.tim.toString() + post.ext.toString();
-
-        tims.add(post.tim ?? 0);
-        fileNames.add(post.tim.toString() + post.ext.toString());
-        media.add(
-          post.ext == '.webm'
-              ? VLCPlayer(
-                  board: widget.board,
-                  video: video,
-                  fileName: post.filename ?? '',
-                )
-              : ImageViewer(
-                  url: 'https://i.4cdn.org/${widget.board}/$video',
-                  interactiveViewer: true,
-                ),
-        );
-      }
-    }
-  }
 
   @override
   void initState() {
@@ -150,23 +113,6 @@ class ThreadPageState extends State<ThreadPage> {
           children: [
             BookmarkButton(
               favorite: favorite,
-            ),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () => {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ThreadGridView(
-                      media: media,
-                      fileNames: fileNames,
-                      board: widget.board,
-                      tims: tims,
-                      prevTitle: unescape(cleanTags(widget.threadName)),
-                    ),
-                  ),
-                ),
-              },
-              child: const Icon(Icons.apps),
             ),
             SizedBox(
               width: 20,
@@ -251,25 +197,22 @@ class ThreadPageState extends State<ThreadPage> {
                   onReload: () => loadThread(),
                 );
               } else {
-                getAllMedia();
-                allPosts = snapshot.data!;
+                allPosts = snapshot.data ?? [];
 
                 return SafeArea(
                   top: true,
                   bottom: false,
                   child: ScrollablePositionedList.builder(
                     shrinkWrap: false,
-                    itemCount: snapshot.data!.length,
+                    itemCount: allPosts.length,
                     physics: const ClampingScrollPhysics(),
                     itemScrollController: itemScrollController,
                     itemPositionsListener: itemPositionsListener,
                     itemBuilder: (context, index) => ThreadPagePost(
                       board: widget.board,
                       thread: widget.thread,
-                      post: snapshot.data![index],
-                      media: media,
-                      fileNames: fileNames,
-                      allPosts: snapshot.data ?? [],
+                      post: allPosts[index],
+                      allPosts: allPosts,
                       onDismiss: (i) => {
                         if (gallery.getCurrentMedia() != '')
                           {

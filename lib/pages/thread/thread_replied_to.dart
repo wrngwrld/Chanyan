@@ -62,7 +62,6 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
   }
 
   void loadPost() {
-    print('h');
     setState(() {
       _fetchPost = fetchPost(widget.board, widget.thread, widget.post);
     });
@@ -126,8 +125,6 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
                         board: widget.board,
                         thread: widget.thread,
                         post: snapshot.data as Post? ?? Post(),
-                        media: media,
-                        fileNames: fileName,
                         allPosts: widget.allPosts,
                         onDismiss: (i) => {},
                       ),

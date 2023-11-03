@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
 import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/Models/media.dart';
+import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/gallery_model.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
+import 'package:flutter_chan/widgets/image_viewer.dart';
+import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,15 +22,16 @@ class MediaPage extends StatefulWidget {
     Key? key,
     required this.video,
     this.board,
-    required this.list,
-    required this.fileNames,
+    required this.allPosts,
+    this.isAsset = false,
+    this.directory,
   }) : super(key: key);
 
   final String video;
   final String? board;
-
-  final List<Widget> list;
-  final List<String> fileNames;
+  final List<Post> allPosts;
+  final bool isAsset;
+  final Directory? directory;
 
   @override
   State<MediaPage> createState() => _MediaPageState();
@@ -37,6 +44,8 @@ class _MediaPageState extends State<MediaPage> {
   late int index;
   String currentName = '';
   bool isSaved = false;
+
+  List<Media> media = [];
 
   void onPageChanged(int i, String media, GalleryProvider gallery) {
     gallery.setCurrentPage(i);
@@ -53,17 +62,68 @@ class _MediaPageState extends State<MediaPage> {
     prefs.setString('startVideo', video);
   }
 
+  Widget getMediaWidget(int i) {
+    if (widget.isAsset) {
+      if (media[i].ext == '.webm') {
+        print(widget.directory);
+        return VLCPlayer(
+          board: widget.board,
+          video: media[i].videoName,
+          fileName: media[i].fileName,
+          isAsset: widget.isAsset,
+          directory: widget.directory,
+        );
+      } else {
+        return InteractiveViewer(
+          minScale: 0.5,
+          maxScale: 5,
+          child: Image.asset(
+            '${widget.directory!.path}/savedAttachments/${media[i].fileName}',
+          ),
+        );
+      }
+    } else {
+      if (media[i].ext == '.webm') {
+        return VLCPlayer(
+          board: widget.board,
+          video: media[i].videoName,
+          fileName: media[i].fileName,
+        );
+      } else {
+        return ImageViewer(
+          url: 'https://i.4cdn.org/${widget.board}/${media[i].videoName}',
+          interactiveViewer: true,
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    index = widget.fileNames.indexWhere((element) => element == widget.video);
+    for (final Post post in widget.allPosts) {
+      if (post.tim != null) {
+        media.add(
+          Media(
+            videoId: post.tim ?? 0,
+            videoName: post.tim.toString() + post.ext.toString(),
+            fileName: post.filename ?? '',
+            ext: post.ext ?? '',
+          ),
+        );
+      }
+    }
+
+    index = media.indexWhere(
+      (element) => element.videoName == widget.video,
+    );
 
     if (index < 0) {
       Navigator.of(context).pop();
     }
 
-    setStartVideo(getNameWithoutExtension(widget.fileNames[index]));
+    setStartVideo(media[index].videoId.toString());
 
     controller = PreloadPageController(
       initialPage: index,
@@ -84,7 +144,7 @@ class _MediaPageState extends State<MediaPage> {
 
     isSaved = false;
     for (final element in savedAttachments.getSavedAttachments()) {
-      if (element.fileName == widget.fileNames[index]) {
+      if (element.fileName == media[index].videoName) {
         isSaved = true;
       }
     }
@@ -107,7 +167,7 @@ class _MediaPageState extends State<MediaPage> {
           child: Column(
             children: [
               Text(
-                widget.fileNames[index],
+                media[index].fileName,
                 style: TextStyle(
                   color: theme.getTheme() == ThemeData.dark()
                       ? Colors.white
@@ -117,7 +177,7 @@ class _MediaPageState extends State<MediaPage> {
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                '${index + 1}/${widget.list.length}',
+                '${index + 1}/${media.length}',
                 style: TextStyle(
                   color: theme.getTheme() == ThemeData.dark()
                       ? Colors.white
@@ -138,7 +198,7 @@ class _MediaPageState extends State<MediaPage> {
                   savedAttachments.addSavedAttachments(
                     _scaffoldKey.currentContext ?? context,
                     widget.board ?? '',
-                    widget.fileNames[index],
+                    media[index].videoName,
                   )
                 },
               )
@@ -177,7 +237,7 @@ class _MediaPageState extends State<MediaPage> {
                                 onPressed: () => {
                                   savedAttachments
                                       .removeSavedAttachments(
-                                          widget.fileNames[index])
+                                          media[index].videoName)
                                       .then(
                                         (value) => {
                                           Navigator.pop(context),
@@ -207,7 +267,7 @@ class _MediaPageState extends State<MediaPage> {
                             child: const Text('Open in Browser'),
                             onPressed: () {
                               launchURL(
-                                'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
+                                'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
                               );
                               Navigator.pop(context);
                             },
@@ -216,8 +276,8 @@ class _MediaPageState extends State<MediaPage> {
                           child: const Text('Share'),
                           onPressed: () {
                             shareMedia(
-                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                              widget.fileNames[index],
+                              'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
+                              media[index].videoName,
                               _scaffoldKey.currentContext ?? context,
                               isSaved: isSaved,
                             );
@@ -228,8 +288,8 @@ class _MediaPageState extends State<MediaPage> {
                           child: const Text('Download'),
                           onPressed: () {
                             saveVideo(
-                              'https://i.4cdn.org/${widget.board}/${widget.fileNames[index]}',
-                              widget.fileNames[index],
+                              'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
+                              media[index].videoName,
                               _scaffoldKey.currentContext ?? context,
                               showSnackBar: true,
                               isSaved: isSaved,
@@ -256,12 +316,12 @@ class _MediaPageState extends State<MediaPage> {
       body: PreloadPageView.custom(
         preloadPagesCount: 1,
         controller: controller,
-        onPageChanged: (i) => onPageChanged(i, widget.fileNames[i], gallery),
+        onPageChanged: (i) => onPageChanged(i, media[i].videoName, gallery),
         childrenDelegate: SliverChildBuilderDelegate(
           (context, i) {
-            return widget.list[i];
+            return getMediaWidget(i);
           },
-          childCount: widget.list.length,
+          childCount: media.length,
         ),
         scrollDirection: Axis.horizontal,
         physics: const ClampingScrollPhysics(),

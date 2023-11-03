@@ -27,8 +27,8 @@ class VLCPlayer extends StatefulWidget {
   final String video;
   final String? board;
   final String fileName;
-  final Directory? directory;
   final bool isAsset;
+  final Directory? directory;
 
   @override
   VLCPlayerState createState() => VLCPlayerState();
@@ -67,7 +67,10 @@ class VLCPlayerState extends State<VLCPlayer> {
     final File file;
 
     if (widget.isAsset) {
-      file = File('${widget.directory!.path}/savedAttachments/${widget.video}');
+      file = File(
+          '${widget.directory!.path}/savedAttachments/${getNameWithoutExtension(widget.fileName)}.mp4');
+
+      print(file.path);
 
       _videoPlayerController = VlcPlayerController.file(
         file,
