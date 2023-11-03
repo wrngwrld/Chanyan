@@ -187,9 +187,7 @@ class VLCPlayerState extends State<VLCPlayer> {
   @override
   void dispose() {
     try {
-      _videoPlayerController.removeListener(listener);
-      _videoPlayerController.stopRendererScanning();
-      _videoPlayerController.dispose();
+      _videoPlayerController.stop();
     } catch (e) {
       print(e);
     }
