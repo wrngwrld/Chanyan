@@ -175,7 +175,7 @@ class _BookmarksState extends State<Bookmarks> {
                                   default:
                                     return Column(
                                       children: [
-                                        for (String string
+                                        for (final String string
                                             in snapshot.data ?? <String>[])
                                           BookmarksPost(
                                             favorite: Favorite.fromJson(

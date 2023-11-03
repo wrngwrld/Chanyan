@@ -85,7 +85,7 @@ class ThreadPostComment extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (Widget comments in listCom) comments,
+        for (final Widget comments in listCom) comments,
       ],
     );
   }

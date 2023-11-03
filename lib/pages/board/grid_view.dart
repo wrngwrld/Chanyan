@@ -25,7 +25,7 @@ class BoardGridView extends StatelessWidget {
         shrinkWrap: true,
         crossAxisCount: 2,
         children: [
-          for (Post post in threads) GridPost(board: board, post: post),
+          for (final Post post in threads) GridPost(board: board, post: post),
         ],
       ),
     );

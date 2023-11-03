@@ -12,71 +12,75 @@ Future<List<Post>> fetchAllThreadsFromBoard(
   String board, {
   String? searchValue,
 }) async {
-  final Response response =
-      await get(Uri.parse('https://a.4cdn.org/$board/catalog.json'));
+  try {
+    final Response response =
+        await get(Uri.parse('https://a.4cdn.org/$board/catalog.json'));
 
-  List<Post> ops = List.empty(growable: true);
-  // ignore: strict_raw_type
-  final List pages = jsonDecode(response.body) as List;
+    List<Post> ops = List.empty(growable: true);
+    // ignore: strict_raw_type
+    final List pages = jsonDecode(response.body) as List;
 
-  if (response.statusCode == 200) {
-    for (final page in pages) {
-      // ignore: strict_raw_type
-      final List opsInPage = page['threads'] as List;
-      for (final opInPage in opsInPage) {
-        ops.add(Post.fromJson(opInPage as Map<String?, dynamic>));
+    if (response.statusCode == 200) {
+      for (final page in pages) {
+        // ignore: strict_raw_type
+        final List opsInPage = page['threads'] as List;
+        for (final opInPage in opsInPage) {
+          ops.add(Post.fromJson(opInPage as Map<String?, dynamic>));
+        }
       }
-    }
 
-    // Thread sorting
-    if (sorting != null) {
-      switch (sorting) {
-        case Sort.byBumpOrder:
-          ops.sort((a, b) {
-            return a.lastModified!.compareTo(b.lastModified ?? 0);
-          });
-          break;
-        case Sort.byReplyCount:
-          ops.sort((a, b) {
-            return b.replies!.compareTo(a.replies ?? 0);
-          });
-          break;
-        case Sort.byImagesCount:
-          ops.sort((a, b) {
-            return b.images!.compareTo(a.images ?? 0);
-          });
-          break;
-        case Sort.byNewest:
-          ops.sort((a, b) {
-            return b.time!.compareTo(a.time ?? 0);
-          });
-          break;
-        case Sort.byOldest:
-          ops.sort((a, b) {
-            return a.time!.compareTo(b.time ?? 0);
-          });
-          break;
+      // Thread sorting
+      if (sorting != null) {
+        switch (sorting) {
+          case Sort.byBumpOrder:
+            ops.sort((a, b) {
+              return a.lastModified!.compareTo(b.lastModified ?? 0);
+            });
+            break;
+          case Sort.byReplyCount:
+            ops.sort((a, b) {
+              return b.replies!.compareTo(a.replies ?? 0);
+            });
+            break;
+          case Sort.byImagesCount:
+            ops.sort((a, b) {
+              return b.images!.compareTo(a.images ?? 0);
+            });
+            break;
+          case Sort.byNewest:
+            ops.sort((a, b) {
+              return b.time!.compareTo(a.time ?? 0);
+            });
+            break;
+          case Sort.byOldest:
+            ops.sort((a, b) {
+              return a.time!.compareTo(b.time ?? 0);
+            });
+            break;
+        }
       }
-    }
 
-    if (searchValue != null) {
-      ops = ops
-          .where((element) => element.sub != null
-              ? element.sub!.toLowerCase().contains(searchValue.toLowerCase())
-              : false || element.name != null
-                  ? element.name!
-                      .toLowerCase()
-                      .contains(searchValue.toLowerCase())
-                  : false || element.com != null
-                      ? element.com!
-                          .toLowerCase()
-                          .contains(searchValue.toLowerCase())
-                      : false)
-          .toList();
-    }
+      if (searchValue != null) {
+        ops = ops
+            .where((element) => element.sub != null
+                ? element.sub!.toLowerCase().contains(searchValue.toLowerCase())
+                : false || element.name != null
+                    ? element.name!
+                        .toLowerCase()
+                        .contains(searchValue.toLowerCase())
+                    : false || element.com != null
+                        ? element.com!
+                            .toLowerCase()
+                            .contains(searchValue.toLowerCase())
+                        : false)
+            .toList();
+      }
 
-    return ops;
-  } else {
+      return ops;
+    } else {
+      throw Exception('Failed to load OPs.');
+    }
+  } catch (e) {
     throw Exception('Failed to load OPs.');
   }
 }

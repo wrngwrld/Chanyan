@@ -5,6 +5,7 @@ import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/image_viewer.dart';
+import 'package:flutter_chan/widgets/reload.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
@@ -57,7 +58,14 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
   void initState() {
     super.initState();
 
-    _fetchPost = fetchPost(widget.board, widget.thread, widget.post);
+    loadPost();
+  }
+
+  void loadPost() {
+    print('h');
+    setState(() {
+      _fetchPost = fetchPost(widget.board, widget.thread, widget.post);
+    });
   }
 
   @override
@@ -102,25 +110,31 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
                 child: PlatformCircularProgressIndicator(),
               );
             default:
-              getMedia(snapshot.data as Post? ?? Post());
-              return ListView(
-                shrinkWrap: false,
-                controller: scrollController,
-                children: [
-                  Scrollbar(
-                    controller: scrollController,
-                    child: ThreadPagePost(
-                      board: widget.board,
-                      thread: widget.thread,
-                      post: snapshot.data as Post? ?? Post(),
-                      media: media,
-                      fileNames: fileName,
-                      allPosts: widget.allPosts,
-                      onDismiss: (i) => {},
+              if (snapshot.hasError) {
+                return ReloadWidget(onReload: () {
+                  loadPost();
+                });
+              } else {
+                getMedia(snapshot.data as Post? ?? Post());
+                return ListView(
+                  shrinkWrap: false,
+                  controller: scrollController,
+                  children: [
+                    Scrollbar(
+                      controller: scrollController,
+                      child: ThreadPagePost(
+                        board: widget.board,
+                        thread: widget.thread,
+                        post: snapshot.data as Post? ?? Post(),
+                        media: media,
+                        fileNames: fileName,
+                        allPosts: widget.allPosts,
+                        onDismiss: (i) => {},
+                      ),
                     ),
-                  ),
-                ],
-              );
+                  ],
+                );
+              }
           }
         },
       ),

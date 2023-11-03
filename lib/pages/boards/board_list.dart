@@ -10,6 +10,7 @@ import 'package:flutter_chan/pages/boards/board_tile.dart';
 import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
 import 'package:flutter_chan/pages/savedAttachments/saved_attachments.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
+import 'package:flutter_chan/widgets/reload.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +37,13 @@ class BoardListState extends State<BoardList> {
   void initState() {
     super.initState();
 
-    _fetchAllBoards = fetchAllBoards().then((value) => filterdBoards = value);
+    loadBoards();
+  }
+
+  void loadBoards() {
+    setState(() {
+      _fetchAllBoards = fetchAllBoards().then((value) => filterdBoards = value);
+    });
   }
 
   @override
@@ -315,33 +322,69 @@ class BoardListState extends State<BoardList> {
                             ],
                           );
                         default:
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 8.0,
-                                  left: 16.0,
-                                  right: 16.0,
-                                ),
-                                child: ClipRect(
-                                  child: CupertinoSearchTextField(
-                                    controller: _searchBarController,
-                                    onChanged: (value) {
-                                      _updateUserList(value, snapshot.data);
-                                    },
-                                    onSubmitted: (value) {
-                                      _updateUserList(value, snapshot.data);
-                                    },
-                                    onSuffixTap: () {
-                                      _updateUserList('', snapshot.data);
-                                    },
+                          if (snapshot.hasError) {
+                            return ReloadWidget(
+                              onReload: () => loadBoards(),
+                            );
+                          } else {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 8.0,
+                                    left: 16.0,
+                                    right: 16.0,
+                                  ),
+                                  child: ClipRect(
+                                    child: CupertinoSearchTextField(
+                                      controller: _searchBarController,
+                                      onChanged: (value) {
+                                        _updateUserList(value, snapshot.data);
+                                      },
+                                      onSubmitted: (value) {
+                                        _updateUserList(value, snapshot.data);
+                                      },
+                                      onSuffixTap: () {
+                                        _updateUserList('', snapshot.data);
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              if (favorites.getFavorites().isNotEmpty)
+                                if (favorites.getFavorites().isNotEmpty)
+                                  CupertinoListSection.insetGrouped(
+                                    header: Text(
+                                      'Favorites',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            theme.getTheme() == ThemeData.dark()
+                                                ? CupertinoColors.white
+                                                : CupertinoColors.black,
+                                      ),
+                                    ),
+                                    children: [
+                                      for (final Board board in filterdBoards)
+                                        if (favorites
+                                            .getFavorites()
+                                            .contains(board.board))
+                                          if (settings.getNSFW())
+                                            BoardTile(
+                                                board: board,
+                                                favorites: favorites
+                                                    .getFavorites()
+                                                    .contains(board.board))
+                                          else if (board.wsBoard != 0)
+                                            BoardTile(
+                                                board: board,
+                                                favorites: favorites
+                                                    .getFavorites()
+                                                    .contains(board.board))
+                                    ],
+                                  ),
                                 CupertinoListSection.insetGrouped(
                                   header: Text(
-                                    'Favorites',
+                                    'Boards',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -352,53 +395,24 @@ class BoardListState extends State<BoardList> {
                                     ),
                                   ),
                                   children: [
-                                    for (Board board in filterdBoards)
-                                      if (favorites
-                                          .getFavorites()
-                                          .contains(board.board))
-                                        if (settings.getNSFW())
-                                          BoardTile(
-                                              board: board,
-                                              favorites: favorites
-                                                  .getFavorites()
-                                                  .contains(board.board))
-                                        else if (board.wsBoard != 0)
-                                          BoardTile(
-                                              board: board,
-                                              favorites: favorites
-                                                  .getFavorites()
-                                                  .contains(board.board))
+                                    for (final Board board in filterdBoards)
+                                      if (settings.getNSFW())
+                                        BoardTile(
+                                            board: board,
+                                            favorites: favorites
+                                                .getFavorites()
+                                                .contains(board.board))
+                                      else if (board.wsBoard != 0)
+                                        BoardTile(
+                                            board: board,
+                                            favorites: favorites
+                                                .getFavorites()
+                                                .contains(board.board))
                                   ],
                                 ),
-                              CupertinoListSection.insetGrouped(
-                                header: Text(
-                                  'Boards',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.getTheme() == ThemeData.dark()
-                                        ? CupertinoColors.white
-                                        : CupertinoColors.black,
-                                  ),
-                                ),
-                                children: [
-                                  for (Board board in filterdBoards)
-                                    if (settings.getNSFW())
-                                      BoardTile(
-                                          board: board,
-                                          favorites: favorites
-                                              .getFavorites()
-                                              .contains(board.board))
-                                    else if (board.wsBoard != 0)
-                                      BoardTile(
-                                          board: board,
-                                          favorites: favorites
-                                              .getFavorites()
-                                              .contains(board.board))
-                                ],
-                              ),
-                            ],
-                          );
+                              ],
+                            );
+                          }
                       }
                     },
                   ),

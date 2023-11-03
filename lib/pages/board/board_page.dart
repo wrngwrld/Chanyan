@@ -8,6 +8,7 @@ import 'package:flutter_chan/enums/enums.dart';
 import 'package:flutter_chan/pages/board/grid_view.dart';
 import 'package:flutter_chan/pages/board/list_view.dart';
 import 'package:flutter_chan/pages/favorite_button.dart';
+import 'package:flutter_chan/widgets/reload.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,7 @@ class BoardPageState extends State<BoardPage> {
 
   late Future<List<Post>> _fetchAllThreadsFromBoard;
 
-  late List<Post> filterdBoards;
+  late List<Post> filteredBoards;
 
   bool isFavorite = false;
   late Sort sort;
@@ -41,12 +42,19 @@ class BoardPageState extends State<BoardPage> {
     super.initState();
 
     final settings = Provider.of<SettingsProvider>(context, listen: false);
-
     sort = settings.getBoardSort();
 
-    _fetchAllThreadsFromBoard =
-        fetchAllThreadsFromBoard(settings.getBoardSort(), widget.board)
-            .then((value) => filterdBoards = value);
+    loadBoard();
+  }
+
+  void loadBoard() {
+    final settings = Provider.of<SettingsProvider>(context, listen: false);
+
+    setState(() {
+      _fetchAllThreadsFromBoard =
+          fetchAllThreadsFromBoard(settings.getBoardSort(), widget.board)
+              .then((value) => filteredBoards = value);
+    });
   }
 
   void setSort(Sort sortBy, SettingsProvider settings) {
@@ -54,7 +62,7 @@ class BoardPageState extends State<BoardPage> {
       _searchBarController.clear();
 
       _fetchAllThreadsFromBoard = fetchAllThreadsFromBoard(sortBy, widget.board)
-          .then((value) => filterdBoards = value);
+          .then((value) => filteredBoards = value);
 
       sort = sortBy;
     });
@@ -84,7 +92,7 @@ class BoardPageState extends State<BoardPage> {
       sort,
       widget.board,
       searchValue: value,
-    ).then((value) => filterdBoards = value);
+    ).then((value) => filteredBoards = value);
 
     setState(() {});
   }
@@ -283,9 +291,16 @@ class BoardPageState extends State<BoardPage> {
                                   child: PlatformCircularProgressIndicator(),
                                 ),
                               );
-
                             default:
-                              return getBoardView(settings, filterdBoards);
+                              if (snapshot.hasError) {
+                                return ReloadWidget(
+                                  onReload: () => {
+                                    loadBoard(),
+                                  },
+                                );
+                              } else {
+                                return getBoardView(settings, filteredBoards);
+                              }
                           }
                         })
                   ],

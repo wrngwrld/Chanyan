@@ -187,7 +187,7 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                                       padding: EdgeInsets.zero,
                                       crossAxisCount: 3,
                                       children: [
-                                        for (SavedAttachment attachment
+                                        for (final SavedAttachment attachment
                                             in snapshot.data ?? [])
                                           GestureDetector(
                                             onTap: () {

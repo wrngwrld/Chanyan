@@ -45,7 +45,7 @@ class BoardListView extends StatelessWidget {
         controller: scrollController,
         shrinkWrap: true,
         children: [
-          for (Post post in threads) ListPost(board: board, post: post)
+          for (final Post post in threads) ListPost(board: board, post: post)
         ],
       ),
     );
