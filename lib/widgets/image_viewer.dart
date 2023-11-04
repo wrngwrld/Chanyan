@@ -28,13 +28,6 @@ class ImageViewer extends StatefulWidget {
 class _ImageViewerState extends State<ImageViewer> {
   late Future<File> _getImage;
 
-  @override
-  void initState() {
-    super.initState();
-
-    _getImage = getImage();
-  }
-
   Future<File> getImage() async {
     final File file = await DefaultCacheManager().getSingleFile(widget.url);
 
@@ -43,6 +36,8 @@ class _ImageViewerState extends State<ImageViewer> {
 
   @override
   Widget build(BuildContext context) {
+    _getImage = getImage();
+
     return FutureBuilder<File>(
       future: _getImage,
       builder: (context, AsyncSnapshot<File> snapshot) {

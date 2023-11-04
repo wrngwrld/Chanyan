@@ -19,12 +19,6 @@ class Bookmarks extends StatefulWidget {
 class _BookmarksState extends State<Bookmarks> {
   final ScrollController scrollController = ScrollController();
 
-  Future<Iterable<String>> getBookmarks() {
-    final bookmarks = Provider.of<BookmarksProvider>(context, listen: false);
-
-    return Future.value(bookmarks.getBookmarks());
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
@@ -165,23 +159,12 @@ class _BookmarksState extends State<Bookmarks> {
                     else
                       Column(
                         children: [
-                          FutureBuilder<Iterable<String>>(
-                              future: getBookmarks(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<Iterable<String>> snapshot) {
-                                return Column(
-                                  children: [
-                                    for (final String string
-                                        in snapshot.data ?? <String>[])
-                                      BookmarksPost(
-                                        favorite: Bookmark.fromJson(
-                                          json.decode(string)
-                                              as Map<String, dynamic>,
-                                        ),
-                                      )
-                                  ],
-                                );
-                              }),
+                          for (final String string in bookmarks.getBookmarks())
+                            BookmarksPost(
+                              favorite: Bookmark.fromJson(
+                                json.decode(string) as Map<String, dynamic>,
+                              ),
+                            )
                         ],
                       ),
                   ],

@@ -33,17 +33,12 @@ class _BookmarksPostState extends State<BookmarksPost> {
   late Future<BookmarkStatus> _fetchBookmarkStatus;
 
   @override
-  void initState() {
-    super.initState();
-
-    _fetchBookmarkStatus = fetchBookmarkStatus(
-        widget.favorite.board, widget.favorite.no.toString());
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
     final bookmarks = Provider.of<BookmarksProvider>(context);
+
+    _fetchBookmarkStatus = fetchBookmarkStatus(
+        widget.favorite.board, widget.favorite.no.toString());
 
     return FutureBuilder<BookmarkStatus>(
         future: _fetchBookmarkStatus,
@@ -146,9 +141,7 @@ class _BookmarksPostState extends State<BookmarksPost> {
                           fit: BoxFit.cover,
                         )),
                   ),
-                )
-              else
-                Container(),
+                ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
