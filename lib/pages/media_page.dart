@@ -167,7 +167,7 @@ class _MediaPageState extends State<MediaPage> {
           child: Column(
             children: [
               Text(
-                media[index].fileName,
+                '${media[index].fileName}${media[index].ext}',
                 style: TextStyle(
                   color: theme.getTheme() == ThemeData.dark()
                       ? Colors.white
