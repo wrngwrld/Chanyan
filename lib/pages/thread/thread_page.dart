@@ -123,13 +123,6 @@ class ThreadPageState extends State<ThreadPage> {
                     builder: (BuildContext context) => CupertinoActionSheet(
                       actions: [
                         CupertinoActionSheetAction(
-                          child: const Text('Reload'),
-                          onPressed: () {
-                            setState(() {});
-                            Navigator.pop(context);
-                          },
-                        ),
-                        CupertinoActionSheetAction(
                           child: const Text('Share'),
                           onPressed: () {
                             Share.share(

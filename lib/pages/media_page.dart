@@ -160,6 +160,17 @@ class _MediaPageState extends State<MediaPage> {
             ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
             : CupertinoColors.black.withOpacity(0.7),
         border: Border.all(color: Colors.transparent),
+        leading: MediaQuery(
+          data: MediaQueryData(
+            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          ),
+          child: Transform.translate(
+            offset: const Offset(-16, 0),
+            child: CupertinoNavigationBarBackButton(
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
         middle: MediaQuery(
           data: MediaQueryData(
             textScaleFactor: MediaQuery.textScaleFactorOf(context),
