@@ -11,7 +11,6 @@ import 'package:flutter_chan/pages/bookmarks/bookmarks.dart';
 import 'package:flutter_chan/pages/savedAttachments/saved_attachments.dart';
 import 'package:flutter_chan/pages/thread/thread_page.dart';
 import 'package:flutter_chan/widgets/reload.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../settings/settings.dart';
@@ -313,12 +312,12 @@ class BoardListState extends State<BoardList> {
                         AsyncSnapshot<List<Board>> snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
-                          return Column(
+                          return const Column(
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 height: 100,
                               ),
-                              PlatformCircularProgressIndicator(),
+                              CupertinoActivityIndicator(),
                             ],
                           );
                         default:

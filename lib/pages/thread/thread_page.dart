@@ -10,7 +10,6 @@ import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/services/string.dart';
 import 'package:flutter_chan/widgets/floating_action_buttons.dart';
 import 'package:flutter_chan/widgets/reload.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
@@ -188,8 +187,8 @@ class ThreadPageState extends State<ThreadPage> {
         builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return Center(
-                child: PlatformCircularProgressIndicator(),
+              return const Center(
+                child: CupertinoActivityIndicator(),
               );
             default:
               if (snapshot.hasError) {

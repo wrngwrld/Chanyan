@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.15.0 <3.0.0'
+  sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -39,7 +39,6 @@ dependencies:
   visibility_detector: ^0.4.0+2
   preload_page_view: ^0.2.0
   share_plus: ^7.1.0
-  flutter_platform_widgets: ^3.2.0
   url_launcher: ^6.0.11
   provider: ^6.0.1
   flutter_slidable: ^3.0.0
@@ -59,8 +58,8 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: 'assets/icons/icon.png'
-  image_path_ios: 'assets/icons/icon_ios.jpg'
+  image_path: "assets/icons/icon.png"
+  image_path_ios: "assets/icons/icon_ios.jpg"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -116,7 +115,7 @@ flutter_native_splash:
   # of your splash screen to a solid color.  Use background_image to set the background of your
   # splash screen to a png image.  This is useful for gradients. The image will be stretch to the
   # size of the app. Only one parameter can be used, color and background_image cannot both be set.
-  color: '#ffffff'
+  color: "#ffffff"
   #background_image: "assets/background.png"
 
   # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
@@ -131,7 +130,7 @@ flutter_native_splash:
   # parameters from above. If the image_dark parameter is specified, color_dark or
   # background_image_dark must be specified.  color_dark and background_image_dark cannot both be
   # set.
-  color_dark: '#000000'
+  color_dark: "#000000"
   #background_image_dark: "assets/dark-background.png"
   #image_dark: assets/splash-invert.png
 

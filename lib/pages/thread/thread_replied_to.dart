@@ -7,7 +7,6 @@ import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_chan/widgets/reload.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 class ThreadRepliesTo extends StatefulWidget {
@@ -105,8 +104,8 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
         builder: (BuildContext context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return Center(
-                child: PlatformCircularProgressIndicator(),
+              return const Center(
+                child: CupertinoActivityIndicator(),
               );
             default:
               if (snapshot.hasError) {

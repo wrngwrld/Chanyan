@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class ImageViewer extends StatefulWidget {
   const ImageViewer({
@@ -48,9 +47,7 @@ class _ImageViewerState extends State<ImageViewer> {
       builder: (context, AsyncSnapshot<File> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return Center(
-              child: PlatformCircularProgressIndicator(),
-            );
+            return const Center(child: CupertinoActivityIndicator());
           default:
             return widget.interactiveViewer
                 ? InteractiveViewer(

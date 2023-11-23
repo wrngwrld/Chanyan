@@ -9,7 +9,6 @@ import 'package:flutter_chan/pages/board/grid_view.dart';
 import 'package:flutter_chan/pages/board/list_view.dart';
 import 'package:flutter_chan/pages/favorite_button.dart';
 import 'package:flutter_chan/widgets/reload.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
 class BoardPage extends StatefulWidget {
@@ -285,10 +284,10 @@ class BoardPageState extends State<BoardPage> {
                             AsyncSnapshot<List<Post>> snapshot) {
                           switch (snapshot.connectionState) {
                             case ConnectionState.waiting:
-                              return SizedBox(
+                              return const SizedBox(
                                 height: 400,
                                 child: Center(
-                                  child: PlatformCircularProgressIndicator(),
+                                  child: CupertinoActivityIndicator(),
                                 ),
                               );
                             default:

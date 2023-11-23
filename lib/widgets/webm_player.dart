@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,7 +213,7 @@ class VLCPlayerState extends State<VLCPlayer> {
           if (snapshot.hasData) {
             return videoWidget(savedAttachmentsProvider);
           } else {
-            return PlatformCircularProgressIndicator();
+            return const CupertinoActivityIndicator();
           }
         },
       );
@@ -235,8 +234,8 @@ class VLCPlayerState extends State<VLCPlayer> {
     }
     return Stack(
       children: [
-        Center(
-          child: PlatformCircularProgressIndicator(),
+        const Center(
+          child: CupertinoActivityIndicator(),
         ),
         VisibilityDetector(
           key: ObjectKey(widget.video),
@@ -268,9 +267,8 @@ class VLCPlayerState extends State<VLCPlayer> {
                   VlcPlayer(
                     controller: _videoPlayerController,
                     aspectRatio: _videoPlayerController.value.aspectRatio,
-                    placeholder: Center(
-                      child: PlatformCircularProgressIndicator(),
-                    ),
+                    placeholder:
+                        const Center(child: CupertinoActivityIndicator()),
                   ),
                 ],
               ),
