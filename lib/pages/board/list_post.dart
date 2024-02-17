@@ -168,7 +168,7 @@ class _ListPostState extends State<ListPost> {
                           Text(
                             DateFormat('kk:mm - dd.MM.y').format(
                               DateTime.fromMillisecondsSinceEpoch(
-                                widget.post.tim ?? 0,
+                                widget.post.time! * 1000,
                               ),
                             ),
                             style: TextStyle(
