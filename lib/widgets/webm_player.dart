@@ -8,7 +8,6 @@ import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../blocs/settings_model.dart';
@@ -38,7 +37,7 @@ class VLCPlayerState extends State<VLCPlayer> {
 
   Directory directory = Directory('');
 
-  bool isVisible = false;
+  bool isVisible = true;
 
   double sliderValue = 0.0;
   bool validPosition = false;
@@ -61,15 +60,11 @@ class VLCPlayerState extends State<VLCPlayer> {
   Future<void> initVideo() async {
     final settings = Provider.of<SettingsProvider>(context, listen: false);
 
-    fetchStartVideo();
-
     final File file;
 
     if (widget.isAsset) {
       file = File(
           '${widget.directory!.path}/savedAttachments/${getNameWithoutExtension(widget.fileName)}.mp4');
-
-      print(file.path);
 
       _videoPlayerController = VlcPlayerController.file(
         file,
@@ -108,17 +103,6 @@ class VLCPlayerState extends State<VLCPlayer> {
     _videoPlayerController.addListener(listener);
 
     return file;
-  }
-
-  Future<void> fetchStartVideo() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    final String? startVideo = prefs.getString('startVideo');
-
-    if (startVideo == getNameWithoutExtension(widget.fileName))
-      setState(() {
-        isVisible = true;
-      });
   }
 
   Future<void> listener() async {
@@ -210,11 +194,9 @@ class VLCPlayerState extends State<VLCPlayer> {
       return FutureBuilder<File>(
         future: cachedVideo,
         builder: (context, AsyncSnapshot<File> snapshot) {
-          if (snapshot.hasData) {
-            return videoWidget(savedAttachmentsProvider);
-          } else {
-            return const CupertinoActivityIndicator();
-          }
+          return snapshot.hasData
+              ? videoWidget(savedAttachmentsProvider)
+              : const CupertinoActivityIndicator();
         },
       );
     }

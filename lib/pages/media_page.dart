@@ -11,9 +11,7 @@ import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/widgets/image_viewer.dart';
 import 'package:flutter_chan/widgets/webm_player.dart';
-import 'package:preload_page_view/preload_page_view.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -38,7 +36,7 @@ class MediaPage extends StatefulWidget {
 }
 
 class _MediaPageState extends State<MediaPage> {
-  late PreloadPageController controller;
+  late PageController controller;
 
   final String page = '0';
   late int index;
@@ -56,16 +54,9 @@ class _MediaPageState extends State<MediaPage> {
     });
   }
 
-  Future<void> setStartVideo(String video) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.setString('startVideo', video);
-  }
-
   Widget getMediaWidget(int i) {
     if (widget.isAsset) {
       if (media[i].ext == '.webm') {
-        print(widget.directory);
         return VLCPlayer(
           board: widget.board,
           video: media[i].videoName,
@@ -123,9 +114,7 @@ class _MediaPageState extends State<MediaPage> {
       Navigator.of(context).pop();
     }
 
-    setStartVideo(media[index].videoId.toString());
-
-    controller = PreloadPageController(
+    controller = PageController(
       initialPage: index,
       keepPage: false,
     );
@@ -324,10 +313,10 @@ class _MediaPageState extends State<MediaPage> {
           ],
         ),
       ),
-      body: PreloadPageView.custom(
-        preloadPagesCount: 1,
+      body: PageView.custom(
         controller: controller,
-        onPageChanged: (i) => onPageChanged(i, media[i].videoName, gallery),
+        onPageChanged: (pageIndex) =>
+            onPageChanged(pageIndex, media[pageIndex].videoName, gallery),
         childrenDelegate: SliverChildBuilderDelegate(
           (context, i) {
             return getMediaWidget(i);
