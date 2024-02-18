@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_chan/API/save_videos.dart';
+import 'package:flutter_chan/blocs/gallery_model.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:provider/provider.dart';
@@ -186,23 +187,26 @@ class VLCPlayerState extends State<VLCPlayer> {
     final SavedAttachmentsProvider savedAttachmentsProvider =
         Provider.of<SavedAttachmentsProvider>(context);
     final SettingsProvider settings = Provider.of<SettingsProvider>(context);
+    final GalleryProvider galleryProvider =
+        Provider.of<GalleryProvider>(context, listen: false);
 
     if (widget.isAsset || !settings.getUseCachingOnVideos()) {
       _videoPlayerController.addListener(listener);
-      return videoWidget(savedAttachmentsProvider);
+      return videoWidget(savedAttachmentsProvider, galleryProvider);
     } else {
       return FutureBuilder<File>(
         future: cachedVideo,
         builder: (context, AsyncSnapshot<File> snapshot) {
           return snapshot.hasData
-              ? videoWidget(savedAttachmentsProvider)
+              ? videoWidget(savedAttachmentsProvider, galleryProvider)
               : const CupertinoActivityIndicator();
         },
       );
     }
   }
 
-  Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider) {
+  Stack videoWidget(SavedAttachmentsProvider savedAttachmentsProvider,
+      GalleryProvider galleryProvider) {
     try {
       if (_videoPlayerController.value.isInitialized && mounted) {
         if (savedAttachmentsProvider.playing) {
@@ -246,16 +250,26 @@ class VLCPlayerState extends State<VLCPlayer> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  VlcPlayer(
-                    controller: _videoPlayerController,
-                    aspectRatio: _videoPlayerController.value.aspectRatio,
-                    placeholder:
-                        const Center(child: CupertinoActivityIndicator()),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        galleryProvider.setControlsVisible(
+                            !galleryProvider.getControlsVisible());
+                      });
+                    },
+                    child: AbsorbPointer(
+                      child: VlcPlayer(
+                        controller: _videoPlayerController,
+                        aspectRatio: _videoPlayerController.value.aspectRatio,
+                        placeholder:
+                            const Center(child: CupertinoActivityIndicator()),
+                      ),
+                    ),
                   ),
                 ],
               ),
               Opacity(
-                opacity: controlsVisible ? 1 : 0,
+                opacity: galleryProvider.getControlsVisible() ? 1 : 0,
                 child: SafeArea(
                   child: Column(
                     children: [

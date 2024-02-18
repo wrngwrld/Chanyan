@@ -144,175 +144,178 @@ class _MediaPageState extends State<MediaPage> {
           ? CupertinoColors.systemGroupedBackground
           : CupertinoColors.black,
       extendBodyBehindAppBar: true,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: theme.getTheme() == ThemeData.light()
-            ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
-            : CupertinoColors.black.withOpacity(0.7),
-        border: Border.all(color: Colors.transparent),
-        leading: MediaQuery(
-          data: MediaQueryData(
-            textScaleFactor: MediaQuery.textScaleFactorOf(context),
-          ),
-          child: Transform.translate(
-            offset: const Offset(-16, 0),
-            child: CupertinoNavigationBarBackButton(
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-        ),
-        middle: MediaQuery(
-          data: MediaQueryData(
-            textScaleFactor: MediaQuery.textScaleFactorOf(context),
-          ),
-          child: Column(
-            children: [
-              Text(
-                '${media[index].fileName}${media[index].ext}',
-                style: TextStyle(
-                  color: theme.getTheme() == ThemeData.dark()
-                      ? Colors.white
-                      : Colors.black,
+      appBar: gallery.getControlsVisible()
+          ? CupertinoNavigationBar(
+              backgroundColor: theme.getTheme() == ThemeData.light()
+                  ? CupertinoColors.systemGroupedBackground.withOpacity(0.7)
+                  : CupertinoColors.black.withOpacity(0.7),
+              border: Border.all(color: Colors.transparent),
+              leading: MediaQuery(
+                data: MediaQueryData(
+                  textScaleFactor: MediaQuery.textScaleFactorOf(context),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                '${index + 1}/${media.length}',
-                style: TextStyle(
-                  color: theme.getTheme() == ThemeData.dark()
-                      ? Colors.white
-                      : Colors.black,
+                child: Transform.translate(
+                  offset: const Offset(-16, 0),
+                  child: CupertinoNavigationBarBackButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isSaved)
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: const Icon(CupertinoIcons.bookmark),
-                onPressed: () => {
-                  savedAttachments.addSavedAttachments(
-                    _scaffoldKey.currentContext ?? context,
-                    widget.board ?? '',
-                    media[index].videoName,
-                  )
-                },
-              )
-            else
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: const Icon(CupertinoIcons.bookmark_fill),
-                onPressed: () => {
-                  showCupertinoDialog(
-                    barrierDismissible: true,
-                    context: context,
-                    builder: (context) {
-                      return StatefulBuilder(
-                        builder: (context, setState) {
-                          return CupertinoAlertDialog(
-                            title: const Text('Delete Attachment?'),
+              middle: MediaQuery(
+                data: MediaQueryData(
+                  textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      '${media[index].fileName}${media[index].ext}',
+                      style: TextStyle(
+                        color: theme.getTheme() == ThemeData.dark()
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '${index + 1}/${media.length}',
+                      style: TextStyle(
+                        color: theme.getTheme() == ThemeData.dark()
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (!isSaved)
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Icon(CupertinoIcons.bookmark),
+                      onPressed: () => {
+                        savedAttachments.addSavedAttachments(
+                          _scaffoldKey.currentContext ?? context,
+                          widget.board ?? '',
+                          media[index].videoName,
+                        )
+                      },
+                    )
+                  else
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Icon(CupertinoIcons.bookmark_fill),
+                      onPressed: () => {
+                        showCupertinoDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (context) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return CupertinoAlertDialog(
+                                  title: const Text('Delete Attachment?'),
+                                  actions: [
+                                    CupertinoDialogAction(
+                                      child: const Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          color: CupertinoColors.activeBlue,
+                                        ),
+                                      ),
+                                      onPressed: () => {
+                                        Navigator.pop(context),
+                                      },
+                                    ),
+                                    CupertinoDialogAction(
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          color: CupertinoColors.activeBlue,
+                                        ),
+                                      ),
+                                      onPressed: () => {
+                                        savedAttachments
+                                            .removeSavedAttachments(
+                                                media[index].videoName)
+                                            .then(
+                                              (value) => {
+                                                Navigator.pop(context),
+                                              },
+                                            ),
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      },
+                    ),
+                  SizedBox(
+                    width: 20,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        showCupertinoModalPopup(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              CupertinoActionSheet(
                             actions: [
-                              CupertinoDialogAction(
-                                child: const Text(
-                                  'Cancel',
-                                  style: TextStyle(
-                                    color: CupertinoColors.activeBlue,
-                                  ),
+                              if (!isSaved)
+                                CupertinoActionSheetAction(
+                                  child: const Text('Open in Browser'),
+                                  onPressed: () {
+                                    launchURL(
+                                      'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
+                                    );
+                                    Navigator.pop(context);
+                                  },
                                 ),
-                                onPressed: () => {
-                                  Navigator.pop(context),
+                              CupertinoActionSheetAction(
+                                child: const Text('Share'),
+                                onPressed: () {
+                                  shareMedia(
+                                    'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
+                                    media[index].videoName,
+                                    _scaffoldKey.currentContext ?? context,
+                                    isSaved: isSaved,
+                                  );
+                                  Navigator.pop(context);
                                 },
                               ),
-                              CupertinoDialogAction(
-                                child: const Text(
-                                  'Delete',
-                                  style: TextStyle(
-                                    color: CupertinoColors.activeBlue,
-                                  ),
-                                ),
-                                onPressed: () => {
-                                  savedAttachments
-                                      .removeSavedAttachments(
-                                          media[index].videoName)
-                                      .then(
-                                        (value) => {
-                                          Navigator.pop(context),
-                                        },
-                                      ),
+                              CupertinoActionSheetAction(
+                                child: const Text('Download'),
+                                onPressed: () {
+                                  saveVideo(
+                                    'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
+                                    media[index].videoName,
+                                    _scaffoldKey.currentContext ?? context,
+                                    showSnackBar: true,
+                                    isSaved: isSaved,
+                                  );
+                                  Navigator.pop(context);
                                 },
                               ),
                             ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                },
-              ),
-            SizedBox(
-              width: 20,
-              child: CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (BuildContext context) => CupertinoActionSheet(
-                      actions: [
-                        if (!isSaved)
-                          CupertinoActionSheetAction(
-                            child: const Text('Open in Browser'),
-                            onPressed: () {
-                              launchURL(
-                                'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
-                              );
-                              Navigator.pop(context);
-                            },
+                            cancelButton: CupertinoActionSheetAction(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
                           ),
-                        CupertinoActionSheetAction(
-                          child: const Text('Share'),
-                          onPressed: () {
-                            shareMedia(
-                              'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
-                              media[index].videoName,
-                              _scaffoldKey.currentContext ?? context,
-                              isSaved: isSaved,
-                            );
-                            Navigator.pop(context);
-                          },
-                        ),
-                        CupertinoActionSheetAction(
-                          child: const Text('Download'),
-                          onPressed: () {
-                            saveVideo(
-                              'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
-                              media[index].videoName,
-                              _scaffoldKey.currentContext ?? context,
-                              showSnackBar: true,
-                              isSaved: isSaved,
-                            );
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                      cancelButton: CupertinoActionSheetAction(
-                        child: const Text('Cancel'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+                        );
+                      },
+                      child: const Icon(Icons.ios_share),
                     ),
-                  );
-                },
-                child: const Icon(Icons.ios_share),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : null,
       body: PageView.custom(
         controller: controller,
         onPageChanged: (pageIndex) =>
