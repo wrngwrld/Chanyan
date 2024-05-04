@@ -238,7 +238,7 @@ class _MediaPageState extends State<MediaPage> {
                                       onPressed: () => {
                                         savedAttachments
                                             .removeSavedAttachments(
-                                                media[index].videoName)
+                                                media[index].videoName, context)
                                             .then(
                                               (value) => {
                                                 Navigator.pop(context),

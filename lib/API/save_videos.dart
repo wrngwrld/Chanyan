@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_chan/Models/saved_attachment.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
+import 'package:flutter_chan/pages/savedAttachments/permission_denied.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +31,8 @@ Future<bool> _requestPermission(Permission permission) async {
   return false;
 }
 
-Future<Directory> requestDirectory(Directory directory) async {
+Future<Directory> requestDirectory(Directory directory, BuildContext context,
+    {bool showErrorDialog = true}) async {
   if (Platform.isAndroid) {
     if (await _requestPermission(Permission.storage)) {
       directory = (await getExternalStorageDirectory())!;
@@ -49,6 +52,15 @@ Future<Directory> requestDirectory(Directory directory) async {
   } else {
     if (await _requestPermission(Permission.photos)) {
       directory = await getApplicationDocumentsDirectory();
+    } else {
+      if (showErrorDialog) {
+        await showCupertinoModalBottomSheet(
+          expand: false,
+          context: context,
+          builder: (context) => const PermissionDenied(),
+        );
+      }
+      throw 'Permission denied';
     }
   }
 
@@ -84,7 +96,12 @@ Future<void> saveVideo(
   Directory directory = Directory('');
 
   if (isSaved) {
-    directory = await requestDirectory(directory);
+    try {
+      directory = await requestDirectory(directory, context);
+    } catch (e) {
+      savedAttachmentsProvider.startVideo();
+      return;
+    }
 
     if (Platform.isIOS) {
       await ImageGallerySaver.saveFile(
@@ -120,14 +137,12 @@ Future<void> saveVideo(
           });
     }
   } else {
-    Navigator.pop(context);
-
-    showCupertinoSnackbar(
-      null,
-      false,
-      context,
-      'Downloading...',
-    );
+    try {
+      directory = await requestDirectory(directory, context);
+    } catch (e) {
+      savedAttachmentsProvider.startVideo();
+      return;
+    }
 
     showCupertinoSnackbar(
       null,
@@ -139,8 +154,6 @@ Future<void> saveVideo(
     final String ext = '.${fileName.split('.').last}';
 
     try {
-      directory = await requestDirectory(directory);
-
       if (await directory.exists()) {
         final File fileDownloadPath = File('${directory.path}/$fileName');
         final File videoCache = await DefaultCacheManager().getSingleFile(url);
@@ -223,7 +236,12 @@ Future<void> shareMedia(
   savedAttachmentsProvider.pauseVideo();
 
   if (isSaved) {
-    directory = await requestDirectory(directory);
+    try {
+      directory = await requestDirectory(directory, context);
+    } catch (e) {
+      savedAttachmentsProvider.startVideo();
+      return;
+    }
 
     Share.shareXFiles([
       XFile(
@@ -232,14 +250,13 @@ Future<void> shareMedia(
       )
     ]);
   } else {
-    Navigator.pop(context);
+    try {
+      directory = await requestDirectory(directory, context);
+    } catch (e) {
+      savedAttachmentsProvider.startVideo();
+      return;
+    }
 
-    showCupertinoSnackbar(
-      null,
-      false,
-      context,
-      'Downloading...',
-    );
     showCupertinoSnackbar(
       null,
       false,
@@ -248,8 +265,6 @@ Future<void> shareMedia(
     );
 
     try {
-      directory = await requestDirectory(directory);
-
       if (await directory.exists()) {
         final File fileDownloadPath = File('${directory.path}/$fileName');
         final File videoCache = await DefaultCacheManager().getSingleFile(url);
@@ -335,6 +350,13 @@ Future<SavedAttachment?> saveAttachment(
 
   savedAttachmentsProvider.pauseVideo();
 
+  try {
+    directory = await requestDirectory(directory, context);
+  } catch (e) {
+    savedAttachmentsProvider.startVideo();
+    return null;
+  }
+
   showCupertinoSnackbar(
     null,
     false,
@@ -343,8 +365,6 @@ Future<SavedAttachment?> saveAttachment(
   );
 
   try {
-    directory = await requestDirectory(directory);
-
     if (await directory.exists()) {
       final File fileDownloadPath =
           File('${directory.path}/savedAttachments/$fileName');

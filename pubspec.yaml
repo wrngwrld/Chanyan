@@ -18,7 +18,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0"
+  sdk: ">=3.3.4"
 
 dependencies:
   flutter:
@@ -48,6 +48,8 @@ dependencies:
   ffmpeg_kit_flutter_full: ^6.0.3
   flutter_cache_manager: ^3.3.1
   package_info_plus: ^4.2.0
+  app_settings: ^5.1.1
+  modal_bottom_sheet: ^3.0.0
 
 dev_dependencies:
   flutter_test:

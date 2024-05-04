@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/Models/saved_attachment.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/media_page.dart';
+import 'package:flutter_chan/pages/savedAttachments/permission_denied.dart';
 import 'package:provider/provider.dart';
 
 class SavedAttachments extends StatefulWidget {
@@ -25,8 +27,14 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
 
   Directory directory = Directory('');
 
-  Future<List<SavedAttachment>> getSavedAttachments() async {
-    directory = await requestDirectory(directory);
+  Future<List<SavedAttachment>> getSavedAttachments(
+      BuildContext context) async {
+    try {
+      directory =
+          await requestDirectory(directory, context, showErrorDialog: false);
+    } catch (e) {
+      return Future.error(e.toString());
+    }
 
     final savedAttachments =
         Provider.of<SavedAttachmentsProvider>(context, listen: false);
@@ -113,7 +121,8 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                               CupertinoActionSheetAction(
                                 child: const Text('Clear bookmarks'),
                                 onPressed: () {
-                                  savedAttachments.clearSavedAttachments();
+                                  savedAttachments
+                                      .clearSavedAttachments(context);
                                   Navigator.pop(context);
                                 },
                               ),
@@ -139,35 +148,40 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  if (savedAttachments.getSavedAttachments().isEmpty)
-                    Column(
-                      children: [
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Text(
-                          'Save Attachments first!',
-                          style: TextStyle(
-                            fontSize: 26,
-                            color: theme.getTheme() == ThemeData.dark()
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        ),
-                      ],
-                    )
-                  else
-                    Column(
-                      children: [
-                        FutureBuilder<List<SavedAttachment>>(
-                            future: getSavedAttachments(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<SavedAttachment>> snapshot) {
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                  return Container();
-                                default:
-                                  return SizedBox(
+                  FutureBuilder<List<SavedAttachment>>(
+                      future: getSavedAttachments(context),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<SavedAttachment>> snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container();
+                          default:
+                            if (snapshot.hasError)
+                              return const PermissionDenied();
+                            else if (savedAttachments
+                                .getSavedAttachments()
+                                .isEmpty)
+                              return Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Text(
+                                    'Save Attachments first!',
+                                    style: TextStyle(
+                                      fontSize: 26,
+                                      color:
+                                          theme.getTheme() == ThemeData.dark()
+                                              ? Colors.white
+                                              : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            else
+                              return Column(
+                                children: [
+                                  SizedBox(
                                     child: GridView.count(
                                       physics: const ScrollPhysics(),
                                       shrinkWrap: true,
@@ -225,11 +239,11 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                                           )
                                       ],
                                     ),
-                                  );
-                              }
-                            }),
-                      ],
-                    ),
+                                  ),
+                                ],
+                              );
+                        }
+                      }),
                 ],
               ),
             )
