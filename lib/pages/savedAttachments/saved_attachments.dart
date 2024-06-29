@@ -22,6 +22,47 @@ class SavedAttachments extends StatefulWidget {
 class _SavedAttachmentsState extends State<SavedAttachments> {
   final ScrollController scrollController = ScrollController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    convertLegacySavedAttachments();
+  }
+
+  void convertLegacySavedAttachments() {
+    if (Platform.isIOS) {
+      final savedAttachments =
+          Provider.of<SavedAttachmentsProvider>(context, listen: false);
+      final List<SavedAttachment> savedAttachmentList =
+          savedAttachments.getSavedAttachments();
+
+      if (savedAttachmentList.isEmpty) {
+        return;
+      }
+
+      final List<SavedAttachment> newSavedAttachmentList = [];
+
+      savedAttachmentList.forEach((element) {
+        if (element.fileName!.split('.').length >= 2) {
+          String ext = element.fileName!.split('.').last;
+          final String name = element.fileName!.split('.').first;
+
+          if (ext == 'webm') {
+            ext = 'mp4';
+          }
+
+          final newFileName = '$name.$ext';
+
+          element.fileName = newFileName;
+
+          newSavedAttachmentList.add(element);
+        }
+      });
+
+      savedAttachments.setList(newSavedAttachmentList);
+    }
+  }
+
   Directory directory = Directory('');
 
   Future<List<SavedAttachment>> getSavedAttachments(

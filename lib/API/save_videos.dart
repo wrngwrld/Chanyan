@@ -413,7 +413,7 @@ Future<SavedAttachment?> saveAttachment(
 
             return SavedAttachment(
               savedAttachmentType: SavedAttachmentType.Video,
-              fileName: fileName,
+              fileName: fileName.replaceAll('.webm', '.mp4'),
               thumbnail: thumbnailPath,
             );
           } else {
@@ -500,7 +500,9 @@ Future<SavedAttachment?> saveAttachment(
         savedAttachmentsProvider.startVideo();
 
         return SavedAttachment(
-          savedAttachmentType: SavedAttachmentType.Image,
+          savedAttachmentType: ext == '.mp4' || ext == '.webm' || ext == '.gif'
+              ? SavedAttachmentType.Video
+              : SavedAttachmentType.Image,
           fileName: fileName,
           thumbnail: thumbnailPath,
         );

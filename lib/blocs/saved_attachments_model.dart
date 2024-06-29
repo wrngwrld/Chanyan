@@ -28,6 +28,20 @@ class SavedAttachmentsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setList(List<SavedAttachment> savedAttachments) async {
+    list = [];
+
+    for (final element in savedAttachments) {
+      list.add(json.encode(element));
+    }
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setStringList('savedAttachments', list);
+
+    notifyListeners();
+  }
+
   List<SavedAttachment> getSavedAttachments() {
     final Iterable<String> savedList = list;
     final List<SavedAttachment> savedAttachmentList = [];
@@ -82,8 +96,12 @@ class SavedAttachmentsProvider with ChangeNotifier {
 
     list = [];
 
+    final String pathBaseName = path.split('.').first;
+
     for (final element in savedAttachmentList) {
-      if (element.fileName == path) {
+      final String elementBaseName = element.fileName!.split('.').first;
+
+      if (elementBaseName == pathBaseName) {
         newList.remove(element);
       } else {
         list.add(json.encode(element));

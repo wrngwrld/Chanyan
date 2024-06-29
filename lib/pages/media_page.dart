@@ -56,7 +56,7 @@ class _MediaPageState extends State<MediaPage> {
 
   Widget getMediaWidget(int i) {
     if (widget.isAsset) {
-      if (media[i].ext == '.webm') {
+      if (media[i].ext == '.webm' || media[i].ext == '.mp4') {
         return VLCPlayer(
           board: widget.board,
           video: media[i].videoName,
@@ -135,7 +135,10 @@ class _MediaPageState extends State<MediaPage> {
 
     isSaved = false;
     for (final element in savedAttachments.getSavedAttachments()) {
-      if (element.fileName == media[index].videoName) {
+      final String videoBaseName = media[index].videoName.split('.').first;
+      final String fileBaseName = element.fileName!.split('.').first;
+
+      if (fileBaseName == videoBaseName) {
         isSaved = true;
       }
     }

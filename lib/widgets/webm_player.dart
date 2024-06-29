@@ -67,7 +67,7 @@ class VLCPlayerState extends State<VLCPlayer> {
 
     if (widget.isAsset) {
       file = File(
-          '${widget.directory!.path}/savedAttachments/${getNameWithoutExtension(widget.fileName)}${Platform.isIOS ? '.mp4' : widget.ext}');
+          '${widget.directory!.path}/savedAttachments/${getNameWithoutExtension(widget.fileName)}${widget.ext}');
 
       _videoPlayerController = VlcPlayerController.file(
         file,
