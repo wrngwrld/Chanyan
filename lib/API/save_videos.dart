@@ -475,6 +475,17 @@ Future<SavedAttachment?> saveAttachment(
       } else {
         videoCache.copy(fileDownloadPath.path);
 
+        String thumbnailPath = fileName;
+
+        if (ext == '.mp4' || ext == '.webm') {
+          thumbnailPath = await downloadThumbnail(
+            fileName,
+            thumbnailUrl,
+            '${directory.path}/savedAttachments/',
+            dio,
+          );
+        }
+
         Navigator.pop(context);
 
         showCupertinoSnackbar(
@@ -489,7 +500,7 @@ Future<SavedAttachment?> saveAttachment(
         return SavedAttachment(
           savedAttachmentType: 'Image',
           fileName: fileName,
-          thumbnail: fileName,
+          thumbnail: thumbnailPath,
         );
       }
     }

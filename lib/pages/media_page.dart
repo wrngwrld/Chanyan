@@ -63,13 +63,15 @@ class _MediaPageState extends State<MediaPage> {
           fileName: media[i].fileName,
           isAsset: widget.isAsset,
           directory: widget.directory,
+          ext: media[i].ext,
         );
       } else {
         return InteractiveViewer(
           minScale: 0.5,
           maxScale: 5,
-          child: Image.asset(
-            '${widget.directory!.path}/savedAttachments/${media[i].fileName}',
+          child: Image.file(
+            File(
+                '${widget.directory!.path}/savedAttachments/${media[i].fileName}'),
           ),
         );
       }
@@ -168,7 +170,7 @@ class _MediaPageState extends State<MediaPage> {
                 child: Column(
                   children: [
                     Text(
-                      '${media[index].fileName}${media[index].ext}',
+                      '${media[index].fileName}${widget.isAsset ? '' : media[index].ext}',
                       style: TextStyle(
                         color: theme.getTheme() == ThemeData.dark()
                             ? Colors.white

@@ -211,8 +211,9 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   fit: BoxFit.cover,
-                                                  image: AssetImage(
-                                                    '${directory.path}/savedAttachments/${attachment.thumbnail}',
+                                                  image: FileImage(
+                                                    File(
+                                                        '${directory.path}/savedAttachments/${attachment.thumbnail}'),
                                                   ),
                                                 ),
                                               ),
