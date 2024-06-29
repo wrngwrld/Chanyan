@@ -22,9 +22,6 @@ class SavedAttachments extends StatefulWidget {
 class _SavedAttachmentsState extends State<SavedAttachments> {
   final ScrollController scrollController = ScrollController();
 
-  List<Widget> media = [];
-  List<String> fileNames = [];
-
   Directory directory = Directory('');
 
   Future<List<SavedAttachment>> getSavedAttachments(
