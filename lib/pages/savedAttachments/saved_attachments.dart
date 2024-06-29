@@ -219,7 +219,7 @@ class _SavedAttachmentsState extends State<SavedAttachments> {
                                               ),
                                               child: attachment
                                                           .savedAttachmentType ==
-                                                      'Video'
+                                                      SavedAttachmentType.Video
                                                   ? Center(
                                                       child: Icon(
                                                         CupertinoIcons.play,

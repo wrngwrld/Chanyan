@@ -1,3 +1,5 @@
+enum SavedAttachmentType { Image, Video }
+
 class SavedAttachment {
   SavedAttachment({
     this.savedAttachmentType,
@@ -7,19 +9,20 @@ class SavedAttachment {
 
   factory SavedAttachment.fromJson(Map<String, dynamic> json) {
     return SavedAttachment(
-      savedAttachmentType: json['savedAttachmentType'] as String?,
+      savedAttachmentType:
+          SavedAttachmentType.values.byName(json['savedAttachmentType']),
       fileName: json['fileName'] as String?,
       thumbnail: json['thumbnail'] as String?,
     );
   }
 
-  String? savedAttachmentType;
+  SavedAttachmentType? savedAttachmentType;
   String? fileName;
   String? thumbnail;
 
   Map<String, dynamic> toJson() {
     return {
-      'savedAttachmentType': savedAttachmentType,
+      'savedAttachmentType': savedAttachmentType?.name,
       'fileName': fileName,
       'thumbnail': thumbnail,
     };

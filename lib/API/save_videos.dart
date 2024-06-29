@@ -412,7 +412,7 @@ Future<SavedAttachment?> saveAttachment(
             savedAttachmentsProvider.startVideo();
 
             return SavedAttachment(
-              savedAttachmentType: 'Video',
+              savedAttachmentType: SavedAttachmentType.Video,
               fileName: fileName,
               thumbnail: thumbnailPath,
             );
@@ -451,7 +451,7 @@ Future<SavedAttachment?> saveAttachment(
             savedAttachmentsProvider.startVideo();
 
             return SavedAttachment(
-              savedAttachmentType: 'Video',
+              savedAttachmentType: SavedAttachmentType.Video,
               fileName: fileName,
               thumbnail: thumbnailPath,
             );
@@ -466,7 +466,9 @@ Future<SavedAttachment?> saveAttachment(
             savedAttachmentsProvider.startVideo();
 
             return SavedAttachment(
-              savedAttachmentType: ext == '.mp4' ? 'Video' : 'Image',
+              savedAttachmentType: ext == '.mp4'
+                  ? SavedAttachmentType.Video
+                  : SavedAttachmentType.Image,
               fileName: fileName,
               thumbnail: fileName,
             );
@@ -498,7 +500,7 @@ Future<SavedAttachment?> saveAttachment(
         savedAttachmentsProvider.startVideo();
 
         return SavedAttachment(
-          savedAttachmentType: 'Image',
+          savedAttachmentType: SavedAttachmentType.Image,
           fileName: fileName,
           thumbnail: thumbnailPath,
         );
