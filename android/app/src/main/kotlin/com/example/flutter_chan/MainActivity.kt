@@ -1,4 +1,4 @@
-package com.example.flutter_chan
+package com.wrngwrld.chanyan
 
 import io.flutter.embedding.android.FlutterActivity
 
