@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/Models/post.dart';
@@ -17,16 +19,21 @@ class BoardGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final crossCount = (MediaQuery.sizeOf(context).width / 250).floor();
+
     return Scrollbar(
       controller: scrollController,
-      child: GridView.count(
+      child: GridView.builder(
+        itemCount: threads.length,
         padding: const EdgeInsets.only(top: 10),
         controller: scrollController,
         shrinkWrap: true,
-        crossAxisCount: 2,
-        children: [
-          for (final Post post in threads) GridPost(board: board, post: post),
-        ],
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: max(2, crossCount),
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return GridPost(board: board, post: threads[index]);
+        },
       ),
     );
   }
