@@ -249,26 +249,23 @@ class VLCPlayerState extends State<VLCPlayer> {
           },
           child: Stack(
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        galleryProvider.setControlsVisible(
-                            !galleryProvider.getControlsVisible());
-                      });
-                    },
-                    child: AbsorbPointer(
-                      child: VlcPlayer(
-                        controller: _videoPlayerController,
-                        aspectRatio: _videoPlayerController.value.aspectRatio,
-                        placeholder:
-                            const Center(child: CupertinoActivityIndicator()),
-                      ),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      galleryProvider.setControlsVisible(
+                          !galleryProvider.getControlsVisible());
+                    });
+                  },
+                  child: AbsorbPointer(
+                    child: VlcPlayer(
+                      controller: _videoPlayerController,
+                      aspectRatio: _videoPlayerController.value.aspectRatio,
+                      placeholder:
+                          const Center(child: CupertinoActivityIndicator()),
                     ),
                   ),
-                ],
+                ),
               ),
               Opacity(
                 opacity: galleryProvider.getControlsVisible() ? 1 : 0,
