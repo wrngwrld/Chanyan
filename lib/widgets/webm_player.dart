@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_chan/API/save_videos.dart';
@@ -148,6 +149,47 @@ class VLCPlayerState extends State<VLCPlayer> {
     }
   }
 
+  void _onScrubbing(DragUpdateDetails details) {
+    try {
+      setState(() {
+        final double screenWidth = MediaQuery.of(context).size.width;
+
+        final int videoDurationInSeconds =
+            _videoPlayerController.value.duration.inSeconds;
+
+        double scrubSensitivity;
+
+        if (videoDurationInSeconds <= 15) {
+          scrubSensitivity = 70.0 / videoDurationInSeconds;
+        } else if (videoDurationInSeconds <= 30) {
+          scrubSensitivity = 100.0 / videoDurationInSeconds;
+        } else if (videoDurationInSeconds <= 300) {
+          scrubSensitivity = 200.0 / videoDurationInSeconds;
+        } else {
+          scrubSensitivity = 300.0 / videoDurationInSeconds;
+        }
+
+        final double delta = (details.delta.dx / screenWidth) *
+            scrubSensitivity *
+            videoDurationInSeconds;
+
+        int newSliderValue = (sliderValue + delta).round();
+
+        newSliderValue = newSliderValue.clamp(0, videoDurationInSeconds);
+
+        if ((newSliderValue - sliderValue).abs() >= 1) {
+          sliderValue = newSliderValue.toDouble();
+
+          if (_videoPlayerController.value.isInitialized) {
+            _videoPlayerController.setTime(sliderValue.toInt() * 1000);
+          }
+        }
+      });
+    } catch (e) {
+      print('Error during scrubbing: $e');
+    }
+  }
+
   void _onSliderPositionChanged(double progress) {
     try {
       setState(() {
@@ -225,144 +267,161 @@ class VLCPlayerState extends State<VLCPlayer> {
         const Center(
           child: CupertinoActivityIndicator(),
         ),
-        VisibilityDetector(
-          key: ObjectKey(widget.video),
-          onVisibilityChanged: (visibility) {
-            if (visibility.visibleFraction < 0.5 &&
-                mounted &&
-                _videoPlayerController.value.isInitialized) {
-              _videoPlayerController.pause();
-
-              setState(() {
-                isVisible = false;
-              });
-            }
-            if (visibility.visibleFraction > 0.5 &&
-                mounted &&
-                _videoPlayerController.value.isInitialized) {
-              _videoPlayerController.play();
-
-              setState(() {
-                isVisible = true;
-              });
-            }
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              galleryProvider
+                  .setControlsVisible(!galleryProvider.getControlsVisible());
+            });
           },
-          child: Stack(
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      galleryProvider.setControlsVisible(
-                          !galleryProvider.getControlsVisible());
-                    });
-                  },
-                  child: AbsorbPointer(
-                    child: VlcPlayer(
-                      controller: _videoPlayerController,
-                      aspectRatio: _videoPlayerController.value.aspectRatio,
-                      placeholder:
-                          const Center(child: CupertinoActivityIndicator()),
+          onHorizontalDragUpdate: (details) {
+            _onScrubbing(details);
+          },
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              setState(() {
+                galleryProvider
+                    .setControlsVisible(!galleryProvider.getControlsVisible());
+              });
+            },
+            onHorizontalDragUpdate: (details) {
+              _onScrubbing(details);
+            },
+            child: VisibilityDetector(
+              key: ObjectKey(widget.video),
+              onVisibilityChanged: (visibility) {
+                if (visibility.visibleFraction < 0.5 &&
+                    mounted &&
+                    _videoPlayerController.value.isInitialized) {
+                  _videoPlayerController.pause();
+
+                  setState(() {
+                    isVisible = false;
+                  });
+                }
+                if (visibility.visibleFraction > 0.5 &&
+                    mounted &&
+                    _videoPlayerController.value.isInitialized) {
+                  _videoPlayerController.play();
+
+                  setState(() {
+                    isVisible = true;
+                  });
+                }
+              },
+              child: Stack(
+                children: [
+                  Center(
+                    child: AbsorbPointer(
+                      child: VlcPlayer(
+                        controller: _videoPlayerController,
+                        aspectRatio: _videoPlayerController.value.aspectRatio,
+                        placeholder:
+                            const Center(child: CupertinoActivityIndicator()),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Opacity(
-                opacity: galleryProvider.getControlsVisible() ? 1 : 0,
-                child: SafeArea(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        height: 45,
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              // The BackdropFilter is currently bugged in flutter, it will not cut the border radius
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(
-                                    sigmaX: 10.0, sigmaY: 10.0),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                      color: Color.fromRGBO(50, 50, 50, 0.50),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(15))),
-                                ),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                  Opacity(
+                    opacity: galleryProvider.getControlsVisible() ? 1 : 0,
+                    child: SafeArea(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Container(),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            height: 45,
+                            child: Stack(
                               children: [
-                                IconButton(
-                                  color: Colors.white,
-                                  icon: _videoPlayerController.value.isPlaying
-                                      ? const Icon(Icons.pause)
-                                      : const Icon(Icons.play_arrow),
-                                  onPressed: _togglePlaying,
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Text(
-                                        position,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Slider(
-                                          activeColor:
-                                              CupertinoColors.systemGrey,
-                                          inactiveColor:
-                                              CupertinoColors.systemFill,
-                                          thumbColor: CupertinoColors.white,
-                                          value: sliderValue,
-                                          min: 0.0,
-                                          max: (!validPosition &&
-                                                  _videoPlayerController
-                                                          .value.duration ==
-                                                      null)
-                                              ? 1.0
-                                              : _videoPlayerController
-                                                  .value.duration.inSeconds
-                                                  .toDouble(),
-                                          onChanged: validPosition
-                                              ? _onSliderPositionChanged
-                                              : null,
-                                        ),
-                                      ),
-                                      Text(
-                                        duration,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 15,
-                                      )
-                                    ],
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  // The BackdropFilter is currently bugged in flutter, it will not cut the border radius
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                        sigmaX: 10.0, sigmaY: 10.0),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                          color:
+                                              Color.fromRGBO(50, 50, 50, 0.50),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                    ),
                                   ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      color: Colors.white,
+                                      icon:
+                                          _videoPlayerController.value.isPlaying
+                                              ? const Icon(Icons.pause)
+                                              : const Icon(Icons.play_arrow),
+                                      onPressed: _togglePlaying,
+                                    ),
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Text(
+                                            position,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Slider(
+                                              activeColor:
+                                                  CupertinoColors.systemGrey,
+                                              inactiveColor:
+                                                  CupertinoColors.systemFill,
+                                              thumbColor: CupertinoColors.white,
+                                              value: sliderValue,
+                                              min: 0.0,
+                                              max: (!validPosition &&
+                                                      _videoPlayerController
+                                                              .value.duration ==
+                                                          null)
+                                                  ? 1.0
+                                                  : _videoPlayerController
+                                                      .value.duration.inSeconds
+                                                      .toDouble(),
+                                              onChanged: validPosition
+                                                  ? _onSliderPositionChanged
+                                                  : null,
+                                            ),
+                                          ),
+                                          Text(
+                                            duration,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ],
