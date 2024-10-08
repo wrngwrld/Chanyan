@@ -5,9 +5,7 @@ import 'package:flutter_chan/blocs/theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../blocs/settings_model.dart';
 import '../../../services/show_snackbar.dart';
-import '../cupertino_settings_icon.dart';
 
 class DataSettings extends StatefulWidget {
   const DataSettings({Key? key}) : super(key: key);
@@ -109,7 +107,6 @@ class DataSettingsState extends State<DataSettings> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeChanger>(context);
-    final settings = Provider.of<SettingsProvider>(context);
 
     return CupertinoPageScaffold(
       backgroundColor: theme.getTheme() == ThemeData.dark()
@@ -153,25 +150,6 @@ class DataSettingsState extends State<DataSettings> {
       child: SafeArea(
           child: Column(
         children: [
-          CupertinoListSection.insetGrouped(
-            children: [
-              CupertinoListTile(
-                leading: const CupertinoSettingsIcon(
-                  icon: CupertinoIcons.doc,
-                  color: CupertinoColors.systemYellow,
-                ),
-                title: const Text(
-                  'Use caching on videos (Experimental)',
-                ),
-                trailing: CupertinoSwitch(
-                  onChanged: (value) => {
-                    settings.setUseCachingOnVideos(value),
-                  },
-                  value: settings.getUseCachingOnVideos(),
-                ),
-              ),
-            ],
-          ),
           CupertinoListSection.insetGrouped(
             children: [
               CupertinoListTile(

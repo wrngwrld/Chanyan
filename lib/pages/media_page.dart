@@ -1,17 +1,21 @@
+import 'dart:collection';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chan/API/api.dart';
-import 'package:flutter_chan/API/save_videos.dart';
 import 'package:flutter_chan/Models/media.dart';
 import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/gallery_model.dart';
-import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
-import 'package:flutter_chan/widgets/image_viewer.dart';
-import 'package:flutter_chan/widgets/webm_player.dart';
+import 'package:flutter_chan/widgets/video_controls.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'package:provider/provider.dart';
+
+import '../API/api.dart';
+import '../API/save_videos.dart';
+import '../blocs/saved_attachments_model.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -36,69 +40,24 @@ class MediaPage extends StatefulWidget {
 }
 
 class _MediaPageState extends State<MediaPage> {
-  late PageController controller;
+  late PageController pageController;
 
-  final String page = '0';
-  late int index;
-  String currentName = '';
+  List<MediaMetadata> mediaList = [];
+
+  final early = HashSet<int>();
+
+  late final players = HashMap<int, Player>();
+  late final controllers = HashMap<int, VideoController>();
+
   bool isSaved = false;
-
-  List<Media> media = [];
-
-  void onPageChanged(int i, String media, GalleryProvider gallery) {
-    gallery.setCurrentPage(i);
-    gallery.setCurrentMedia(media);
-
-    setState(() {
-      index = i;
-    });
-  }
-
-  Widget getMediaWidget(int i) {
-    if (widget.isAsset) {
-      if (media[i].ext == '.webm' || media[i].ext == '.mp4') {
-        return VLCPlayer(
-          board: widget.board,
-          video: media[i].videoName,
-          fileName: media[i].fileName,
-          isAsset: widget.isAsset,
-          directory: widget.directory,
-          ext: media[i].ext,
-        );
-      } else {
-        return InteractiveViewer(
-          minScale: 0.5,
-          maxScale: 5,
-          child: Image.file(
-            File(
-                '${widget.directory!.path}/savedAttachments/${media[i].fileName}'),
-          ),
-        );
-      }
-    } else {
-      if (media[i].ext == '.webm') {
-        return VLCPlayer(
-          board: widget.board,
-          video: media[i].videoName,
-          fileName: media[i].fileName,
-        );
-      } else {
-        return ImageViewer(
-          url: 'https://i.4cdn.org/${widget.board}/${media[i].videoName}',
-          interactiveViewer: true,
-        );
-      }
-    }
-  }
+  int index = 0;
 
   @override
   void initState() {
-    super.initState();
-
     for (final Post post in widget.allPosts) {
       if (post.tim != null) {
-        media.add(
-          Media(
+        mediaList.add(
+          MediaMetadata(
             videoId: post.tim ?? 0,
             videoName: post.tim.toString() + post.ext.toString(),
             fileName: post.filename ?? '',
@@ -108,23 +67,61 @@ class _MediaPageState extends State<MediaPage> {
       }
     }
 
-    index = media.indexWhere(
+    index = mediaList.indexWhere(
       (element) => element.videoName == widget.video,
     );
 
-    if (index < 0) {
-      Navigator.of(context).pop();
-    }
-
-    controller = PageController(
+    pageController = PageController(
       initialPage: index,
       keepPage: false,
     );
+
+    Future.wait([
+      if (index > 0 && index - 1 >= 0) createPlayer(index - 1),
+      createPlayer(index),
+      if (index < mediaList.length) createPlayer(index + 1),
+    ]).then((_) {
+      players[index]?.play();
+    });
+
+    super.initState();
   }
 
   @override
   void dispose() {
+    for (final player in players.values) {
+      player.dispose();
+    }
     super.dispose();
+  }
+
+  Future<void> createPlayer(int page) async {
+    final player = Player();
+    final controller = VideoController(
+      player,
+      configuration: const VideoControllerConfiguration(),
+    );
+    await player.setPlaylistMode(PlaylistMode.loop);
+
+    await player.open(
+      Media(
+        widget.isAsset
+            ? '${widget.directory!.path}/savedAttachments/${getNameWithoutExtension(mediaList[page].fileName)}${mediaList[page].ext}'
+            : 'https://i.4cdn.org/${widget.board}/${mediaList[page].videoName}',
+      ),
+      play: false,
+    );
+    players[page] = player;
+    controllers[page] = controller;
+
+    if (early.contains(page)) {
+      early.remove(page);
+      setState(() {});
+    }
+  }
+
+  bool isVideo(String ext) {
+    return ext == '.mp4' || ext == '.webm' || ext == '.mkv';
   }
 
   @override
@@ -135,7 +132,7 @@ class _MediaPageState extends State<MediaPage> {
 
     isSaved = false;
     for (final element in savedAttachments.getSavedAttachments()) {
-      final String videoBaseName = media[index].videoName.split('.').first;
+      final String videoBaseName = mediaList[index].videoName.split('.').first;
       final String fileBaseName = element.fileName!.split('.').first;
 
       if (fileBaseName == videoBaseName) {
@@ -173,7 +170,7 @@ class _MediaPageState extends State<MediaPage> {
                 child: Column(
                   children: [
                     Text(
-                      '${media[index].fileName}${widget.isAsset ? '' : media[index].ext}',
+                      '${mediaList[index].fileName}${widget.isAsset ? '' : mediaList[index].ext}',
                       style: TextStyle(
                         color: theme.getTheme() == ThemeData.dark()
                             ? Colors.white
@@ -183,7 +180,7 @@ class _MediaPageState extends State<MediaPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '${index + 1}/${media.length}',
+                      '${index + 1}/${mediaList.length}',
                       style: TextStyle(
                         color: theme.getTheme() == ThemeData.dark()
                             ? Colors.white
@@ -204,7 +201,7 @@ class _MediaPageState extends State<MediaPage> {
                         savedAttachments.addSavedAttachments(
                           _scaffoldKey.currentContext ?? context,
                           widget.board ?? '',
-                          media[index].videoName,
+                          mediaList[index].videoName,
                         )
                       },
                     )
@@ -243,7 +240,8 @@ class _MediaPageState extends State<MediaPage> {
                                       onPressed: () => {
                                         savedAttachments
                                             .removeSavedAttachments(
-                                                media[index].videoName, context)
+                                                mediaList[index].videoName,
+                                                context)
                                             .then(
                                               (value) => {
                                                 Navigator.pop(context),
@@ -274,7 +272,7 @@ class _MediaPageState extends State<MediaPage> {
                                   child: const Text('Open in Browser'),
                                   onPressed: () {
                                     launchURL(
-                                      'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
+                                      'https://i.4cdn.org/${widget.board}/${mediaList[index].videoName}',
                                     );
                                     Navigator.pop(context);
                                   },
@@ -283,8 +281,8 @@ class _MediaPageState extends State<MediaPage> {
                                 child: const Text('Share'),
                                 onPressed: () {
                                   shareMedia(
-                                    'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
-                                    media[index].videoName,
+                                    'https://i.4cdn.org/${widget.board}/${mediaList[index].videoName}',
+                                    mediaList[index].videoName,
                                     _scaffoldKey.currentContext ?? context,
                                     isSaved: isSaved,
                                   );
@@ -295,8 +293,8 @@ class _MediaPageState extends State<MediaPage> {
                                 child: const Text('Download'),
                                 onPressed: () {
                                   saveVideo(
-                                    'https://i.4cdn.org/${widget.board}/${media[index].videoName}',
-                                    media[index].videoName,
+                                    'https://i.4cdn.org/${widget.board}/${mediaList[index].videoName}',
+                                    mediaList[index].videoName,
                                     _scaffoldKey.currentContext ?? context,
                                     showSnackBar: true,
                                     isSaved: isSaved,
@@ -321,18 +319,110 @@ class _MediaPageState extends State<MediaPage> {
               ),
             )
           : null,
-      body: PageView.custom(
-        controller: controller,
-        onPageChanged: (pageIndex) =>
-            onPageChanged(pageIndex, media[pageIndex].videoName, gallery),
-        childrenDelegate: SliverChildBuilderDelegate(
-          (context, i) {
-            return getMediaWidget(i);
-          },
-          childCount: media.length,
-        ),
+      body: PageView.builder(
+        onPageChanged: (i) {
+          index = i;
+
+          gallery.setCurrentPage(i);
+          gallery.setCurrentMedia(mediaList[i].videoName);
+
+          if (isVideo(mediaList[i].ext)) {
+            players[i]?.play();
+          }
+
+          // Dispose the [Player]s & [VideoController]s of the pages that are not visible & not adjacent to the current page.
+          players.removeWhere(
+            (page, player) {
+              final remove = ![i, i - 1, i + 1].contains(page);
+              if (remove) {
+                player.dispose();
+              }
+              return remove;
+            },
+          );
+          controllers.removeWhere(
+            (page, controller) {
+              final remove = ![i, i - 1, i + 1].contains(page);
+              return remove;
+            },
+          );
+
+          // Pause other pages' videos.
+          for (final e in players.entries) {
+            if (e.key != i) {
+              e.value.pause();
+              e.value.seek(Duration.zero);
+            }
+          }
+
+          // Create the [Player]s & [VideoController]s for the next & previous page.
+          // It is obvious that current page's [Player] & [VideoController] will already exist, still checking it redundantly
+          if (!players.containsKey(i)) {
+            createPlayer(i);
+          }
+          if (!players.containsKey(i + 1) && i + 1 < mediaList.length) {
+            createPlayer(i + 1);
+          }
+          if (!players.containsKey(i - 1) && i - 1 >= 0) {
+            createPlayer(i - 1);
+          }
+        },
+        itemCount: mediaList.length,
+        itemBuilder: (context, i) {
+          if (isVideo(mediaList[i].ext)) {
+            final controller = controllers[i];
+            if (controller == null) {
+              early.add(i);
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xffffffff),
+                ),
+              );
+            }
+
+            return Stack(children: [
+              Center(
+                child: SafeArea(
+                  child: Video(
+                    controller: controller,
+                    controls: NoVideoControls,
+                    fill: Colors.transparent,
+                  ),
+                ),
+              ),
+              SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: VideoControls(
+                        controller: controller,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ]);
+          } else {
+            return Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 5,
+                child: widget.isAsset
+                    ? Image.file(
+                        File(
+                          '${widget.directory!.path}/savedAttachments/${mediaList[i].fileName}',
+                        ),
+                      )
+                    : Image.network(
+                        'https://i.4cdn.org/${widget.board}/${mediaList[i].videoName}'),
+              ),
+            );
+          }
+        },
+        controller: pageController,
         scrollDirection: Axis.vertical,
-        physics: const ClampingScrollPhysics(),
       ),
     );
   }

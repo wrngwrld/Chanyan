@@ -8,10 +8,13 @@ import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/blocs/settings_model.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/boards/board_list.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
+
   FlutterError.onError = (FlutterErrorDetails details) {
     print('Error From INSIDE FRAME_WORK');
     print('----------------------');

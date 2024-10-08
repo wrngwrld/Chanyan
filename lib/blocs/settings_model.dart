@@ -10,7 +10,6 @@ class SettingsProvider with ChangeNotifier {
   bool allowNSFW = false;
   ViewType boardView = ViewType.gridView;
   Sort boardSort = Sort.byImagesCount;
-  bool useCachingOnVideos = false;
 
   Future<void> loadPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,25 +34,6 @@ class SettingsProvider with ChangeNotifier {
 
       allowNSFW = allowNSFWPrefs!;
     }
-
-    if (prefs.getBool('useCachingOnVideos') != null) {
-      final bool? useCachingOnVideosPrefs = prefs.getBool('useCachingOnVideos');
-
-      useCachingOnVideos = useCachingOnVideosPrefs!;
-    }
-
-    notifyListeners();
-  }
-
-  bool getUseCachingOnVideos() {
-    return useCachingOnVideos;
-  }
-
-  Future<void> setUseCachingOnVideos(bool boolean) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    useCachingOnVideos = boolean;
-    prefs.setBool('useCachingOnVideos', boolean);
 
     notifyListeners();
   }

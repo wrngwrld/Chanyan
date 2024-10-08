@@ -4,7 +4,7 @@ import 'package:flutter_chan/Models/post.dart';
 import 'package:flutter_chan/blocs/theme.dart';
 import 'package:flutter_chan/pages/thread/thread_page_post.dart';
 import 'package:flutter_chan/widgets/image_viewer.dart';
-import 'package:flutter_chan/widgets/webm_player.dart';
+import 'package:flutter_chan/widgets/video_player.dart';
 import 'package:provider/provider.dart';
 
 class ThreadReplies extends StatefulWidget {
@@ -50,7 +50,7 @@ class _ThreadRepliesState extends State<ThreadReplies> {
 
         fileNames.add(post.tim.toString() + post.ext.toString());
         media.add(post.ext == '.webm'
-            ? VLCPlayer(
+            ? VideoPlayer(
                 board: widget.board,
                 video: video,
                 fileName: post.filename ?? '',
