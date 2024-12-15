@@ -49,7 +49,7 @@ class _ThreadRepliesState extends State<ThreadReplies> {
         final String video = post.tim.toString() + post.ext.toString();
 
         fileNames.add(post.tim.toString() + post.ext.toString());
-        media.add(post.ext == '.webm'
+        media.add((post.ext == '.webm' || post.ext == '.mp4')
             ? VLCPlayer(
                 board: widget.board,
                 video: video,
@@ -118,7 +118,7 @@ class _ThreadRepliesState extends State<ThreadReplies> {
                         board: widget.board,
                         thread: widget.thread,
                         post: widget.replies[i],
-                        allPosts: widget.allPosts,
+                        allPosts: widget.replies,
                         onDismiss: (i) => {},
                       ),
                   ],

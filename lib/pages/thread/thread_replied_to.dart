@@ -40,7 +40,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
       final String video = post.tim.toString() + post.ext.toString();
 
       fileName.add(post.tim.toString() + post.ext.toString());
-      media.add(post.ext == '.webm'
+      media.add((post.ext == '.webm' || post.ext == '.mp4')
           ? VLCPlayer(
               board: widget.board,
               video: video,

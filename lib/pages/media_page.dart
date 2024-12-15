@@ -76,7 +76,7 @@ class _MediaPageState extends State<MediaPage> {
         );
       }
     } else {
-      if (media[i].ext == '.webm') {
+      if (media[i].ext == '.webm' || media[i].ext == '.mp4') {
         return VLCPlayer(
           board: widget.board,
           video: media[i].videoName,
