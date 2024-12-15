@@ -32,7 +32,7 @@ dependencies:
   flutter_html: ^3.0.0-alpha.6
   path_provider: ^2.1.5
   dio: ^5.7.0
-  image_gallery_saver: ^2.0.3
+  image_gallery_saver_plus: ^3.0.5
   permission_handler: ^11.3.1
   flutter_launcher_icons: ^0.14.2
   shared_preferences: ^2.3.3

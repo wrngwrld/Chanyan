@@ -14,7 +14,7 @@ jobs:
       - name: "☕️ Setup Java"
         uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: "17.x"
 
       # Setup the flutter environment.
       - name: "🦋 Setup Flutter"

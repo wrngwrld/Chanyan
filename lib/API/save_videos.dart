@@ -10,7 +10,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_chan/Models/saved_attachment.dart';
 import 'package:flutter_chan/blocs/saved_attachments_model.dart';
 import 'package:flutter_chan/pages/savedAttachments/permission_denied.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -104,7 +104,7 @@ Future<void> saveVideo(
     }
 
     if (Platform.isIOS) {
-      await ImageGallerySaver.saveFile(
+      await ImageGallerySaverPlus.saveFile(
         '${directory.path}/savedAttachments/$fileName'
             .replaceAll('.webm', '.mp4'),
         isReturnPathOfIOS: true,
@@ -120,7 +120,7 @@ Future<void> saveVideo(
               null,
           });
     } else {
-      await ImageGallerySaver.saveFile(
+      await ImageGallerySaverPlus.saveFile(
         '${directory.path}/savedAttachments/$fileName'
             .replaceAll('.webm', '.mp4'),
         isReturnPathOfIOS: true,
@@ -172,7 +172,7 @@ Future<void> saveVideo(
                 await convertWebMToMP4(videoCache, fileDownloadPath);
 
             if (ReturnCode.isSuccess(returnCode)) {
-              await ImageGallerySaver.saveFile(
+              await ImageGallerySaverPlus.saveFile(
                 fileDownloadPath.path.replaceAll('.webm', '.mp4'),
                 isReturnPathOfIOS: true,
               ).then((value) => {
@@ -197,7 +197,7 @@ Future<void> saveVideo(
               );
             }
           } else {
-            await ImageGallerySaver.saveFile(videoCache.path,
+            await ImageGallerySaverPlus.saveFile(videoCache.path,
                     isReturnPathOfIOS: true)
                 .then((value) => {
                       if (showSnackBar) Navigator.pop(context),

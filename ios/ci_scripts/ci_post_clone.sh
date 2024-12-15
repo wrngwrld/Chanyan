@@ -7,7 +7,7 @@ set -e
 cd $CI_PRIMARY_REPOSITORY_PATH # change working directory to the root of your cloned repo.
 
 # Specify the Flutter tag you want to checkout.
-FLUTTER_TAG="3.19.6"
+FLUTTER_TAG="3.27.0"
 
 # Install Flutter using git with the specified tag.
 git clone https://github.com/flutter/flutter.git --depth 1 --branch $FLUTTER_TAG $HOME/flutter
