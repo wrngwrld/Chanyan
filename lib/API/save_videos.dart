@@ -34,7 +34,7 @@ Future<bool> _requestPermission(Permission permission) async {
 Future<Directory> requestDirectory(Directory directory, BuildContext context,
     {bool showErrorDialog = true}) async {
   if (Platform.isAndroid) {
-    if (await _requestPermission(Permission.storage)) {
+    if (await _requestPermission(Permission.manageExternalStorage)) {
       directory = (await getExternalStorageDirectory())!;
       String newPath = '';
       final List<String> paths = directory.path.split('/');
