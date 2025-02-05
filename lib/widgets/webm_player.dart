@@ -382,7 +382,19 @@ class VLCPlayerState extends State<VLCPlayer> {
                                               inactiveColor:
                                                   CupertinoColors.systemFill,
                                               thumbColor: CupertinoColors.white,
-                                              value: sliderValue,
+                                              value: sliderValue.clamp(
+                                                  0.0,
+                                                  (!validPosition &&
+                                                          _videoPlayerController
+                                                                  .value
+                                                                  .duration ==
+                                                              null)
+                                                      ? 1.0
+                                                      : _videoPlayerController
+                                                          .value
+                                                          .duration
+                                                          .inSeconds
+                                                          .toDouble()),
                                               min: 0.0,
                                               max: (!validPosition &&
                                                       _videoPlayerController
