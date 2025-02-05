@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -92,7 +94,6 @@ class _AppWithThemeState extends State<AppWithTheme>
     final theme = Provider.of<ThemeChanger>(context);
 
     return CupertinoApp(
-      color: CupertinoColors.activeGreen,
       debugShowCheckedModeBanner: false,
       home: const BoardList(),
       theme: CupertinoThemeData(
@@ -100,6 +101,11 @@ class _AppWithThemeState extends State<AppWithTheme>
             ? Brightness.dark
             : Brightness.light,
       ),
+      localizationsDelegates: const [
+        DefaultCupertinoLocalizations.delegate,
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+      ],
     );
   }
 }
