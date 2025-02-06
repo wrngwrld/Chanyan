@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    if: "!contains(github.event.release.tag_name, 'nightly')" # Runs only for main releases
+    if: contains(github.event.release.tag_name, 'nightly') # Runs only for nightly releases
     runs-on: ubuntu-latest
     steps:
       - name: "📩 Checkout actions/checkout@v1"
