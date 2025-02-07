@@ -220,10 +220,31 @@ Future<void> saveVideo(
                         null,
                     });
           }
+        } else {
+          await ImageGallerySaverPlus.saveFile(
+            videoCache.path,
+          ).then((value) => {
+                if (showSnackBar) Navigator.pop(context),
+                if (showSnackBar)
+                  showCupertinoSnackbar(
+                    const Duration(milliseconds: 1800),
+                    true,
+                    context,
+                    'File downloaded!',
+                  )
+                else
+                  null,
+              });
         }
       }
     } catch (e) {
       print(e);
+      showCupertinoSnackbar(
+        const Duration(milliseconds: 1800),
+        true,
+        context,
+        'Download failed :(',
+      );
     }
   }
 
