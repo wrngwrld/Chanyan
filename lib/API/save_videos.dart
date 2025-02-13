@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:ffmpeg_kit_flutter_full/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_full/ffmpeg_session.dart';
@@ -34,7 +35,14 @@ Future<bool> _requestPermission(Permission permission) async {
 Future<Directory> requestDirectory(Directory directory, BuildContext context,
     {bool showErrorDialog = true}) async {
   if (Platform.isAndroid) {
-    if (await _requestPermission(Permission.manageExternalStorage)) {
+    final int sdkVersion =
+        (await DeviceInfoPlugin().androidInfo).version.sdkInt;
+
+    final permission = sdkVersion >= 30
+        ? Permission.manageExternalStorage
+        : Permission.storage;
+
+    if (await _requestPermission(permission)) {
       directory = (await getExternalStorageDirectory())!;
       String newPath = '';
       final List<String> paths = directory.path.split('/');
@@ -212,10 +220,31 @@ Future<void> saveVideo(
                         null,
                     });
           }
+        } else {
+          await ImageGallerySaverPlus.saveFile(
+            videoCache.path,
+          ).then((value) => {
+                if (showSnackBar) Navigator.pop(context),
+                if (showSnackBar)
+                  showCupertinoSnackbar(
+                    const Duration(milliseconds: 1800),
+                    true,
+                    context,
+                    'File downloaded!',
+                  )
+                else
+                  null,
+              });
         }
       }
     } catch (e) {
       print(e);
+      showCupertinoSnackbar(
+        const Duration(milliseconds: 1800),
+        true,
+        context,
+        'Download failed :(',
+      );
     }
   }
 

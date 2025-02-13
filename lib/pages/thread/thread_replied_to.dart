@@ -113,7 +113,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
                   loadPost();
                 });
               } else {
-                getMedia(snapshot.data as Post? ?? Post());
+                getMedia(snapshot.data ?? Post());
                 return ListView(
                   shrinkWrap: false,
                   controller: scrollController,
@@ -123,7 +123,7 @@ class _ThreadRepliesToState extends State<ThreadRepliesTo> {
                       child: ThreadPagePost(
                         board: widget.board,
                         thread: widget.thread,
-                        post: snapshot.data as Post? ?? Post(),
+                        post: snapshot.data ?? Post(),
                         allPosts: widget.allPosts,
                         onDismiss: (i) => {},
                       ),
