@@ -21,6 +21,7 @@ class ThreadPagePost extends StatefulWidget {
     required this.thread,
     required this.allPosts,
     required this.onDismiss,
+    this.replies,
   }) : super(key: key);
 
   final String board;
@@ -28,6 +29,7 @@ class ThreadPagePost extends StatefulWidget {
   final Post post;
   final List<Post> allPosts;
   final Function(String? index) onDismiss;
+  final List<Post>? replies;
 
   static String formatBytes(int bytes, int decimals) {
     if (bytes <= 0) {
@@ -92,11 +94,10 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MediaPage(
-                                video: widget.post.tim.toString() +
-                                    widget.post.ext.toString(),
-                                board: widget.board,
-                                allPosts: widget.allPosts,
-                              ),
+                                  video: widget.post.tim.toString() +
+                                      widget.post.ext.toString(),
+                                  board: widget.board,
+                                  allPosts: widget.replies ?? widget.allPosts),
                             ),
                           ).then(
                             (value) => {
