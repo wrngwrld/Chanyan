@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chan/API/api.dart';
@@ -156,17 +157,34 @@ class _ThreadPagePostState extends State<ThreadPagePost> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        widget.post.name ?? 'Anonymous',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: theme.getTheme() == ThemeData.dark()
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          Text(
+                            widget.post.name ?? 'Anonymous',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: theme.getTheme() == ThemeData.dark()
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (widget.post.country != null &&
+                              CountryFlag.fromCountryCode(
+                                      widget.post.country!) !=
+                                  null)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: SizedBox(
+                                width: 16,
+                                height: 11,
+                                child: CountryFlag.fromCountryCode(
+                                    widget.post.country!),
+                              ),
+                            ),
+                        ],
                       ),
                       Text(
                         DateFormat('kk:mm - dd.MM.y').format(
