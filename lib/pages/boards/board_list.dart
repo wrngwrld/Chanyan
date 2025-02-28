@@ -155,7 +155,7 @@ class BoardListState extends State<BoardList> {
                   textScaleFactor: MediaQuery.textScaleFactorOf(context),
                 ),
                 child: Text(
-                  'Chanyan',
+                  'NekoSurf',
                   style: TextStyle(
                     color: theme.getTheme() == ThemeData.dark()
                         ? CupertinoColors.white

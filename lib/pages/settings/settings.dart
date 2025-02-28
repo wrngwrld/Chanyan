@@ -80,7 +80,7 @@ class _SettingsState extends State<Settings> {
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Chanyan'),
+                      const Text('NekoSurf'),
                       FutureBuilder<PackageInfo>(
                           future: _getVersionNumber,
                           builder:
@@ -97,7 +97,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   trailing: const CupertinoListTileChevron(),
                   onTap: () => {
-                    launchURL('https://github.com/wrngwrld/Chanyan'),
+                    launchURL('https://github.com/NekoSurf/NekoSurf'),
                   },
                 ),
                 CupertinoListTile(
