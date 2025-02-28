@@ -32,7 +32,7 @@ dependencies:
   flutter_html: ^3.0.0-alpha.6
   path_provider: ^2.1.5
   dio: ^5.8.0+1
-  image_gallery_saver_plus: ^3.0.5
+  image_gallery_saver_plus: ^4.0.0-0.alpha
   permission_handler: ^11.3.1
   flutter_launcher_icons: ^0.14.3
   shared_preferences: ^2.5.2
@@ -44,7 +44,10 @@ dependencies:
   intl: ^0.20.2
   lint: ^2.3.0
   scrollable_positioned_list: ^0.3.8
-  ffmpeg_kit_flutter_full: ^6.0.3
+  ffmpeg_kit_flutter:
+    git:
+      url: https://github.com/MSOB7YY/ffmpeg-kit
+      path: flutter/flutter
   flutter_cache_manager: ^3.4.1
   package_info_plus: ^8.2.1
   app_settings: ^5.2.0
