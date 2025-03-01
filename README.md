@@ -1,14 +1,14 @@
-# Chanyan
+# NekoSurf
 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/graphs/commit-activity)
-[![Issues](https://img.shields.io/github/issues/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/issues)
-[![GPL3 License](https://img.shields.io/github/license/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/blob/develop/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/wrngwrld/Chanyan.svg?style=flat-square)](https://github.com/wrngwrld/Chanyan/releases/latest)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat-square)](https://github.com/NekoSurf/NekoSurf/graphs/commit-activity)
+[![Issues](https://img.shields.io/github/issues/NekoSurf/NekoSurf.svg?style=flat-square)](https://github.com/NekoSurf/NekoSurf/issues)
+[![GPL3 License](https://img.shields.io/github/license/NekoSurf/NekoSurf.svg?style=flat-square)](https://github.com/NekoSurf/NekoSurf/blob/develop/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/NekoSurf/NekoSurf.svg?style=flat-square)](https://github.com/NekoSurf/NekoSurf/releases/latest)
 [![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg?style=flat-square)](https://pub.dev/packages/lint)
 
 ## Features
 
-- Boards and threads that can be favorised 
+- Boards and threads that can be favorised
 - Boards in grid- or listview
 - Sortable boards
 - Fast video and image gallery (Support for WebM on iOS)
@@ -24,12 +24,13 @@
 </p>
 
 ### Gallery
+
 <img src="./screenshots/galery.gif" width="40%">
 
 ## Testflight
 
-If you want to test it on testflight use [this link](https://testflight.apple.com/join/ky5bRwMY) 
+If you want to test it on Testflight, use [this link](https://testflight.apple.com/join/ky5bRwMY)
 
 ## License
 
-Distributed under the GPL3 License. See [LICENSE](https://github.com/wrngwrld/Chanyan/blob/develop/LICENSE) for more information.
+Distributed under the GPL3 License. See [LICENSE](https://github.com/NekoSurf/NekoSurf/blob/develop/LICENSE) for more information.

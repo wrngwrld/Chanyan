@@ -1,5 +1,5 @@
-name: flutter_chan
-description: A new Flutter project.
+name: flutter_nekosurf
+description: 4chan image board viewer for iOS and Android, written in Flutter
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.9.5
+version: 0.9.6
 
 environment:
   sdk: ">=3.6.0"
@@ -32,10 +32,10 @@ dependencies:
   flutter_html: ^3.0.0-alpha.6
   path_provider: ^2.1.5
   dio: ^5.8.0+1
-  image_gallery_saver_plus: ^3.0.5
+  image_gallery_saver_plus: ^4.0.0-0.alpha
   permission_handler: ^11.3.1
   flutter_launcher_icons: ^0.14.3
-  shared_preferences: ^2.5.1
+  shared_preferences: ^2.5.2
   visibility_detector: ^0.4.0+2
   share_plus: ^10.1.4
   url_launcher: ^6.3.1
@@ -44,22 +44,25 @@ dependencies:
   intl: ^0.20.2
   lint: ^2.3.0
   scrollable_positioned_list: ^0.3.8
-  ffmpeg_kit_flutter_full: ^6.0.3
+  ffmpeg_kit_flutter:
+    git:
+      url: https://github.com/MSOB7YY/ffmpeg-kit
+      path: flutter/flutter
   flutter_cache_manager: ^3.4.1
-  package_info_plus: ^8.1.4
-  app_settings: ^5.1.1
+  package_info_plus: ^8.2.1
+  app_settings: ^5.2.0
   modal_bottom_sheet: ^3.0.0
-  device_info_plus: ^11.2.2
+  device_info_plus: ^11.3.0
   country_flags: ^3.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_native_splash: ^2.4.3
+  flutter_native_splash: ^2.4.4
 
-flutter_icons:
-  android: true
+flutter_launcher_icons:
+  android: "launcher_icon"
   ios: true
   image_path: "assets/icons/icon.png"
   image_path_ios: "assets/icons/icon_ios.jpg"
